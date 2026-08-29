@@ -105,8 +105,8 @@ const browser = await chromium.launch();
     await shoot(page, route, slug(route));
   }
 
-  // 404 page
-  await inspectPage(page, "/definitely-not-a-page", "404 page");
+  // 404 page (the 404 network status itself logs a console error — expected)
+  await page.goto(BASE + "/definitely-not-a-page", { waitUntil: "networkidle" }).catch(() => {});
   const notFoundOk = await page.evaluate(() => /404|lost/i.test(document.body.innerText));
   if (!notFoundOk) note("ERROR", "404 page", "custom 404 content not detected");
   await shoot(page, "/definitely-not-a-page", "404");

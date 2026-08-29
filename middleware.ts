@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { clients } from "@/data/clients";
+import { properties } from "@/data/properties";
 
 const SESSION_COOKIE = "bv_session";
 
@@ -27,6 +28,20 @@ export function middleware(request: NextRequest) {
 
   if (pathname === "/login" && isValidSession) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
+
+  // Data isolation with a real HTTP 404: because the dashboard streams
+  // (loading.tsx), an in-page notFound() can no longer change the status
+  // code — so ownership of /dashboard/properties/[id] is enforced here,
+  // before rendering starts. The page repeats the check as defence in depth.
+  const propertyMatch = pathname.match(/^\/dashboard\/properties\/([^/]+)$/);
+  if (propertyMatch && isValidSession) {
+    const property = properties.find((p) => p.id === propertyMatch[1]);
+    if (!property || property.clientId !== sessionId) {
+      // Rewriting to an unmatched route renders the branded 404 page with a
+      // genuine 404 status.
+      return NextResponse.rewrite(new URL("/__forbidden-404", request.url));
+    }
   }
 
   return NextResponse.next();

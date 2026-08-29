@@ -1,0 +1,44 @@
+import type { Metadata } from "next";
+import Image from "next/image";
+import { Logo } from "@/components/site/Logo";
+import { LoginForm } from "@/components/auth/LoginForm";
+import { siteImages } from "@/data/siteImages";
+
+export const metadata: Metadata = {
+  title: "Owner login",
+  description:
+    "Sign in to the BellaVere owner portal to follow bookings, revenue and the care of your property.",
+};
+
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ from?: string }>;
+}) {
+  const { from } = await searchParams;
+  // Only honour internal dashboard destinations; ignore anything else.
+  const redirectTo =
+    typeof from === "string" && from.startsWith("/dashboard") ? from : undefined;
+
+  return (
+    <div className="relative flex min-h-svh items-center justify-center overflow-hidden bg-navy-900 px-5 py-28 sm:px-8">
+      <Image
+        src={siteImages.loginBackdrop.src}
+        alt={siteImages.loginBackdrop.alt}
+        fill
+        priority
+        sizes="100vw"
+        className="scale-105 object-cover blur-[2px]"
+      />
+      <div className="absolute inset-0 bg-navy-900/70" aria-hidden />
+
+      <div className="absolute top-6 left-6 z-10 sm:top-8 sm:left-8">
+        <Logo dark />
+      </div>
+
+      <div className="relative z-10 w-full max-w-md">
+        <LoginForm from={redirectTo} />
+      </div>
+    </div>
+  );
+}
