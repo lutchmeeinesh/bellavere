@@ -34,7 +34,7 @@ The first pass flagged a console error on the custom 404 page; it was Chromium l
 
 ## Lighthouse (production build, desktop, `/`)
 
-Scores recorded in `lighthouse.json` (regenerate with the command in the README if Chrome moves). Target: ≥ 90 performance, ≥ 95 accessibility, ≥ 95 best practices.
+**Performance 100 · Accessibility 96 · Best Practices 100** (targets: ≥ 90 / ≥ 95 / ≥ 95 — all met). Full report in `lighthouse.json`. Note: in this environment `chrome-launcher` could not spawn Chrome itself; the report was produced by launching Playwright's Chromium with `--remote-debugging-port=9222` and running `npx lighthouse --port=9222 --preset=desktop`.
 
 ## Known limitations (accepted for a demo)
 

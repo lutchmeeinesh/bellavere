@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+.chrome-tmp/
+server.log
+lighthouse.json
+review-findings.json
