@@ -31,11 +31,11 @@ export const admins: Admin[] = [
   },
   {
     id: "a-ankit",
-    name: "Ankit Zoodookhorun",
+    name: "Ankit Dookhorun",
     shortName: "Ankit",
     email: "zoodookhorun@gmail.com",
     title: "Client Relations",
-    initials: "AZ",
+    initials: "AD",
     passwordHashEnv: "ADMIN_ANKIT_PASSWORD_HASH",
   },
   {

@@ -119,3 +119,27 @@ A multi-agent workflow: three independent auditors, each with a different lens (
 - `scripts/review.mjs`: **0 errors, 0 warnings.** New checks: a **fake-filler guard** scans the full HTML of every public page for the removed content (placeholder phone/address, response times, "+9%", "by the 5th", old testimonial names, "since 20xx", portfolio links); the sign-in page offers exactly **2** demo accounts; `/properties` returns 404. All earlier currency, security, admin and isolation checks still pass.
 - `TODO: confirm with client` markers: 30 → 15, all for facts only the client can supply.
 
+---
+
+## Round 5 — 22 September 2026 (real contact details)
+
+### Independent verification
+
+A read-only workflow ran three reviewers with different lenses (exactness of the new facts, coverage on the site, honesty/overclaiming) plus a skeptic who re-checked every report against the files: 22 issues confirmed, 13 rejected.
+
+### Findings & fixes
+
+1. **Privacy leak (fixed).** `data/company.ts` is imported by client components, so its `team[].email` fields — including **Krit's personal email, which is never displayed** — were shipped in two browser JS bundles. Emails were removed from the team list (admin logins keep them server-side in `data/admins.ts`). The review script now **scans every built browser bundle** for password hashes, admin env names, the session secret and private emails: 41 bundles clean.
+2. **Count-ups showed "0" to crawlers and screen readers (fixed).** Server HTML rendered "0%" for "100% human answers" (and would have shown "0/7"). `CountUp` now renders the real figure first, with a screen-reader copy; only the visible digits animate. 24/7 and "Same day" are fixed text.
+3. **"1 point of contact" contradicted the two published contacts** — replaced in the trust bar.
+4. **Organisation-wide 24/7 `openingHours`** implied premises — removed; 24/7 stays on the contact points.
+5. **Contact intro bundled same-day replies with a same-day valuation** — separated.
+6. **Nihal missing from "The main people you will speak to"** — added (name, availability, number; no invented role).
+7. **Footer showed only Ankit's number without a name** — now both people, by name.
+8. My own fake-filler guard flagged the real `instagram.com/bellavere.ltd` (it matched any `instagram.com/bellavere…`) — narrowed to the old invented `.mu` handles.
+9. Grammar ("coordinates" → "coordinate"), stale code comment, and every doc reference to the old surname.
+
+### Verification
+
+- `npm run build`: 0 TypeScript errors, 0 lint errors.
+- `scripts/review.mjs`: **0 errors, 0 warnings** — adds: bundle secret scan; contact page must show Ankit Dookhorun, +230 5531 0734, zoodookhorun@gmail.com, Nihal Lutchmee, +230 5817 4529, 24/7, same-day, and both bellavere.ltd social links; the old surname must not reappear.

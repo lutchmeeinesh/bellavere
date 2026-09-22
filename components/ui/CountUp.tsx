@@ -3,7 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 import { useInView, useReducedMotion } from "framer-motion";
 
-/** Animated number that counts up from 0 when it scrolls into view. */
+/**
+ * Number that counts up from 0 when it scrolls into view. The real figure is
+ * rendered first (server HTML, no-JS visitors, crawlers) and exposed to
+ * screen readers; only the visible digits animate.
+ */
 export function CountUp({
   value,
   decimals = 0,
@@ -22,7 +26,7 @@ export function CountUp({
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, margin: "-40px" });
   const reduceMotion = useReducedMotion();
-  const [display, setDisplay] = useState(0);
+  const [display, setDisplay] = useState(value);
 
   useEffect(() => {
     if (!inView) return;
@@ -43,16 +47,24 @@ export function CountUp({
     return () => cancelAnimationFrame(frame);
   }, [inView, value, duration, reduceMotion]);
 
-  const formatted = display.toLocaleString("en-GB", {
-    minimumFractionDigits: decimals,
-    maximumFractionDigits: decimals,
-  });
+  const format = (n: number) =>
+    n.toLocaleString("en-GB", {
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals,
+    });
 
   return (
     <span ref={ref} className={className}>
-      {prefix}
-      {formatted}
-      {suffix}
+      <span className="sr-only">
+        {prefix}
+        {format(value)}
+        {suffix}
+      </span>
+      <span aria-hidden>
+        {prefix}
+        {format(display)}
+        {suffix}
+      </span>
     </span>
   );
 }

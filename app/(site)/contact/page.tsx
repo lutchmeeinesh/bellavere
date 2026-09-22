@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Clock, Mail, Phone } from "lucide-react";
+import { Mail, Phone } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Reveal, RevealItem, RevealStagger } from "@/components/ui/Reveal";
@@ -37,8 +37,9 @@ export default function ContactPage() {
             <p className="eyebrow mb-4">Contact</p>
             <h1>Let’s talk about your property</h1>
             <p className="mt-5 text-lg text-ink-500">
-              Tell us about your villa or apartment and a real person will
-              reply with an honest view of what it could earn.
+              Tell us about your villa or apartment. A real person will reply{" "}
+              {company.responseTime}, and we&rsquo;ll give you an honest view of
+              what it could earn.
             </p>
           </Reveal>
         </Container>
@@ -56,13 +57,44 @@ export default function ContactPage() {
                     <Phone className="size-5" aria-hidden />
                   </DetailIcon>
                   <div>
-                    <p className="text-sm font-medium text-navy-900">Call us</p>
-                    <a
-                      href={`tel:${company.phone.replace(/\s/g, "")}`}
-                      className="mt-1 inline-block text-sm text-ink-500 transition-colors duration-150 hover:text-gold-700"
-                    >
-                      {company.phone}
-                    </a>
+                    <p className="text-sm font-medium text-navy-900">
+                      Call us
+                      {company.hours ? (
+                        <span className="font-normal text-ink-500">
+                          {" "}
+                          — {company.hours.toLowerCase()}
+                        </span>
+                      ) : null}
+                    </p>
+                    <ul className="mt-2 space-y-3">
+                      {company.contacts.map((person) => (
+                        <li key={person.name}>
+                          <p className="text-sm text-navy-900">
+                            {person.name}
+                            {person.role ? (
+                              <span className="text-ink-500">
+                                {" "}
+                                · {person.role}
+                              </span>
+                            ) : null}
+                          </p>
+                          <a
+                            href={`tel:${person.phone.replace(/\s/g, "")}`}
+                            className="block text-sm text-ink-500 transition-colors duration-150 hover:text-gold-700"
+                          >
+                            {person.phone}
+                          </a>
+                          {person.email ? (
+                            <a
+                              href={`mailto:${person.email}`}
+                              className="block text-sm text-ink-500 transition-colors duration-150 hover:text-gold-700"
+                            >
+                              {person.email}
+                            </a>
+                          ) : null}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 </RevealItem>
               ) : null}
@@ -82,24 +114,11 @@ export default function ContactPage() {
                     {company.email}
                   </a>
                   <p className="mt-1 text-xs text-ink-500">
-                    Answered by a person, never a bot.
+                    Every query answered {company.responseTime} — by a person,
+                    never a bot.
                   </p>
                 </div>
               </RevealItem>
-
-              {company.hours ? (
-                <RevealItem className="flex gap-4">
-                  <DetailIcon>
-                    <Clock className="size-5" aria-hidden />
-                  </DetailIcon>
-                  <div>
-                    <p className="text-sm font-medium text-navy-900">
-                      Office hours
-                    </p>
-                    <p className="mt-1 text-sm text-ink-500">{company.hours}</p>
-                  </div>
-                </RevealItem>
-              ) : null}
 
               {SOCIAL_LINKS.length > 0 ? (
                 <RevealItem className="flex items-center gap-3 pl-15">

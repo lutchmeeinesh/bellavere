@@ -17,10 +17,14 @@ export function TrustBar() {
           {company.commitments.map((item) => (
             <RevealItem key={item.label} className="text-center">
               <div className="font-serif text-5xl text-navy-900 lg:text-6xl">
-                <CountUp
-                  value={item.value}
-                  suffix={"suffix" in item ? item.suffix : ""}
-                />
+                {"display" in item ? (
+                  item.display
+                ) : (
+                  <CountUp
+                    value={item.value}
+                    suffix={"suffix" in item ? item.suffix : ""}
+                  />
+                )}
               </div>
               <p className="eyebrow mt-3">{item.label}</p>
             </RevealItem>

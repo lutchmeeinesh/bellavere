@@ -132,7 +132,7 @@ export function ContactForm() {
           <h3 className="mt-6">Message received</h3>
           <p className="mt-3 max-w-sm text-ink-500">
             Thank you — a real person from our team will read your message
-            and reply.
+            and reply the same day.
           </p>
           <Button variant="outline" size="sm" className="mt-8" onClick={reset}>
             Send another message

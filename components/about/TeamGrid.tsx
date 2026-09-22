@@ -8,7 +8,7 @@ import { company } from "@/data/company";
  */
 export function TeamGrid() {
   return (
-    <RevealStagger className="mx-auto grid max-w-3xl gap-12 sm:grid-cols-2">
+    <RevealStagger className="mx-auto grid max-w-5xl gap-12 sm:grid-cols-2 lg:grid-cols-3">
       {company.team.map((member) => (
         <RevealItem key={member.name} className="text-center">
           <span
@@ -18,7 +18,7 @@ export function TeamGrid() {
             {member.initials}
           </span>
           <h3 className="mt-5 text-xl">{member.name}</h3>
-          <p className="eyebrow mt-2">{member.role}</p>
+          {member.role ? <p className="eyebrow mt-2">{member.role}</p> : null}
           <p className="mx-auto mt-3 max-w-xs text-sm leading-relaxed text-ink-500">
             {member.bio}
           </p>

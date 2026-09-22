@@ -29,9 +29,12 @@ const PUBLIC_ROUTES = ["/", "/services", "/about", "/contact", "/privacy", "/ter
 
 // Fake filler that was deliberately removed — it must never come back.
 const REMOVED_FILLER = [
-  /728 4410/, /La Croisette Business/, /Suite 4/, /instagram\.com\/bellavere/,
+  /728 4410/, /La Croisette Business/, /Suite 4/,
+  // The old invented social handles (the real accounts are bellavere.ltd).
+  /instagram\.com\/bellavere\.mu/, /facebook\.com\/bellavere\.mu/, /linkedin\.com\/company\/bellavere/,
   /within 4 hours/i, /under 2 hours/i, /9% to rental/i, /by the 5th/i,
   /Lyon to London/, /Ravi Naidoo/, /since 20\d\d/i, /Our portfolio/,
+  /Ankit Zoodookhorun/,
 ];
 const DASH_ROUTES = ["/dashboard", "/dashboard/properties", "/dashboard/bookings", "/dashboard/maintenance", "/dashboard/statements", "/dashboard/documents", "/dashboard/settings"];
 
@@ -101,6 +104,24 @@ async function shoot(page, route, name) {
   await page.setViewportSize({ width: 1440, height: 900 });
 }
 
+// ---------- browser bundles must not carry secrets ----------
+// Anything imported by client components ships to every visitor. Password
+// hashes, admin details and Krit's personal email must never be in there.
+{
+  const dir = path.join(process.cwd(), ".next", "static", "chunks");
+  const SECRET = [/scrypt:/, /passwordHash/, /ADMIN_[A-Z]+_PASSWORD_HASH/, /kritgoburdhan/i, /lutchmeeinesh/i, /SESSION_SECRET/];
+  if (!fs.existsSync(dir)) note("WARN", "bundles", "no .next/static/chunks — run npm run build first");
+  else {
+    const files = fs.readdirSync(dir, { recursive: true }).filter((f) => String(f).endsWith(".js"));
+    let leaks = 0;
+    for (const file of files) {
+      const code = fs.readFileSync(path.join(dir, String(file)), "utf8");
+      for (const pattern of SECRET) if (pattern.test(code)) { leaks++; note("ERROR", "bundles", `${file} contains ${pattern}`); }
+    }
+    if (!leaks) console.log(`OK: ${files.length} browser bundles contain no secrets or private emails`);
+  }
+}
+
 const browser = await chromium.launch();
 
 // ---------- logged-out pass ----------
@@ -124,6 +145,14 @@ const browser = await chromium.launch();
     }
   }
   console.log("OK: removed fake filler checked on every public page");
+
+  // Confirmed contact details are published where they belong.
+  await page.goto(`${BASE}/contact`, { waitUntil: "networkidle" });
+  const contactHtml = await page.evaluate(() => document.documentElement.outerHTML);
+  for (const expected of ["Ankit Dookhorun", "+230 5531 0734", "zoodookhorun@gmail.com", "Nihal Lutchmee", "+230 5817 4529", "24/7", "the same day", "instagram.com/bellavere.ltd", "facebook.com/bellavere.ltd"]) {
+    if (!contactHtml.includes(expected)) note("ERROR", "contact", `contact page is missing "${expected}"`);
+  }
+  console.log("OK: contact page shows Ankit, Nihal, 24/7, same-day replies and both social accounts");
 
   // Exactly two demo accounts are offered on the sign-in page.
   await page.goto(`${BASE}/login`, { waitUntil: "networkidle" });

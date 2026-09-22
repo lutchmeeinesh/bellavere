@@ -22,18 +22,37 @@ export const company = {
   marketLong:
     "Villas, apartments and residences across Mauritius — north, west, east, south and the central plateau.",
   /**
-   * Not yet provided by the client, so not shown anywhere. Fill these in and
-   * the contact page, footer and structured data pick them up automatically.
+   * Confirmed by the client (22 Sep 2026): the people to call, both
+   * reachable every day, 24/7. Shown on the contact page and in structured
+   * data. Ankit's email is published at the client's request.
    */
-  // TODO: confirm with client — phone, office hours, social links,
-  // registered address (for the legal pages)
-  phone: null as string | null,
-  hours: null as string | null,
+  contacts: [
+    {
+      name: "Ankit Dookhorun",
+      role: "Client Relations" as string | null,
+      phone: "+230 5531 0734",
+      email: "zoodookhorun@gmail.com" as string | null,
+    },
+    {
+      name: "Nihal Lutchmee",
+      role: null as string | null,
+      phone: "+230 5817 4529",
+      email: null as string | null,
+    },
+  ],
+  /** Main line (Ankit) for the footer and structured data. */
+  phone: "+230 5531 0734" as string | null,
+  hours: "Every day, 24/7" as string | null,
+  /** Both contacts are reachable around the clock. */
+  available247: true,
+  /** Confirmed by the client: every query is answered the same day. */
+  responseTime: "the same day",
   social: {
-    instagram: null as string | null,
-    facebook: null as string | null,
+    instagram: "https://www.instagram.com/bellavere.ltd/" as string | null,
+    facebook: "https://www.facebook.com/bellavere.ltd" as string | null,
     linkedin: null as string | null,
   },
+  // TODO: confirm with client — registered address (for the legal pages)
   registeredAddress: null as string | null,
   email: "BellavereLtd@gmail.com",
   /** No walk-in office: only the country is published. */
@@ -58,36 +77,42 @@ export const company = {
       "Your management fee is negotiated with you and set after our first meeting — it never exceeds 15% of gross rental income. No hidden fees: every cost is itemised on your monthly statement.",
   },
   /**
-   * The team. Surnames are inferred from the team's email addresses.
-   * `email` is kept for internal use (e.g. routing enquiries) and is NOT
-   * rendered on the public site — personal addresses attract spam.
+   * The people shown on the About page. Ankit's surname is confirmed by the
+   * client; Krit's is inferred from the email address. No personal emails
+   * here: this object is bundled into browser code, so anything in it is
+   * public. Admin logins live server-side in data/admins.ts. Nihal's role
+   * was not given, so none is shown.
    */
-  // TODO: confirm with client — surname spelling and bio wording
+  // TODO: confirm with client — Krit's surname spelling and bio wording
   team: [
     {
       name: "Krit Goburdhan",
-      role: "General Manager & Site Supervisor",
+      role: "General Manager & Site Supervisor" as string | null,
       bio: "Runs Bellavere day to day and is on site in person — supervising maintenance, inspections and every contractor who works on your property.",
       initials: "KG",
-      email: "Kritgoburdhan@gmail.com",
     },
     {
-      name: "Ankit Zoodookhorun",
-      role: "Client Relations",
-      bio: "Your first point of contact for statements, bookings and questions — answered by a person who knows your property, never a chatbot.",
-      initials: "AZ",
-      email: "zoodookhorun@gmail.com",
+      name: "Ankit Dookhorun",
+      role: "Client Relations" as string | null,
+      bio: "Your first point of contact for statements, bookings and questions — reachable every day, 24/7, and never a chatbot.",
+      initials: "AD",
+    },
+    {
+      name: "Nihal Lutchmee",
+      role: null as string | null,
+      bio: "Reachable every day, 24/7, on +230 5817 4529.",
+      initials: "NL",
     },
   ],
   /**
-   * Commitments shown in the home trust bar. These are true by definition of
-   * the service, unlike track-record figures (properties managed, years
-   * operating, ratings), which should only be published once real.
+   * Commitments shown in the home trust bar — each one confirmed by the
+   * client. `value` counts up; `display` is shown as fixed text. Publish
+   * track-record figures (properties managed, ratings) only once real.
    */
   commitments: [
     { value: 0, label: "Hidden fees" },
-    { value: 1, label: "Point of contact" },
-    { value: 2, label: "Currencies — MUR & EUR" },
+    { display: "24/7", label: "Always reachable" },
+    { display: "Same day", label: "Every query answered" },
     { value: 100, suffix: "%", label: "Human answers, no bots" },
   ],
 } as const;

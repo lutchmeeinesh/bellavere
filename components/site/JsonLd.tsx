@@ -51,6 +51,34 @@ export function JsonLd() {
     },
     // Island-wide coverage, confirmed by the client's own map (22 Sep 2026).
     areaServed: { "@type": "Country", name: "Mauritius" },
+    // No walk-in office, so no organisation-wide opening hours: the 24/7
+    // availability belongs to the contact people (hoursAvailable below).
+    contactPoint: company.contacts.map((person) => ({
+      "@type": "ContactPoint",
+      name: person.name,
+      telephone: person.phone,
+      ...(person.email ? { email: person.email } : {}),
+      contactType: "customer service",
+      areaServed: "MU",
+      ...(company.available247
+        ? {
+            hoursAvailable: {
+              "@type": "OpeningHoursSpecification",
+              dayOfWeek: [
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday",
+                "Saturday",
+                "Sunday",
+              ],
+              opens: "00:00",
+              closes: "23:59",
+            },
+          }
+        : {}),
+    })),
     sameAs: Object.values(company.social).filter(Boolean),
     knowsAbout: SERVICES.map((service) => service.name),
     makesOffer: SERVICES.map((service) => ({

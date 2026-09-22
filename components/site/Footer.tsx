@@ -33,7 +33,7 @@ const columns = [
 ];
 
 export function Footer() {
-  // Empty until the client provides real social profiles.
+  // Only the social profiles set in data/company.ts are shown.
   const socialLinks = publishedSocialLinks(company.name, company.social);
   return (
     <footer className="bg-navy-900 text-white">
@@ -46,6 +46,28 @@ export function Footer() {
               around Mauritius — north, south, east, west and the central
               plateau.
             </p>
+            {company.contacts.length > 0 ? (
+              <div className="mt-5 text-sm text-white/70">
+                {company.hours ? (
+                  <p className="text-white/60">
+                    Call us — {company.hours.toLowerCase()}
+                  </p>
+                ) : null}
+                <ul className="mt-1.5 space-y-1">
+                  {company.contacts.map((person) => (
+                    <li key={person.name}>
+                      {person.name.split(" ")[0]}{" "}
+                      <a
+                        href={`tel:${person.phone.replace(/\s/g, "")}`}
+                        className="transition-colors duration-200 hover:text-white"
+                      >
+                        {person.phone}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
             {socialLinks.length > 0 ? (
               <div className="mt-6 flex gap-3">
                 {socialLinks.map(({ label, href, Icon }) => (

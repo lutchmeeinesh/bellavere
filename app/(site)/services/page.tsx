@@ -79,7 +79,7 @@ export default function ServicesPage() {
           "Occupancy reporting",
         ]}
         detailIcon={MessageCircle}
-        detail={<>Every enquiry answered by a real person</>}
+        detail={<>Every query answered the same day, by a real person</>}
       />
 
       <ServiceSection
@@ -90,7 +90,7 @@ export default function ServicesPage() {
         imageSide="right"
         tinted
         paragraphs={[
-          "Salt air, cyclone season and back-to-back guests are hard on an island home. We run regular inspections, look after pools and gardens, and coordinates repairs before small issues become expensive ones.",
+          "Salt air, cyclone season and back-to-back guests are hard on an island home. We run regular inspections, look after pools and gardens, and coordinate repairs before small issues become expensive ones.",
           "Every job is logged against your property and itemised on your statement, with contractors coordinated and supervised on site — no hidden fees.",
         ]}
         included={[

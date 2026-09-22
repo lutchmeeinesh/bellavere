@@ -31,7 +31,7 @@ const VALUES = [
   {
     icon: HeartHandshake,
     title: "Always a human",
-    copy: "Write to us and a real person answers — never a chatbot. Someone who knows your property by name.",
+    copy: "Call or write any time: someone is reachable every day, 24/7, and every query is answered the same day. A real person who knows your property — never a chatbot.",
   },
 ];
 
@@ -148,7 +148,7 @@ export default function AboutPage() {
           <SectionHeading
             eyebrow="The team"
             title="The main people you will speak to"
-            sub="Two people, one standard. Small enough that you always deal with the people in charge."
+            sub="Three people, one standard. Small enough that you always deal with someone who knows your property."
             align="center"
             className="mb-14"
           />

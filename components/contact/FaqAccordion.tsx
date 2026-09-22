@@ -19,6 +19,15 @@ const FAQ_ITEMS: FaqItem[] = [
     answer: company.pricing.detail,
   },
   {
+    id: "reply",
+    question: "How quickly will you get back to me?",
+    answer: `The same day — every query, every time. ${company.contacts
+      .map((person) => person.name.split(" ")[0])
+      .join(
+        " and ",
+      )} can be reached every day, 24/7, on the numbers on this page.`,
+  },
+  {
     id: "payouts",
     question: "When do I get paid?",
     answer:
@@ -58,13 +67,13 @@ export function FaqAccordion({ className }: { className?: string }) {
                 className={cn(
                   "flex w-full items-center justify-between gap-6 py-5 text-left",
                   "cursor-pointer transition-colors duration-150",
-                  "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500"
+                  "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500",
                 )}
               >
                 <span
                   className={cn(
                     "font-serif text-xl font-semibold transition-colors duration-150",
-                    open ? "text-gold-700" : "text-navy-900"
+                    open ? "text-gold-700" : "text-navy-900",
                   )}
                 >
                   {item.question}
@@ -73,7 +82,7 @@ export function FaqAccordion({ className }: { className?: string }) {
                   aria-hidden
                   className={cn(
                     "size-5 shrink-0 text-gold-700 transition-transform duration-200",
-                    open && "rotate-180"
+                    open && "rotate-180",
                   )}
                 />
               </button>

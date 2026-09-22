@@ -56,9 +56,9 @@ The client supplied the company name, team, email, mission and dual-currency req
 - Also removed as unconfirmed: "no mark-up on contractor invoices", "24/7 call-out", "vetted, insured contractors", "30 days' notice". They were replaced with claims grounded in the mission or the outreach copy (e.g. "every cost itemised", "emergency coordination").
 
 ### Team
-- **Surnames inferred from the email addresses** (Krit Goburdhan, Ankit Zoodookhorun), marked TODO to confirm spelling.
+- **Surnames inferred from the email addresses** (Krit Goburdhan, Ankit Zoodookhorun), marked TODO to confirm spelling. *Correction (round 5): the client confirmed Ankit's family name is **Dookhorun**; only Krit's is still inferred.*
 - Bios are written only from the roles given, with no invented history. No gendered pronouns are used for team members anywhere.
-- **Personal email addresses are stored but not published.** The public contact is the company email, because personal addresses on a website attract spam. Change `components/about/TeamGrid.tsx` if the client wants direct contact shown.
+- **Personal email addresses are stored but not published.** *(Superseded in round 5: Ankit's email is published at the client's request; Krit's is not, and it no longer lives in browser-bundled data.)* The public contact is the company email, because personal addresses on a website attract spam. Change `components/about/TeamGrid.tsx` if the client wants direct contact shown.
 
 ### Currency (MUR and EUR)
 - **Stored in EUR, displayed in EUR or MUR** at the visitor's choice (header, dashboard top bar, Settings). Default EUR.
@@ -108,3 +108,13 @@ The client asked to strip everything fake, keep two demo accounts, and rename th
 - Contractor names in the demo data became generic trades ("Pool specialist") — invented company names could collide with real Mauritian businesses.
 - "Developers" was kept as a client group despite a critic's objection: the client's own prospect list names developers explicitly.
 
+---
+
+## Update 4 — 22 September 2026 (real contact details)
+
+- **Contacts:** Ankit Dookhorun (+230 5531 0734, zoodookhorun@gmail.com) and Nihal Lutchmee (+230 5817 4529 — written in the Mauritian 4+4 format; the client typed "58174529"). Both reachable every day, 24/7; every query answered the same day. Instagram and Facebook: bellavere.ltd (URLs `instagram.com/bellavere.ltd/`, `facebook.com/bellavere.ltd` — not verified from here; open each once to confirm).
+- **Nihal** was added to the About team ("The main people you will speak to") and the contact page, with **no role or bio invented** — only the confirmed availability and number. Nihal's email was not given, so none is shown.
+- **Footer** lists both people by first name with their numbers; the client didn't rank one contact above the other. The structured data's main `telephone` is Ankit's (Client Relations) because schema.org takes one; both appear as `contactPoint`s with 24/7 `hoursAvailable`.
+- **Trust bar:** "1 point of contact" was replaced by "Same day — every query answered" (two people are now published), and "2 currencies" by "24/7 — always reachable". Both new tiles are fixed text, not count-ups.
+- **24/7 is scoped to people, not an office or a call-out service:** the structured data carries no organisation-wide opening hours (there is no walk-in office), and no "24/7 emergency call-out" claim was reintroduced.
+- **Same-day** applies to replying to queries only — the contact page keeps it separate from the earnings assessment (fees are set after a first meeting).

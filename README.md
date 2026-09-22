@@ -20,7 +20,7 @@ Three administrators can see **every owner's information** at `/admin` and open 
 | Admin | Login email |
 | --- | --- |
 | Krit Goburdhan | kritgoburdhan@gmail.com |
-| Ankit Zoodookhorun | zoodookhorun@gmail.com |
+| Ankit Dookhorun | zoodookhorun@gmail.com |
 | Lutchmee Inesh | lutchmeeinesh@gmail.com |
 
 Passwords are **not in the code**. Temporary passwords were generated into `ADMIN-CREDENTIALS.local.md` (git-ignored) and their scrypt hashes into `.env.local` (git-ignored). Hand each person their password privately, then delete that file. To change a password: `node scripts/hash-password.mjs "new password"`, then put the output in the matching `ADMIN_*_PASSWORD_HASH` variable locally and in Vercel.
@@ -59,7 +59,10 @@ The login page lists these with one-click "Use" buttons.
 | Fact | Value | Where |
 | --- | --- | --- |
 | Name | Bellavere (trading name: Bellavere Property Care) | `data/company.ts` |
-| Team | Krit Goburdhan — General Manager & Site Supervisor; Ankit Zoodookhorun — Client Relations | `data/company.ts` |
+| Team | Krit Goburdhan — General Manager & Site Supervisor; Ankit Dookhorun — Client Relations; Nihal Lutchmee | `data/company.ts` |
+| Contacts | Ankit Dookhorun +230 5531 0734, zoodookhorun@gmail.com · Nihal Lutchmee +230 5817 4529 — both reachable every day, 24/7 | `data/company.ts` (`contacts`) |
+| Response time | Every query answered the same day | `data/company.ts` (`responseTime`) |
+| Social | Instagram and Facebook: bellavere.ltd | `data/company.ts` (`social`) |
 | Company email | BellavereLtd@gmail.com | `data/company.ts` |
 | Mission | "Our mission is to provide the best service while maintaining full transparency. No hidden fees — and there will always be a human to answer you." | `data/company.ts` |
 | Currency | MUR and EUR, visitor chooses | `lib/format.ts` |
@@ -68,7 +71,7 @@ The login page lists these with one-click "Use" buttons.
 | Coverage | All around Mauritius (the client's own map) | `public/images/coverage-map.webp`, About page |
 | Services incl. syndic | From the client's own prospect-list outreach copy | `app/(site)/services/page.tsx` |
 
-Team members' personal emails are stored in `data/company.ts` for internal use (e.g. routing enquiries) but are **not shown on the public site**. Surnames were inferred from the email addresses — confirm spelling.
+Ankit's email and both phone numbers are published on the contact page at the client's request. **Krit's email is not published** and is kept only in `data/admins.ts` (server-side) — `data/company.ts` is bundled into browser code, so it must never hold private data. Krit's surname is still inferred from the email address.
 
 ## Placeholders still waiting on company info
 
@@ -76,13 +79,12 @@ Team members' personal emails are stored in `data/company.ts` for internal use (
 
 | Still needed | Currently | Where |
 | --- | --- | --- |
-| Phone, office hours, social links | **not shown anywhere** — they appear automatically once set | `data/company.ts` |
 | Registered address, BRN | not shown; legal pages list them once set | `data/company.ts`, legal pages |
 | Legal name | "Bellavere Ltd" (inferred from the email) | `data/company.ts` |
 | Tagline | "Your property, perfectly managed." | `data/company.ts` |
 | Fee basis | 15% cap assumed to be of gross rental income | `data/company.ts` |
 | EUR→MUR rate | €1 = Rs 52 | `lib/format.ts` |
-| Surname spelling & bios | inferred from emails | `data/company.ts` |
+| Krit's surname & the bios | inferred from the email / written from the roles | `data/company.ts` |
 | Testimonials | 3 **illustrative** quotes (Élise M., Deepak R., Nathalie C. — not real people, not the demo owners). Replace with real quotes, with permission, before the site is public | `data/testimonials.ts` |
 | Legal pages | templates for a lawyer to review; retention periods TODO | `app/(site)/privacy`, `app/(site)/terms` |
 | Imagery | Unsplash stock (marketing pages + the portal demo) | `data/siteImages.ts`, `data/properties.ts` |

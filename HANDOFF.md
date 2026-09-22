@@ -39,7 +39,8 @@ Node 20+ required (built and tested on Node 24).
 ### Confirmed company facts (from the client, 22 Sep 2026)
 
 - **Name:** Bellavere (lowercase v; the original brief's "BellaVere" was retired). Trading name "Bellavere Property Care".
-- **Team:** **Krit Goburdhan**, General Manager & Site Supervisor, and **Ankit Zoodookhorun**, Client Relations. Surnames were inferred from their email addresses. Their personal emails are stored in `data/company.ts` but deliberately **not published**.
+- **Team:** **Krit Goburdhan**, General Manager & Site Supervisor (surname inferred from the email); **Ankit Dookhorun**, Client Relations (surname confirmed — his email is zoodookhorun@gmail.com); **Nihal Lutchmee** (no role given, so none shown).
+- **Contacts (confirmed 22 Sep):** Ankit +230 5531 0734 and zoodookhorun@gmail.com; Nihal +230 5817 4529. Both reachable **every day, 24/7**. **Every query is answered the same day.** Social: Instagram and Facebook **bellavere.ltd**. Krit's email is **not** published.
 - **Company email:** BellavereLtd@gmail.com
 - **Mission:** "Our mission is to provide the best service while maintaining full transparency. No hidden fees — and there will always be a human to answer you."
 - **Currency:** MUR and EUR, user-selectable.
@@ -48,7 +49,7 @@ Node 20+ required (built and tested on Node 24).
 - **Coverage:** all around Mauritius, per the client's own map (`public/images/coverage-map.webp`, OpenStreetMap-based: keep the attribution caption).
 - **No walk-in office:** no address on the contact page or in the footer.
 - **Admins:** Krit (kritgoburdhan@gmail.com), Ankit (zoodookhorun@gmail.com), Inesh (lutchmeeinesh@gmail.com).
-- **No fake filler (22 Sep 2026):** the client asked for every invented fact to be removed. Phone, hours, social links and address are `null` in `data/company.ts` and hidden until provided; no invented numbers, response times, service extras, policies or features; testimonials are kept (client's request) as clearly illustrative, initial-only names that differ from the demo owners.
+- **No fake filler (22 Sep 2026):** the client asked for every invented fact to be removed. Only the registered address (and BRN) remain `null` in `data/company.ts` and hidden until provided; no invented numbers, response times, service extras, policies or features; testimonials are kept (client's request) as clearly illustrative, initial-only names that differ from the demo owners.
 - **Services:** also informed by the client's own syndic prospect list: syndic, common-area management, preventive maintenance, contractor coordination, inspections, pool/landscaping supervision, owner reporting, renovation follow-up. That list's third-party contact details are **not** used anywhere on the site.
 
 ---
@@ -73,6 +74,7 @@ Node 20+ required (built and tested on Node 24).
 2. **Phase 1 — five parallel agents,** each given the same written foundation brief: (A) Home+About, (B) Services+Properties, (C) Contact+Login+404, (D) Dashboard shell+Overview+Properties, (E) Bookings+Maintenance+Statements+Documents+Settings.
 3. **Phase 2/3 — automated review:** a Playwright script (`scripts/review.mjs`) and Lighthouse. It found and fixed the streaming-404 isolation bug (§8).
 4. **Round 2 (22 Sep 2026):** real company facts, the Bellavere spelling, the syndic service, the MUR/EUR switch, SEO (sitemap, robots, OG image, JSON-LD), privacy and terms pages, form spam protection, a newsletter endpoint, a photo/alt-text audit, and AA contrast fixes. See REVIEW.md "Round 2" and ASSUMPTIONS.md "Update — 22 September 2026".
+7. **Round 5 (22 Sep 2026):** real contacts (Ankit Dookhorun, Nihal Lutchmee, 24/7, same-day replies, Instagram/Facebook bellavere.ltd); an independent verification workflow caught a privacy leak (Krit's email in browser bundles), fixed along with the trust bar and count-up SSR values. See REVIEW.md "Round 5".
 6. **Round 4 (22 Sep 2026):** every piece of fake filler stripped (multi-agent audit, 91 findings, three fix/verify rounds), public portfolio and newsletter removed, demo owners reduced to Sophie + Hamilton, testimonials renamed. See REVIEW.md "Round 4".
 5. **Round 3 (22 Sep 2026):** three admin accounts and the `/admin` area, signed sessions + hashed passwords + login rate limit, negotiable fees (≤15%, per-owner rates), island-wide coverage with the client's map, "Visit us" removed, onboarding 1–2 weeks, pre-launch `SITE_INDEXABLE` / `DEMO_MODE` switches. See REVIEW.md "Round 3".
 
@@ -211,6 +213,7 @@ Lighthouse: `chrome-launcher` can't spawn Chrome in this environment. Launch Pla
 1. **Streaming kills 404 status codes.** The dashboard has `loading.tsx`, so it streams, and once streaming starts Next.js 15 can't change the HTTP status. An in-page `notFound()` only swaps the UI (you get a 200). Property ownership is therefore enforced in **`middleware.ts`**, which rewrites foreign or unknown ids to a genuine 404. **Any new streamed detail route that must 404 needs the same middleware pattern.**
 2. **Streaming also moves `<meta>` into `<body>`.** Because pages are dynamic, Next.js 15 streams metadata after `</head>` for browsers and even Googlebot. `htmlLimitedBots: /.*/` in `next.config.ts` keeps it in `<head>`. **Don't remove it**, or link previews and SEO degrade.
 3. **`Card` hard-codes `bg-white`.** Classes are joined with `cn()` (no tailwind-merge), so passing `bg-navy-900` does NOT override it; the white wins. For dark cards, use a plain element (see the syndic card in `components/home/ServicesOverview.tsx`).
+6. **`data/company.ts` ships to the browser.** Client components (Hero, FaqAccordion) import it, so every value in it is public, even if never rendered — Krit's personal email leaked into the JS bundles this way until round 5. Keep private data in server-only modules (`data/admins.ts`, `.env`). `scripts/review.mjs` now scans the built bundles for secrets.
 5. **Never use `$` inside values in `.env` files.** Next.js's loader expands `$name`, which silently corrupted the original `$`-separated password hashes (120 → 80 characters, logins failed). Hashes now use `:`.
 4. **Rupee formatting uses a non-breaking space** ("Rs\u00a024,960"). Tests and greps must match `\u00a0`, not a normal space.
 
@@ -256,11 +259,12 @@ Recreate `data/*.ts` + `lib/metrics.ts` as Supabase tables and queries, keeping 
 
 - ✅ Name, team, email, mission, currency, syndic service, fees (negotiable, ≤15%), onboarding (1–2 weeks), island-wide coverage + map, no walk-in office.
 - ✅ All fake filler stripped: placeholder contact details hidden, invented metrics/response times/service extras/policies/features removed, public portfolio removed, demo owners reduced to two.
-- ⬜ In `data/company.ts`: **phone, office hours, social links, registered address, BRN** (each appears automatically once set), legal name, tagline, the 15% basis, surname spelling and bios.
+- ✅ Phone numbers, 24/7 availability, same-day replies, Instagram and Facebook (round 5).
+- ⬜ In `data/company.ts`: **registered address, BRN** (they appear on the legal pages once set), legal name, tagline, the 15% basis, Krit's surname spelling, and bios — including a role for Nihal if there is one.
 - ⬜ The **EUR→MUR rate** in `lib/format.ts`, or store real dual prices per record.
 - ⬜ **Real testimonials** (with permission) to replace the illustrative ones, and real photography.
 - ⬜ A public portfolio page once there are real listings (the old one is in git history: commit `cdb2f9f`).
-- ⬜ Whether to publish the team's direct emails (currently hidden).
+- ✅ Ankit's email is published (client's request); Krit's stays private.
 
 ## 🟡 D. Wire up the stubs
 
