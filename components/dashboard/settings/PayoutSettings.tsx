@@ -18,7 +18,7 @@ export function PayoutSettings({
     <Card className="p-6">
       <h2 className="text-xl">Payout details</h2>
       <p className="mt-1 text-sm text-ink-500">
-        Where your monthly net payout is sent.
+        Where your net payout is sent.
       </p>
       <div className="mt-5 flex items-center justify-between gap-4 rounded-xl border border-sand-300 bg-sand-50 px-4 py-3.5">
         <span className="font-mono text-sm tracking-wide text-navy-900">
@@ -27,12 +27,7 @@ export function PayoutSettings({
         <Badge tone="gold">{payoutCurrency}</Badge>
       </div>
       <p className="mt-3 text-sm text-ink-500">
-        Your agreed management fee is {Math.round(feeRate * 100)}% of gross
-        rental income.
-      </p>
-      <p className="mt-1 text-sm text-ink-500">
-        Payouts are made monthly by the 5th.
-        {/* TODO: confirm with client */}
+        Your agreed management fee is {Math.round(feeRate * 100)}%.
       </p>
       <div className="mt-5">
         <button

@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Building2, Clock, Phone, ShieldCheck, Sparkles } from "lucide-react";
+import {
+  Building2,
+  MessageCircle,
+  Phone,
+  ShieldCheck,
+  Sparkles,
+} from "lucide-react";
 import { ComparisonTable } from "@/components/services/ComparisonTable";
 import { ServiceSection } from "@/components/services/ServiceSection";
 import { Button } from "@/components/ui/Button";
@@ -61,24 +67,19 @@ export default function ServicesPage() {
         image={siteImages.services.rental}
         imageSide="left"
         paragraphs={[
-          "We list and market your villa or apartment across the right channels, then price it night by night to keep occupancy and rate in balance. Every enquiry is answered, every guest vetted, every check-in and check-out handled by our team.",
+          "We list and market your villa or apartment, answer every enquiry, manage bookings, pricing and occupancy, and handle every guest check-in and check-out.",
           "You watch it all happen from the owner dashboard: bookings as they land, occupancy against the season, revenue by month.",
         ]}
         included={[
-          "Listing & professional photography coordination",
-          "Channel & direct marketing",
-          "Dynamic pricing reviews",
-          "Guest vetting & communication",
-          "Check-in, check-out & key handling",
+          "Listing & marketing",
+          "Enquiries & bookings",
+          "Pricing & occupancy management",
+          "Guest communication",
+          "Guest check-in & check-out",
           "Occupancy reporting",
         ]}
-        detailIcon={Clock}
-        detail={
-          <>
-            Enquiries answered in under 2 hours, 7 days a week
-            {/* TODO: confirm with client */}
-          </>
-        }
+        detailIcon={MessageCircle}
+        detail={<>Every enquiry answered by a real person</>}
       />
 
       <ServiceSection
@@ -89,25 +90,20 @@ export default function ServicesPage() {
         imageSide="right"
         tinted
         paragraphs={[
-          "Salt air, cyclone season and back-to-back guests are hard on an island home. Our care team runs scheduled inspections, keeps pools and gardens immaculate, and coordinates repairs before small issues become expensive ones.",
-          "Every job is photographed, logged against your property and itemised on your statement, with contractors supervised on site — no hidden fees.",
+          "Salt air, cyclone season and back-to-back guests are hard on an island home. We run regular inspections, look after pools and gardens, and coordinates repairs before small issues become expensive ones.",
+          "Every job is logged against your property and itemised on your statement, with contractors coordinated and supervised on site — no hidden fees.",
         ]}
         included={[
-          "Scheduled inspections with photo reports",
+          "Routine upkeep & repairs",
+          "Regular property inspections",
           "Renovation follow-up",
           "Pool & garden care",
-          "Housekeeping & linen",
+          "Cleaning & housekeeping",
           "Emergency coordination",
           "Supervised contractors, every invoice itemised",
-          "Cyclone-season preparation",
         ]}
         detailIcon={ShieldCheck}
-        detail={
-          <>
-            Urgent issues attended within 4 hours
-            {/* TODO: confirm with client */}
-          </>
-        }
+        detail={<>Work supervised on site, in person</>}
       />
 
       <ServiceSection
@@ -118,15 +114,14 @@ export default function ServicesPage() {
         imageSide="left"
         paragraphs={[
           "Your client-relations contact is the single point of contact for everything that touches your property: statements, compliance, insurance, utility bills, tenant and guest matters — and a real person always answers.",
-          "You receive one clear statement every month, a performance review every year, and straight answers in between — without chasing.",
+          "You receive one clear statement every month and straight answers in between — without chasing.",
         ]}
         included={[
           "Dedicated client-relations contact",
           "Monthly owner statements",
-          "Licence & compliance renewals",
+          "Compliance administration",
           "Insurance & utilities administration",
           "Guest & tenant issue resolution",
-          "Annual performance review",
         ]}
         detailIcon={Phone}
         detail={<>One contact. Every answer.</>}
@@ -140,24 +135,17 @@ export default function ServicesPage() {
         imageSide="right"
         tinted
         paragraphs={[
-          "Airport transfers, provisioned kitchens, private chefs, island experiences — our concierge team arranges the details that turn a good stay into the one guests talk about.",
-          "It is hospitality that earns: well-run extras lift review scores, repeat bookings and the rental yield of your property.",
+          "Airport transfers, welcome packs, housekeeping and guest services — we arrange the details that turn a good stay into the one guests talk about.",
+          "It is hospitality that earns: well-run extras increase the rental yield of your property.",
         ]}
         included={[
-          "Airport transfers & car hire",
-          "Welcome packs & provisioning",
-          "Private chefs & experiences",
-          "Mid-stay housekeeping",
-          "Babysitting & equipment hire",
-          "Late check-out arrangement",
+          "Airport transfers",
+          "Welcome packs",
+          "Guest services",
+          "Housekeeping",
         ]}
         detailIcon={Sparkles}
-        detail={
-          <>
-            Concierge extras add an average 9% to rental income
-            {/* TODO: confirm with client */}
-          </>
-        }
+        detail={<>Extras that increase your rental yield</>}
       />
 
       <ServiceSection
@@ -168,7 +156,7 @@ export default function ServicesPage() {
         imageSide="left"
         paragraphs={[
           "For residences, villa estates and apartment complexes, Bellavere acts as syndic and facilities coordinator. We look after the shared spaces — pools, gardens, common areas and security — so every co-owner can enjoy them without having to manage them.",
-          "Preventive maintenance plans, supervised contractors and clear owner reporting keep the building in good order and the service charges easy to understand, with one reliable point of contact for day-to-day property care.",
+          "Preventive maintenance plans, supervised contractors and clear owner reporting keep the building in good order, with one reliable point of contact for day-to-day property care.",
         ]}
         included={[
           "Common-area management & cleaning coordination",
@@ -185,9 +173,9 @@ export default function ServicesPage() {
       <section className="py-24 lg:py-32">
         <Container>
           <SectionHeading
-            eyebrow="Who does what"
-            title="What owners handle vs. what Bellavere handles"
-            sub="The honest division of labour. You keep the decisions that matter; we take everything else off your desk."
+            eyebrow="At a glance"
+            title="What Bellavere handles for you"
+            sub="The day-to-day work we take off your desk."
             align="center"
             className="max-w-3xl"
           />

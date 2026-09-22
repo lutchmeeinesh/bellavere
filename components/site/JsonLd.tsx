@@ -42,7 +42,7 @@ export function JsonLd() {
     legalName: company.legalName,
     url: SITE_URL,
     email: company.email,
-    telephone: company.phone,
+    ...(company.phone ? { telephone: company.phone } : {}),
     slogan: company.tagline,
     description: company.marketLong,
     address: {
@@ -51,7 +51,7 @@ export function JsonLd() {
     },
     // Island-wide coverage, confirmed by the client's own map (22 Sep 2026).
     areaServed: { "@type": "Country", name: "Mauritius" },
-    sameAs: Object.values(company.social),
+    sameAs: Object.values(company.social).filter(Boolean),
     knowsAbout: SERVICES.map((service) => service.name),
     makesOffer: SERVICES.map((service) => ({
       "@type": "Offer",

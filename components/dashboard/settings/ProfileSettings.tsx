@@ -31,7 +31,7 @@ export function ProfileSettings({
     <Card className="p-6">
       <h2 className="text-xl">Profile</h2>
       <p className="mt-1 text-sm text-ink-500">
-        How we address you and where we send your statements.
+        How we address you and how we reach you.
       </p>
       <form onSubmit={handleSubmit} className="mt-5 space-y-4">
         <Field label="Full name" htmlFor="profile-name">

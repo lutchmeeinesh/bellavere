@@ -6,12 +6,12 @@ const STEPS = [
   {
     number: "01",
     title: "Onboard",
-    copy: "We inspect and photograph your property, take care of licensing, and agree a pricing strategy built for your home and its season.",
+    copy: "We meet you, inspect your property, agree your fee and set up your listing — onboarding takes one to two weeks.",
   },
   {
     number: "02",
     title: "We manage",
-    copy: "Guests welcomed, upkeep handled, statements prepared — one team runs the whole operation to hotel standards.",
+    copy: "Guests welcomed, upkeep handled, statements prepared — one team runs the whole operation.",
   },
   {
     number: "03",

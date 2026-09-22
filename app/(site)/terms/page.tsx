@@ -44,11 +44,11 @@ export default function TermsPage() {
                 {/* TODO: confirm with client — Business Registration Number (BRN) */}
                 Business Registration Number (BRN): to be confirmed
               </li>
-              <li>
-                {/* TODO: confirm with client — registered address */}
-                Registered address: {company.address.line1},{" "}
-                {company.address.line2}, {company.address.country}
-              </li>
+              {/* TODO: confirm with client — registered address (appears once
+                  set in data/company.ts) */}
+              {company.registeredAddress ? (
+                <li>Registered address: {company.registeredAddress}</li>
+              ) : null}
               <li>
                 Contact: <a href={`mailto:${company.email}`}>{company.email}</a>
               </li>
@@ -61,13 +61,10 @@ export default function TermsPage() {
               agreement prevails.
             </p>
 
-            <h2>2. Information and listings</h2>
+            <h2>2. Information on this website</h2>
             <p>
               We take care to keep the information on this website accurate and
               up to date, but it is provided for general information only.
-              Property descriptions, photographs, amenities, rates and
-              availability are indicative, may change without notice, and do
-              not form an offer or part of any contract.
             </p>
 
             <h2>3. The owner portal</h2>
@@ -117,9 +114,8 @@ export default function TermsPage() {
 
             <h2>6. Links to other sites</h2>
             <p>
-              The website links to third-party sites, such as our social media
-              pages. We are not responsible for their content or their privacy
-              practices.
+              The website may link to third-party sites. We are not responsible
+              for their content or their privacy practices.
             </p>
 
             <h2>7. Limitation of liability</h2>

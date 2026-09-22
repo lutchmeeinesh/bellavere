@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
  */
 export function CtaBand({
   title = "Let your island home work beautifully",
-  sub = "Tell us about your property and we'll show you, openly and without obligation, what it could achieve.",
+  sub = "Tell us about your property and we'll show you, openly, what it could achieve.",
   withImage = false,
   small = false,
 }: {

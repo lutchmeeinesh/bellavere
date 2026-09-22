@@ -131,8 +131,8 @@ export function ContactForm() {
           </motion.span>
           <h3 className="mt-6">Message received</h3>
           <p className="mt-3 max-w-sm text-ink-500">
-            {/* TODO: confirm with client — response-time promise */}
-            Thank you — we’ll reply within one working day.
+            Thank you — a real person from our team will read your message
+            and reply.
           </p>
           <Button variant="outline" size="sm" className="mt-8" onClick={reset}>
             Send another message

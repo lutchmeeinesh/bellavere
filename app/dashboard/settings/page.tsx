@@ -25,7 +25,7 @@ export default async function SettingsPage() {
     <div>
       <PageHeader
         title="Settings"
-        sub="Your profile, notifications and account preferences"
+        sub="Your profile and account preferences"
       />
       <RevealStagger className="max-w-2xl space-y-6">
         <RevealItem>

@@ -57,11 +57,11 @@ export default function PrivacyPage() {
                 {/* TODO: confirm with client — Business Registration Number (BRN) */}
                 Business Registration Number (BRN): to be confirmed
               </li>
-              <li>
-                {/* TODO: confirm with client — registered address */}
-                Registered address: {company.address.line1},{" "}
-                {company.address.line2}, {company.address.country}
-              </li>
+              {/* TODO: confirm with client — registered address (appears once
+                  set in data/company.ts) */}
+              {company.registeredAddress ? (
+                <li>Registered address: {company.registeredAddress}</li>
+              ) : null}
               <li>
                 Contact for privacy matters:{" "}
                 <a href={`mailto:${company.email}`}>{company.email}</a>
@@ -72,10 +72,9 @@ export default function PrivacyPage() {
             <p>
               We process personal data in accordance with the Mauritius{" "}
               <strong>Data Protection Act 2017</strong>, which is overseen by
-              the <strong>Data Protection Office</strong> of Mauritius. Many of
-              the owners we work with live in the European Union; where the EU
-              General Data Protection Regulation (<strong>GDPR</strong>)
-              applies to our processing of their data, we also comply with it.
+              the <strong>Data Protection Office</strong> of Mauritius. Where
+              the EU General Data Protection Regulation (<strong>GDPR</strong>)
+              applies to our processing of your data, we also comply with it.
             </p>
 
             <h2>3. What we collect</h2>
@@ -91,10 +90,6 @@ export default function PrivacyPage() {
                 shortened, one-way hash of your IP address (not the address
                 itself).
               </li>
-            </ul>
-            <h3>Newsletter</h3>
-            <ul>
-              <li>Your email address and the date you subscribed.</li>
             </ul>
             <h3>Owner portal</h3>
             <ul>
@@ -125,11 +120,6 @@ export default function PrivacyPage() {
                 contract.
               </li>
               <li>
-                <strong>Sending the newsletter</strong> — based on your consent,
-                which you can withdraw at any time using the unsubscribe link or
-                by emailing us.
-              </li>
-              <li>
                 <strong>Running the owner portal and managing your property</strong>{" "}
                 — necessary to perform our management agreement with you.
               </li>
@@ -151,7 +141,6 @@ export default function PrivacyPage() {
                 Contact enquiries that do not lead to an agreement: up to 12
                 months after our last exchange.
               </li>
-              <li>Newsletter subscriptions: until you unsubscribe.</li>
               <li>
                 Owner-account and property records: for the duration of the
                 management agreement, then for as long as Mauritian accounting
@@ -165,9 +154,9 @@ export default function PrivacyPage() {
               We <strong>never sell</strong> your personal data. We share it
               only with service providers (&ldquo;processors&rdquo;) that help
               us run the business, under contracts that require them to protect
-              it — for example our website hosting provider and our email and
-              newsletter providers — and with professional advisers or
-              authorities where the law requires it.
+              it — for example our website hosting provider and our email
+              provider — and with professional advisers or authorities where
+              the law requires it.
             </p>
             <p>
               Some of these providers may store data outside Mauritius or the
@@ -225,7 +214,7 @@ export default function PrivacyPage() {
             <p>
               We do <strong>not</strong> use analytics, advertising or tracking
               cookies, and no third-party cookies are set. Because every cookie
-              are either strictly necessary or set at your request, we do not
+              is either strictly necessary or set at your request, we do not
               show a cookie-consent banner. You can delete cookies at any time
               in your browser settings; deleting <code>bv_session</code> signs
               you out.

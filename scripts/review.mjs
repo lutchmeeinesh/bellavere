@@ -21,12 +21,18 @@ const OUT = path.join(process.cwd(), "screenshots");
 fs.mkdirSync(OUT, { recursive: true });
 
 const ACCOUNTS = {
-  sophie: { email: "sophie@demo.bellavere.com", own: ["p-01", "p-02", "p-03"], foreign: "p-04", ownNames: ["Villa Azure", "Villa Frangipani", "Les Cerisiers 4B"], foreignNames: ["Villa Tamarin Bay", "Cap Ouest Penthouse"] },
-  ravi: { email: "ravi@demo.bellavere.com", own: ["p-04"], foreign: "p-01", ownNames: ["Villa Tamarin Bay"], foreignNames: ["Villa Azure", "Les Salines Loft"] },
-  hamilton: { email: "hamilton@demo.bellavere.com", own: ["p-05", "p-06", "p-07", "p-08", "p-09"], foreign: "p-02", ownNames: ["Cap Ouest Penthouse", "Les Salines Loft"], foreignNames: ["Villa Azure", "Villa Tamarin Bay"] },
+  sophie: { email: "sophie@demo.bellavere.com", own: ["p-01", "p-02", "p-03"], foreign: "p-05", ownNames: ["Villa Azure", "Villa Frangipani", "Les Cerisiers 4B"], foreignNames: ["Cap Ouest Penthouse", "Les Salines Loft"] },
+  hamilton: { email: "hamilton@demo.bellavere.com", own: ["p-05", "p-06", "p-07", "p-08", "p-09"], foreign: "p-02", ownNames: ["Cap Ouest Penthouse", "Les Salines Loft"], foreignNames: ["Villa Azure", "Villa Frangipani"] },
 };
 
-const PUBLIC_ROUTES = ["/", "/services", "/properties", "/properties/villa-azure", "/about", "/contact", "/privacy", "/terms", "/login"];
+const PUBLIC_ROUTES = ["/", "/services", "/about", "/contact", "/privacy", "/terms", "/login"];
+
+// Fake filler that was deliberately removed — it must never come back.
+const REMOVED_FILLER = [
+  /728 4410/, /La Croisette Business/, /Suite 4/, /instagram\.com\/bellavere/,
+  /within 4 hours/i, /under 2 hours/i, /9% to rental/i, /by the 5th/i,
+  /Lyon to London/, /Ravi Naidoo/, /since 20\d\d/i, /Our portfolio/,
+];
 const DASH_ROUTES = ["/dashboard", "/dashboard/properties", "/dashboard/bookings", "/dashboard/maintenance", "/dashboard/statements", "/dashboard/documents", "/dashboard/settings"];
 
 const findings = [];
@@ -108,6 +114,28 @@ const browser = await chromium.launch();
     await shoot(page, route, slug(route));
   }
 
+  // Removed fake filler must not reappear on any public page.
+  for (const route of PUBLIC_ROUTES) {
+    await page.goto(BASE + route, { waitUntil: "networkidle" }).catch(() => {});
+    // Full page source: visible text plus metadata and structured data.
+    const text = await page.evaluate(() => document.documentElement.outerHTML);
+    for (const pattern of REMOVED_FILLER) {
+      if (pattern.test(text)) note("ERROR", `filler ${route}`, `removed fake content is back: ${pattern}`);
+    }
+  }
+  console.log("OK: removed fake filler checked on every public page");
+
+  // Exactly two demo accounts are offered on the sign-in page.
+  await page.goto(`${BASE}/login`, { waitUntil: "networkidle" });
+  const demoButtons = await page.getByRole("button", { name: /^Sign in as / }).count();
+  if (demoButtons !== 2) note("ERROR", "login", `expected 2 demo accounts on the sign-in page, found ${demoButtons}`);
+  else console.log("OK: sign-in page offers exactly 2 demo accounts");
+
+  // The public portfolio is gone.
+  const portfolio = await page.goto(`${BASE}/properties`, { waitUntil: "domcontentloaded" });
+  if (portfolio.status() !== 404) note("ERROR", "portfolio", `/properties should be gone, got ${portfolio.status()}`);
+  else console.log("OK: public portfolio removed (/properties is 404)");
+
   // 404 page (the 404 network status itself logs a console error — expected)
   await page.goto(BASE + "/definitely-not-a-page", { waitUntil: "networkidle" }).catch(() => {});
   const notFoundOk = await page.evaluate(() => /404|lost/i.test(document.body.innerText));
@@ -128,18 +156,18 @@ const browser = await chromium.launch();
   const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
   const page = await ctx.newPage();
   const RUPEE = /Rs \d[\d,]*/;
-  await page.goto(`${BASE}/properties`, { waitUntil: "networkidle" });
+  await page.goto(`${BASE}/`, { waitUntil: "networkidle" });
   const before = await page.evaluate(() => document.body.innerText);
-  if (!/€\d/.test(before)) note("ERROR", "currency", "default /properties does not show euro prices");
+  if (!/€\d/.test(before)) note("ERROR", "currency", "home dashboard preview does not show euro amounts by default");
   await page.getByRole("radio", { name: /Mauritian rupee/ }).first().click();
   await page.waitForTimeout(1500);
   const after = await page.evaluate(() => document.body.innerText);
-  if (!RUPEE.test(after)) note("ERROR", "currency", "clicking MUR did not switch /properties prices to rupees");
-  else console.log("OK: MUR switch re-renders prices in rupees");
-  await page.goto(`${BASE}/properties/villa-azure`, { waitUntil: "networkidle" });
-  const detail = await page.evaluate(() => document.body.innerText);
-  if (!detail.includes("Rs 24,960")) note("ERROR", "currency", "MUR choice did not persist to /properties/villa-azure (expected Rs 24,960)");
-  else console.log("OK: MUR persists across navigation (villa-azure from Rs 24,960)");
+  if (!RUPEE.test(after)) note("ERROR", "currency", "clicking MUR did not switch the home preview to rupees");
+  else console.log("OK: MUR switch re-renders amounts in rupees");
+  await page.reload({ waitUntil: "networkidle" });
+  const reloaded = await page.evaluate(() => document.body.innerText);
+  if (!RUPEE.test(reloaded)) note("ERROR", "currency", "MUR choice did not survive a full page reload (cookie)");
+  else console.log("OK: MUR choice persists across a reload");
   await ctx.request.post(`${BASE}/api/auth/login`, { data: { email: "sophie@demo.bellavere.com", password: "demo1234" } });
   await page.goto(`${BASE}/dashboard/statements`, { waitUntil: "networkidle" });
   const stmt = await page.evaluate(() => document.body.innerText);
@@ -167,10 +195,10 @@ const browser = await chromium.launch();
     await ctx.close();
   }
 
-  // 2. A genuine token with its payload edited (Ravi -> Hamilton) must fail.
+  // 2. A genuine token with its payload edited (Sophie -> Hamilton) must fail.
   {
     const ctx = await browser.newContext();
-    await ctx.request.post(`${BASE}/api/auth/login`, { data: { email: ACCOUNTS.ravi.email, password: "demo1234" } });
+    await ctx.request.post(`${BASE}/api/auth/login`, { data: { email: ACCOUNTS.sophie.email, password: "demo1234" } });
     const token = await sessionOf(ctx);
     if (!token) note("ERROR", "security", "could not obtain a signed session for the tamper test");
     else {
@@ -227,15 +255,15 @@ const browser = await chromium.launch();
       const page = await ctx.newPage();
       await inspectPage(page, "/admin", "admin /admin");
       const overview = await page.evaluate(() => document.body.innerText);
-      for (const name of ["Sophie Laurent", "Ravi Naidoo", "Hamilton Estates Ltd"]) {
+      for (const name of ["Sophie Laurent", "Hamilton Estates Ltd"]) {
         if (!overview.includes(name)) note("ERROR", "admin", `admin overview is missing owner ${name}`);
       }
       console.log("OK: admin overview lists every owner");
       await shoot(page, "/admin", "admin");
-      await inspectPage(page, "/admin/clients/c-ravi", "admin /admin/clients/c-ravi");
+      await inspectPage(page, "/admin/clients/c-sophie", "admin /admin/clients/c-sophie");
       const detail = await page.evaluate(() => document.body.innerText);
-      if (!detail.includes("Villa Tamarin Bay")) note("ERROR", "admin", "owner detail page is missing the owner's property");
-      await shoot(page, "/admin/clients/c-ravi", "admin-clients-c-ravi");
+      if (!detail.includes("Villa Azure")) note("ERROR", "admin", "owner detail page is missing the owner's property");
+      await shoot(page, "/admin/clients/c-sophie", "admin-clients-c-sophie");
 
       // Open Hamilton's portal: their data, the admin banner, and isolation kept.
       await ctx.request.post(`${BASE}/api/admin/view-as`, { form: { clientId: "c-hamilton" }, maxRedirects: 0 });

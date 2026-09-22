@@ -5,7 +5,7 @@ import { daysFromToday, toISODate } from "@/lib/dates";
 const d = (offset: number) => toISODate(daysFromToday(offset));
 
 /**
- * Maintenance tickets for the three demo clients. Resolved tickets carry a
+ * Maintenance tickets for the two demo owner accounts. Resolved tickets carry a
  * cost, which flows into that month's owner statement via lib/metrics.ts.
  */
 export const maintenanceTickets: MaintenanceTicket[] = [
@@ -21,7 +21,7 @@ export const maintenanceTickets: MaintenanceTicket[] = [
     priority: "medium",
     status: "in_progress",
     reportedAt: d(-4),
-    contractor: "Océan Pools Ltd",
+    contractor: "Pool specialist",
   },
   {
     id: "mt-002",
@@ -47,7 +47,7 @@ export const maintenanceTickets: MaintenanceTicket[] = [
     status: "resolved",
     reportedAt: d(-16),
     resolvedAt: d(-14),
-    contractor: "FroidTech Maurice",
+    contractor: "Air-conditioning technician",
     cost: 145,
   },
   {
@@ -62,7 +62,7 @@ export const maintenanceTickets: MaintenanceTicket[] = [
     status: "resolved",
     reportedAt: d(-42),
     resolvedAt: d(-39),
-    contractor: "Serrurerie du Nord",
+    contractor: "Locksmith",
     cost: 85,
   },
   {
@@ -76,48 +76,7 @@ export const maintenanceTickets: MaintenanceTicket[] = [
     priority: "medium",
     status: "in_progress",
     reportedAt: d(-7),
-    contractor: "Vert Jardins",
-  },
-  // — Ravi Naidoo —
-  {
-    id: "mt-006",
-    propertyId: "p-04",
-    clientId: "c-ravi",
-    title: "Infinity edge tile regrouting",
-    description:
-      "Three tiles on the pool's infinity edge have loose grout. Water level lowered, regrouting booked.",
-    category: "Pool",
-    priority: "medium",
-    status: "in_progress",
-    reportedAt: d(-9),
-    contractor: "Océan Pools Ltd",
-  },
-  {
-    id: "mt-007",
-    propertyId: "p-04",
-    clientId: "c-ravi",
-    title: "Media room projector lamp",
-    description:
-      "Projector lamp at end of life; replaced with OEM lamp and filters cleaned.",
-    category: "Electrical",
-    priority: "low",
-    status: "resolved",
-    reportedAt: d(-33),
-    resolvedAt: d(-30),
-    contractor: "ElecTech Maurice",
-    cost: 210,
-  },
-  {
-    id: "mt-008",
-    propertyId: "p-04",
-    clientId: "c-ravi",
-    title: "Terrace balustrade inspection",
-    description:
-      "Annual safety inspection of glass balustrades on the sea-facing terraces.",
-    category: "Safety",
-    priority: "high",
-    status: "reported",
-    reportedAt: d(-2),
+    contractor: "Garden contractor",
   },
   // — Hamilton Estates —
   {
@@ -132,7 +91,7 @@ export const maintenanceTickets: MaintenanceTicket[] = [
     status: "resolved",
     reportedAt: d(-21),
     resolvedAt: d(-18),
-    contractor: "Océan Pools Ltd",
+    contractor: "Pool specialist",
     cost: 190,
   },
   {
@@ -147,7 +106,7 @@ export const maintenanceTickets: MaintenanceTicket[] = [
     status: "resolved",
     reportedAt: d(-55),
     resolvedAt: d(-52),
-    contractor: "ElecTech Maurice",
+    contractor: "Electrician",
     cost: 60,
   },
   {
@@ -161,7 +120,7 @@ export const maintenanceTickets: MaintenanceTicket[] = [
     priority: "medium",
     status: "in_progress",
     reportedAt: d(-6),
-    contractor: "Atelier Bois & Co",
+    contractor: "Carpenter",
   },
   {
     id: "mt-012",
@@ -187,7 +146,7 @@ export const maintenanceTickets: MaintenanceTicket[] = [
     status: "resolved",
     reportedAt: d(-70),
     resolvedAt: d(-68),
-    contractor: "AquaClean Services",
+    contractor: "Plumber",
     cost: 95,
   },
   {

@@ -2,10 +2,9 @@ import type { Property } from "@/lib/types";
 import { unsplash } from "@/lib/img";
 
 /**
- * Demo portfolio. Nine properties belong to the three demo owner accounts;
- * three more (clientId: null) exist only to fill the public portfolio grid.
- * All listings are fictional — the public site carries a
- * "Demo listings for illustration" disclaimer.
+ * Demo properties for the two demo owner accounts (owner-portal demo only;
+ * they are not shown on the public site). All fictional. Real listings will
+ * come from the database.
  */
 export const properties: Property[] = [
   {
@@ -19,8 +18,7 @@ export const properties: Property[] = [
     sleeps: 8,
     nightlyRate: 480,
     clientId: "c-sophie",
-    managedSince: 2019,
-    featured: true,
+    managedSince: 2026,
     headline: "A white-washed contemporary villa two minutes from La Cuvette beach.",
     description:
       "Villa Azure is the house guests extend their stay for: four en-suite bedrooms around a 12-metre infinity pool, a shaded dining terrace under the filaos, and evening light that turns the whole garden gold. Grand Baie's restaurants and the calm waters of La Cuvette are both within a short stroll.",
@@ -69,7 +67,7 @@ export const properties: Property[] = [
     sleeps: 6,
     nightlyRate: 390,
     clientId: "c-sophie",
-    managedSince: 2021,
+    managedSince: 2026,
     headline: "Tropical modern living a short walk from Pereybere's swimming cove.",
     description:
       "Set in a frangipani-filled garden, this single-storey villa opens completely onto its pool deck. Three calm bedrooms, an honest outdoor kitchen, and one of the north coast's best swimming beaches at the end of the lane.",
@@ -113,7 +111,7 @@ export const properties: Property[] = [
     sleeps: 4,
     nightlyRate: 140,
     clientId: "c-sophie",
-    managedSince: 2022,
+    managedSince: 2026,
     headline: "A breezy two-bedroom apartment 150 metres from Trou aux Biches beach.",
     description:
       "On the second floor of a quiet residence with a shared pool, 4B is the easy base for beach-first holidays: two bedrooms, a generous balcony for breakfast, and Trou aux Biches' long white-sand beach just across the road.",
@@ -142,56 +140,6 @@ export const properties: Property[] = [
     ],
   },
   {
-    id: "p-04",
-    slug: "villa-tamarin-bay",
-    name: "Villa Tamarin Bay",
-    type: "villa",
-    location: "Tamarin, west coast",
-    bedrooms: 5,
-    bathrooms: 5,
-    sleeps: 10,
-    nightlyRate: 620,
-    clientId: "c-ravi",
-    managedSince: 2018,
-    featured: true,
-    headline: "Five suites above Tamarin Bay with sunset views over the surf break.",
-    description:
-      "The west coast at its best: a five-suite villa stepping down the hillside towards Tamarin Bay, with a 15-metre lap pool, a media room, and the island's most reliable sunsets from every terrace. Salt-air mornings, surfable waves, dolphins most weeks.",
-    amenities: [
-      "15 m lap pool",
-      "Panoramic bay view",
-      "Media room",
-      "Daily housekeeping & chef on request",
-      "Air conditioning throughout",
-      "Fibre Wi-Fi",
-      "Double garage",
-      "Alarm & night guardian",
-      "Beach 600 m",
-    ],
-    images: [
-      {
-        src: unsplash("1602343168117-bb8ffe3e2e9f"),
-        alt: "Contemporary white villa with a long swimming pool",
-      },
-      {
-        src: unsplash("1615571022219-eb45cf7faa9d"),
-        alt: "Contemporary beach house perched above breaking waves",
-      },
-      {
-        src: unsplash("1600607687920-4e2a09cf159d"),
-        alt: "Modern dining space beside a floating staircase",
-      },
-      {
-        src: unsplash("1512918728675-ed5a9ecdebfd"),
-        alt: "Bedroom with crisp white bedding and a padded headboard",
-      },
-      {
-        src: unsplash("1519046904884-53103b34b206"),
-        alt: "White-sand beach with a palm tree and a thatched parasol",
-      },
-    ],
-  },
-  {
     id: "p-05",
     slug: "les-salines-loft",
     name: "Les Salines Loft",
@@ -202,7 +150,7 @@ export const properties: Property[] = [
     sleeps: 4,
     nightlyRate: 150,
     clientId: "c-hamilton",
-    managedSince: 2020,
+    managedSince: 2026,
     headline: "An industrial-chic loft in the heart of the Black River marina quarter.",
     description:
       "Concrete floors, double-height windows and a mezzanine master suite give this loft real character. Downstairs: the marina's cafés and paddle-board mornings. Twenty minutes from Le Morne, ten from Tamarin's surf.",
@@ -240,8 +188,7 @@ export const properties: Property[] = [
     sleeps: 6,
     nightlyRate: 210,
     clientId: "c-hamilton",
-    managedSince: 2019,
-    featured: true,
+    managedSince: 2026,
     headline: "Top-floor penthouse with a wraparound terrace over Flic-en-Flac lagoon.",
     description:
       "The penthouse the whole residence envies: three bedrooms, a 60 m² wraparound terrace with plunge pool, and front-row seats for the west coast sunset. The lagoon is directly below; Casela and the golf courses are minutes away.",
@@ -285,7 +232,7 @@ export const properties: Property[] = [
     sleeps: 4,
     nightlyRate: 135,
     clientId: "c-hamilton",
-    managedSince: 2021,
+    managedSince: 2026,
     headline: "Calm, green and 300 metres from Mont Choisy's casuarina-lined beach.",
     description:
       "A quietly elegant ground-floor apartment with its own garden terrace in a residence wrapped around two pools. Mont Choisy's kilometre of white sand — the north's finest beach — is a three-minute walk through the filao trees.",
@@ -324,7 +271,7 @@ export const properties: Property[] = [
     sleeps: 2,
     nightlyRate: 95,
     clientId: "c-hamilton",
-    managedSince: 2023,
+    managedSince: 2026,
     headline: "A polished one-bedroom bolthole beside Grand Baie's La Croisette.",
     description:
       "Perfect for couples and long-stay remote workers: a crisp one-bedroom apartment with a leafy patio, five minutes on foot from La Croisette's shops, restaurants and cinema, and a short scooter ride from every beach in the north.",
@@ -362,7 +309,7 @@ export const properties: Property[] = [
     sleeps: 5,
     nightlyRate: 160,
     clientId: "c-hamilton",
-    managedSince: 2020,
+    managedSince: 2026,
     headline: "Toes-in-the-sand beachfront with Coin de Mire filling the horizon.",
     description:
       "Slide the doors open and the beach is literally there. This second-floor apartment looks straight at Coin de Mire island across the channel — the classic north-coast postcard — with snorkelling off the sand below.",
@@ -390,137 +337,14 @@ export const properties: Property[] = [
       },
     ],
   },
-  // Portfolio-only demo listings (not owned by a demo account)
-  {
-    id: "p-10",
-    slug: "villa-coco-palme",
-    name: "Villa Coco Palme",
-    type: "villa",
-    location: "Pointe aux Canonniers, north coast",
-    bedrooms: 4,
-    bathrooms: 3,
-    sleeps: 8,
-    nightlyRate: 450,
-    clientId: null,
-    managedSince: 2022,
-    headline: "A colonial-style family villa under the coconut palms.",
-    description:
-      "Wide verandas, a lawn made for barefoot cricket, and a pool shaded by fifty-year-old palms. Pointe aux Canonniers keeps you between Grand Baie's energy and Mont Choisy's calm.",
-    amenities: [
-      "Private pool",
-      "Half-acre garden",
-      "Veranda dining",
-      "Air conditioning",
-      "Fibre Wi-Fi",
-      "Housekeeping",
-      "Parking",
-    ],
-    images: [
-      {
-        src: unsplash("1600585154340-be6161a56a0c"),
-        alt: "Modern villa with glowing windows and a lawn at dusk",
-      },
-      {
-        src: unsplash("1600566752355-35792bedcfea"),
-        alt: "Bathroom with a freestanding bath and walk-in shower",
-      },
-      {
-        src: unsplash("1512918728675-ed5a9ecdebfd"),
-        alt: "Bedroom with crisp white bedding and a padded headboard",
-      },
-    ],
-  },
-  {
-    id: "p-11",
-    slug: "villa-lhorizon",
-    name: "Villa L'Horizon",
-    type: "villa",
-    location: "Albion, west coast",
-    bedrooms: 3,
-    bathrooms: 3,
-    sleeps: 6,
-    nightlyRate: 340,
-    clientId: null,
-    managedSince: 2021,
-    headline: "Clifftop seclusion beside the Albion lighthouse.",
-    description:
-      "Albion stays wonderfully un-touristy, and L'Horizon makes the most of it: a three-bedroom villa on the low cliffs, an uninterrupted 180° ocean view, and the lighthouse beam sweeping past after dark.",
-    amenities: [
-      "Clifftop position",
-      "Infinity-edge pool",
-      "180° ocean view",
-      "Air conditioning",
-      "Fibre Wi-Fi",
-      "Boules court",
-      "Parking",
-    ],
-    images: [
-      {
-        src: unsplash("1600047509807-ba8f99d2cdde"),
-        alt: "Contemporary villa with timber cladding and a landscaped lawn",
-      },
-      {
-        src: unsplash("1540541338287-41700207dee6"),
-        alt: "Infinity pool framed by palm trees above the ocean",
-      },
-      {
-        src: unsplash("1600607687939-ce8a6c25118c"),
-        alt: "Modern open-plan living room with a pale sofa and timber feature wall",
-      },
-    ],
-  },
-  {
-    id: "p-12",
-    slug: "sunset-reef-apartment",
-    name: "Sunset Reef Apartment",
-    type: "apartment",
-    location: "Tamarin, west coast",
-    bedrooms: 2,
-    bathrooms: 1,
-    sleeps: 4,
-    nightlyRate: 155,
-    clientId: null,
-    managedSince: 2024,
-    headline: "Surf-town living with the reef break at the end of the street.",
-    description:
-      "A relaxed two-bedroom apartment in the heart of Tamarin village: walk to the surf, the salt pans and the Friday food trucks. The balcony faces due west — bring a drink at six.",
-    amenities: [
-      "West-facing balcony",
-      "Shared pool",
-      "Air conditioning",
-      "Fibre Wi-Fi",
-      "Board storage",
-      "Parking",
-    ],
-    images: [
-      {
-        src: unsplash("1499793983690-e29da59ef1c2"),
-        alt: "Thatched beachfront pavilion over a turquoise lagoon",
-      },
-      {
-        src: unsplash("1507525428034-b723cf961d3e"),
-        alt: "Calm beach at sunrise with gentle waves",
-      },
-      {
-        src: unsplash("1522708323590-d24dbb6b0267"),
-        alt: "Compact apartment living and kitchen area with a red armchair",
-      },
-    ],
-  },
 ];
 
 export function getPropertyById(id: string): Property | undefined {
   return properties.find((p) => p.id === id);
 }
 
-export function getPropertyBySlug(slug: string): Property | undefined {
-  return properties.find((p) => p.slug === slug);
-}
 
 export function getPropertiesForClient(clientId: string): Property[] {
   return properties.filter((p) => p.clientId === clientId);
 }
 
-export function getFeaturedProperties(): Property[] {
-  return properties.filter((p) => p.featured);
-}

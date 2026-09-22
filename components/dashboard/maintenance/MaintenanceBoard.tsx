@@ -164,7 +164,7 @@ export function MaintenanceBoard({
     setModalOpen(false);
     resetForm();
     setConfirmation(
-      `Issue reported for ${propertyName(ticket.propertyId)} — our property care team will be in touch.`
+      `Issue reported for ${propertyName(ticket.propertyId)} — this is a demo, so it is not sent to Bellavere.`
     );
     if (confirmationTimer.current) clearTimeout(confirmationTimer.current);
     confirmationTimer.current = setTimeout(() => setConfirmation(null), 5000);

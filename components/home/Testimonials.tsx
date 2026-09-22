@@ -46,7 +46,7 @@ export function Testimonials() {
       <Container>
         <SectionHeading
           eyebrow="Owners' words"
-          title="Trusted from Lyon to London"
+          title="In their own words"
           align="center"
         />
 

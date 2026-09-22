@@ -7,7 +7,7 @@ export interface Client {
   id: string;
   /** Display name (person or company). */
   name: string;
-  /** Short first-person greeting name ("Sophie", "Ravi", "Hamilton Estates"). */
+  /** Short first-person greeting name ("Sophie", "Hamilton Estates"). */
   shortName: string;
   company?: string;
   email: string;
@@ -44,8 +44,6 @@ export interface Property {
   clientId: string | null;
   /** Year Bellavere took over management. */
   managedSince: number;
-  /** Shown in the home page "Featured properties" section. */
-  featured?: boolean;
   images: PropertyImage[];
   amenities: string[];
   headline: string;

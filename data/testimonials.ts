@@ -1,24 +1,29 @@
 import type { Testimonial } from "@/lib/types";
 
-// Demo testimonials for illustration.
-// TODO: confirm with client — real owner quotes and permission to publish
+/**
+ * Illustrative quotes. The client asked to keep this section, with names that
+ * differ from the demo accounts. Initial-only surnames so no quote reads as
+ * a specific real person.
+ */
+// TODO: confirm with client — replace with real owner quotes (with written
+// permission) before the site is public
 export const testimonials: Testimonial[] = [
   {
     quote:
-      "I live in Lyon and my villas are in Grand Baie, yet I have never felt closer to them. The dashboard tells me more than my old agent did in a year of phone calls.",
-    name: "Sophie Laurent",
-    role: "Owner of three properties, north coast",
+      "I live abroad and my villa is on the north coast, yet I always know exactly how it is doing. And when I call, a real person answers — every time.",
+    name: "Élise M.",
+    role: "Villa owner, living in France",
   },
   {
     quote:
-      "Bellavere took over after two seasons of chaos with a big agency. Occupancy went up, my stress went down, and the statements finally add up to the cent.",
-    name: "Ravi Naidoo",
-    role: "Owner, Villa Tamarin Bay",
+      "No surprise charges. Every repair is on the statement with a line explaining it, and the fee was agreed face to face before we started.",
+    name: "Deepak R.",
+    role: "Apartment owner, west coast",
   },
   {
     quote:
-      "We hold five apartments across the island. One contact, one clean monthly statement per unit, and maintenance handled before we even hear about it. Exactly what a portfolio needs.",
-    name: "Amanda Hurst",
-    role: "Director, Hamilton Estates Ltd",
+      "As a residence we needed one reliable contact for the pool, the gardens and the contractors. That is exactly what we got.",
+    name: "Nathalie C.",
+    role: "Residence co-owner, north coast",
   },
 ];

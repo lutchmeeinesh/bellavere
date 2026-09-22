@@ -21,28 +21,20 @@ const FAQ_ITEMS: FaqItem[] = [
   {
     id: "payouts",
     question: "When do I get paid?",
-    // TODO: confirm with client — statement timing & payout date
     answer:
-      "You receive a full statement at the start of every month — gross income, our fee and any expenses, line by line — and your net income is paid out by the 5th.",
+      "Every month you receive a full statement — gross income, our fee and any expenses, line by line. Payout timing is set out in your management agreement.",
   },
   {
     id: "own-use",
     question: "Can I still use my property?",
     answer:
-      "Of course — it’s your home. Block your own dates in a few clicks from the owner dashboard and we’ll keep the calendar clear around them, with the house prepared for your arrival.",
-  },
-  {
-    id: "long-term",
-    question: "Do you handle long-term rentals?",
-    // TODO: confirm with client — long-let offering
-    answer:
-      "Yes. Most of our portfolio is holiday lettings, but we also manage long-let villas and apartments — same care, same transparent statement, a simpler calendar.",
+      "Of course — it’s your home. Talk to your client-relations contact about the dates you need; how owner stays work is set out in your management agreement.",
   },
   {
     id: "onboarding",
     question: "How fast is onboarding?",
     answer:
-      "One to two weeks from our first visit. In that time we inspect the property, arrange professional photography, check the licensing and set up your listing.",
+      "One to two weeks from our first meeting. In that time we inspect the property, agree your fee and set up your listing.",
   },
 ];
 

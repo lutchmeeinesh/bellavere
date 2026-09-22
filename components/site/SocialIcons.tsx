@@ -59,3 +59,39 @@ export function LinkedInIcon({ className }: IconProps) {
     </svg>
   );
 }
+
+type SocialProfiles = {
+  instagram: string | null;
+  facebook: string | null;
+  linkedin: string | null;
+};
+
+/**
+ * Social profiles that actually exist (non-null in data/company.ts), with
+ * their icons. Empty until the client provides real links.
+ */
+export function publishedSocialLinks(
+  companyName: string,
+  social: SocialProfiles,
+) {
+  const all = [
+    {
+      label: `${companyName} on Instagram`,
+      href: social.instagram,
+      Icon: InstagramIcon,
+    },
+    {
+      label: `${companyName} on Facebook`,
+      href: social.facebook,
+      Icon: FacebookIcon,
+    },
+    {
+      label: `${companyName} on LinkedIn`,
+      href: social.linkedin,
+      Icon: LinkedInIcon,
+    },
+  ];
+  return all.flatMap((link) =>
+    link.href ? [{ ...link, href: link.href }] : [],
+  );
+}

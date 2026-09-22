@@ -31,18 +31,18 @@ const VALUES = [
   {
     icon: HeartHandshake,
     title: "Always a human",
-    copy: "Call or write and a real person answers — never a chatbot, never a ticket queue. Someone who knows your property by name.",
+    copy: "Write to us and a real person answers — never a chatbot. Someone who knows your property by name.",
   },
 ];
 
 const WHY_ITEMS = [
   "One reliable point of contact for everything",
-  `A fee agreed with you — ${company.pricing.short.toLowerCase()}. No hidden fees.`,
-  "A person answers every call and message — never a bot",
+  `A fee negotiated with you after our first meeting — never more than ${Math.round(company.pricing.maxFeeRate * 100)}%. No hidden fees.`,
+  "A person answers every message — never a bot",
   "Work on your property supervised on site, in person",
   "A live owner dashboard, day and night, from anywhere",
   "Prices and statements in rupees or euros — your choice",
-  "Preventive maintenance, inspections and owner reporting as standard",
+  "Preventive maintenance, inspections and owner reporting",
   "Syndic and common-area management for whole residences",
 ];
 
@@ -67,8 +67,7 @@ export default function AboutPage() {
             <p className="eyebrow mb-4">About Bellavere</p>
             <h1>Care you can see, from people you can reach</h1>
             <p className="mt-6 text-lg text-ink-500">
-              {company.marketLong} Looked after in person, reported openly,
-              and never a hidden fee.
+              {company.marketLong} Looked after in person and reported openly, with never a hidden fee.
             </p>
           </Reveal>
         </Container>
@@ -92,22 +91,21 @@ export default function AboutPage() {
             <div>
               <SectionHeading
                 eyebrow="Our story"
-                title="Built around two promises"
+                title="Built around our mission"
               />
               <Reveal delay={0.1}>
-                {/* TODO: confirm with client — story wording */}
                 <p className="mt-6 leading-relaxed text-ink-900">
-                  {company.name} was set up by {company.team[0].name} and{" "}
-                  {company.team[1].name} to fix two things owners too often
-                  put up with: fees that appear out of nowhere, and nobody
-                  answering when something goes wrong.
+                  At {company.name}, {company.team[0].name} and{" "}
+                  {company.team[1].name} work to the promises in our mission:
+                  full transparency, no hidden fees, and a person who answers
+                  whenever something goes wrong.
                 </p>
                 <p className="mt-5 leading-relaxed text-ink-900">
-                  So the promises are simple. Every cost is itemised and
-                  visible on your dashboard. And whenever you call or write, a
-                  person answers — Krit on the ground, Ankit at the other end
-                  of the line. From single villas to the common areas of whole
-                  residences, that is how we look after every property.
+                  In practice, every cost is itemised and visible on your
+                  dashboard. And whenever you message us, a person answers —
+                  Krit on the ground, Ankit as your first point of contact.
+                  From single villas to the common areas of whole residences,
+                  that is how we look after every property.
                 </p>
                 <blockquote className="mt-8 border-l-2 border-gold-500 pl-5 font-serif text-xl leading-snug text-navy-900">
                   &ldquo;{company.mission}&rdquo;
@@ -163,7 +161,7 @@ export default function AboutPage() {
         <Container>
           <SectionHeading
             eyebrow="Why owners choose us"
-            title="The reasons owners stay"
+            title="What you can count on"
           />
           <RevealStagger
             as="ul"
@@ -189,7 +187,7 @@ export default function AboutPage() {
               <SectionHeading
                 eyebrow="Where we work"
                 title="All around the island"
-                sub="We look after properties across the whole of Mauritius — north and south, coast and plateau — and visit each one in person, so inspections happen often and problems get fixed fast."
+                sub="We look after properties across the whole of Mauritius — north and south, coast and plateau — and Krit supervises work and inspections on site, in person."
               />
               <RevealStagger as="ul" className="mt-8 flex flex-wrap gap-2.5">
                 {COVERAGE_REGIONS.map((area) => (

@@ -1,11 +1,6 @@
 import Link from "next/link";
-import {
-  InstagramIcon,
-  FacebookIcon,
-  LinkedInIcon,
-} from "@/components/site/SocialIcons";
+import { publishedSocialLinks } from "@/components/site/SocialIcons";
 import { Logo } from "@/components/site/Logo";
-import { NewsletterForm } from "@/components/site/NewsletterForm";
 import { Container } from "@/components/ui/Container";
 import { company } from "@/data/company";
 
@@ -14,7 +9,6 @@ const columns = [
     title: "Company",
     links: [
       { href: "/about", label: "About us" },
-      { href: "/properties", label: "Our portfolio" },
       { href: "/contact", label: "Contact" },
     ],
   },
@@ -39,6 +33,8 @@ const columns = [
 ];
 
 export function Footer() {
+  // Empty until the client provides real social profiles.
+  const socialLinks = publishedSocialLinks(company.name, company.social);
   return (
     <footer className="bg-navy-900 text-white">
       <Container className="py-16 lg:py-20">
@@ -50,30 +46,20 @@ export function Footer() {
               around Mauritius — north, south, east, west and the central
               plateau.
             </p>
-            <div className="mt-6 flex gap-3">
-              {/* TODO: confirm with client — social links */}
-              <a
-                href={company.social.instagram}
-                aria-label={`${company.name} on Instagram`}
-                className="rounded-full border border-white/15 p-2.5 text-white/70 transition-colors duration-200 hover:border-gold-500 hover:text-gold-500"
-              >
-                <InstagramIcon className="size-4" />
-              </a>
-              <a
-                href={company.social.facebook}
-                aria-label={`${company.name} on Facebook`}
-                className="rounded-full border border-white/15 p-2.5 text-white/70 transition-colors duration-200 hover:border-gold-500 hover:text-gold-500"
-              >
-                <FacebookIcon className="size-4" />
-              </a>
-              <a
-                href={company.social.linkedin}
-                aria-label={`${company.name} on LinkedIn`}
-                className="rounded-full border border-white/15 p-2.5 text-white/70 transition-colors duration-200 hover:border-gold-500 hover:text-gold-500"
-              >
-                <LinkedInIcon className="size-4" />
-              </a>
-            </div>
+            {socialLinks.length > 0 ? (
+              <div className="mt-6 flex gap-3">
+                {socialLinks.map(({ label, href, Icon }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    aria-label={label}
+                    className="rounded-full border border-white/15 p-2.5 text-white/70 transition-colors duration-200 hover:border-gold-500 hover:text-gold-500"
+                  >
+                    <Icon className="size-4" />
+                  </a>
+                ))}
+              </div>
+            ) : null}
           </div>
 
           {columns.map((column) => (
@@ -97,19 +83,16 @@ export function Footer() {
           ))}
         </div>
 
-        <div className="mt-14 flex flex-col gap-6 border-t border-white/10 pt-8 lg:flex-row lg:items-center lg:justify-between">
+        <div className="mt-14 flex flex-col gap-4 border-t border-white/10 pt-8 text-xs leading-relaxed text-white/60 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <p className="text-sm font-medium text-white">
-              A quiet monthly note on property in Mauritius
-            </p>
-            {/* Posts to /api/newsletter — connect a mailing-list provider there. */}
-            <NewsletterForm />
-          </div>
-          <div className="text-xs leading-relaxed text-white/60 lg:text-right">
             <p>
-              © {new Date().getFullYear()} {company.legalName}. All rights reserved.
+              © {new Date().getFullYear()} {company.legalName}. All rights
+              reserved.
             </p>
-            <p className="mt-1 flex gap-4 lg:justify-end">
+            <p className="mt-1">{company.address.country}</p>
+          </div>
+          <div className="lg:text-right">
+            <p className="flex gap-4 lg:justify-end">
               <Link
                 href="/privacy"
                 className="transition-colors duration-200 hover:text-white"
@@ -123,8 +106,9 @@ export function Footer() {
                 Terms of use
               </Link>
             </p>
-            <p className="mt-1">{company.address.country}</p>
-            <p className="mt-1">Demo website — all listings and figures are illustrative.</p>
+            <p className="mt-1">
+              The owner-portal demo uses sample accounts and figures.
+            </p>
           </div>
         </div>
       </Container>

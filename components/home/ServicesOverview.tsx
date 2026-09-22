@@ -24,26 +24,25 @@ const SERVICES: Service[] = [
   {
     icon: KeyRound,
     title: "Rental management",
-    copy: "From listing and seasonal pricing to guest vetting and check-ins, we run your rental end to end. You approve the strategy; we deliver the occupancy.",
+    copy: "From listing, marketing and pricing to enquiries, bookings and guest check-ins, we run your rental end to end.",
     href: "/services#rental",
   },
   {
     icon: Wrench,
     title: "Maintenance",
-    // TODO: confirm with client — inspection cadence
-    copy: "Preventive care, prompt repairs and regular inspections keep your property flawless year-round. Every job is logged, photographed and visible on your dashboard.",
+    copy: "Preventive care, repairs and regular inspections keep your property in good order year-round. Every job is logged and its status is visible on your dashboard.",
     href: "/services#maintenance",
   },
   {
     icon: HeartHandshake,
     title: "Client care",
-    copy: "One contact knows your property, your preferences and your guests by name — and a real person always answers. Clear statements arrive monthly, and nothing is decided without you.",
+    copy: "One contact knows your property, your preferences and your guests by name — and a real person always answers. Clear statements arrive monthly.",
     href: "/services#client-care",
   },
   {
     icon: ConciergeBell,
     title: "Concierge & services",
-    copy: "Airport transfers, private chefs, boat days and in-villa spa — arranged before guests think to ask. The kind of service your nightly rate deserves.",
+    copy: "Airport transfers, welcome packs, housekeeping and guest services — the extras that make a stay memorable and lift your rental yield.",
     href: "/services#concierge",
   },
 ];

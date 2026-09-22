@@ -93,3 +93,18 @@ The client supplied the company name, team, email, mission and dual-currency req
 - **Admins open owner portals rather than a separate copy of every screen** ("view as"), so every owner-facing view is available to staff with no duplicated UI and the same isolation checks. A banner makes the mode unmistakable.
 - **Session security was upgraded before adding admins:** a forgeable cookie was tolerable for demo owners but not for accounts that see everyone's data. Sessions are now HMAC-signed with expiry; passwords are scrypt hashes; failed logins are rate-limited.
 - **Pre-launch safety switches:** `SITE_INDEXABLE` (default off → `noindex` + `robots.txt` disallow) so deploying the demo to the new domain doesn't get fake testimonials/listings indexed; `DEMO_MODE` (default on) to switch off the demo owners at launch.
+
+---
+
+## Update 3 — 22 September 2026 (fake filler stripped)
+
+The client asked to strip everything fake, keep two demo accounts, and rename the testimonial authors.
+
+- **What counted as fake filler:** anything presenting unconfirmed information as fact about Bellavere — placeholder phone/address/hours/social links, invented numbers (response times, "+9%"), service extras beyond the confirmed scope (private chefs, babysitting, photography, licensing, cyclone prep, annual reviews…), unconfirmed policies (payout "by the 5th", long lets, "no onboarding fee", "reply within one working day"), portal features that don't exist (date blocking, email notifications, partner offers), and a newsletter Bellavere doesn't send.
+- **The public property portfolio was removed.** Its 12 homes were fictional, and a new company presenting them as "homes we manage" is the most misleading filler of all. The two demo owners keep their properties inside the owner-portal demo, which is labelled.
+- **Which two demo accounts:** Sophie Laurent (private owner) and Hamilton Estates Ltd (company) — the two client types — whose phone numbers sit in ranges reserved for fiction. Ravi Naidoo's Mauritian number could have belonged to a real person, so that account was removed.
+- **Testimonials kept at the client's request** but rewritten: initial-only names (Élise M., Deepak R., Nathalie C.) so no quote reads as a specific real person, no overlap with the demo owners, no invented performance claims, and one from a residence co-owner to reflect the syndic service. They remain illustrative (TODO) and should be replaced with real quotes before the site is public — publishing invented testimonials as real is risky under consumer-protection rules.
+- **Contact details are `null` rather than deleted from the data model,** so the contact page, footer and structured data show them automatically once real values are set.
+- Contractor names in the demo data became generic trades ("Pool specialist") — invented company names could collide with real Mauritian businesses.
+- "Developers" was kept as a client group despite a critic's objection: the client's own prospect list names developers explicitly.
+

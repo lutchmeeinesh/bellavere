@@ -8,7 +8,7 @@ Paste this whole file into a new chat to bring it fully up to speed. It covers w
 
 A polished **demo website for Bellavere** (trading as **Bellavere Property Care**), a property management and **syndic** company working **all around Mauritius** (north, west, east, south and the central plateau). It has two halves:
 
-- **Marketing site:** home, services (five, including syndic & residence management), properties portfolio + per-property detail pages, about, contact, privacy, terms, login, 404.
+- **Marketing site:** home, services (five, including syndic & residence management), about, contact, privacy, terms, login, 404. There is deliberately **no public property portfolio** until real listings exist.
 - **Owner dashboard** (`/dashboard/*`, auth-protected): each owner logs in and sees **only** their own properties (occupancy, bookings, revenue, maintenance, statements, documents, settings).
 - **Admin area** (`/admin/*`): three Bellavere staff accounts see every owner, property, arrival, repair and document, and can open any owner's portal (§4c).
 
@@ -29,12 +29,11 @@ npm run build      # passes with 0 TypeScript errors, 0 lint errors
 
 Node 20+ required (built and tested on Node 24).
 
-**Demo logins** (all password `demo1234`, listed on the login page with one-click fill):
+**Demo logins** (two accounts, password `demo1234`, listed on the login page with one-click fill so visitors can try the portal):
 
 | Email | Owner | Portfolio | Paid in |
 |---|---|---|---|
 | `sophie@demo.bellavere.com` | Sophie Laurent | 2 villas + 1 apartment | EUR |
-| `ravi@demo.bellavere.com` | Ravi Naidoo | 1 villa | MUR |
 | `hamilton@demo.bellavere.com` | Hamilton Estates Ltd | 5 apartments | EUR |
 
 ### Confirmed company facts (from the client, 22 Sep 2026)
@@ -44,11 +43,12 @@ Node 20+ required (built and tested on Node 24).
 - **Company email:** BellavereLtd@gmail.com
 - **Mission:** "Our mission is to provide the best service while maintaining full transparency. No hidden fees — and there will always be a human to answer you."
 - **Currency:** MUR and EUR, user-selectable.
-- **Fees:** negotiated and set after the first meeting, **never more than 15%**. Each owner's agreed rate is `Client.feeRate` and drives their statements (demo: Sophie 14%, Ravi 15%, Hamilton 12%).
+- **Fees:** negotiated and set after the first meeting, **never more than 15%**. Each owner's agreed rate is `Client.feeRate` and drives their statements (demo: Sophie 14%, Hamilton 12%).
 - **Onboarding:** one to two weeks.
 - **Coverage:** all around Mauritius, per the client's own map (`public/images/coverage-map.webp`, OpenStreetMap-based: keep the attribution caption).
 - **No walk-in office:** no address on the contact page or in the footer.
 - **Admins:** Krit (kritgoburdhan@gmail.com), Ankit (zoodookhorun@gmail.com), Inesh (lutchmeeinesh@gmail.com).
+- **No fake filler (22 Sep 2026):** the client asked for every invented fact to be removed. Phone, hours, social links and address are `null` in `data/company.ts` and hidden until provided; no invented numbers, response times, service extras, policies or features; testimonials are kept (client's request) as clearly illustrative, initial-only names that differ from the demo owners.
 - **Services:** also informed by the client's own syndic prospect list: syndic, common-area management, preventive maintenance, contractor coordination, inspections, pool/landscaping supervision, owner reporting, renovation follow-up. That list's third-party contact details are **not** used anywhere on the site.
 
 ---
@@ -73,6 +73,7 @@ Node 20+ required (built and tested on Node 24).
 2. **Phase 1 — five parallel agents,** each given the same written foundation brief: (A) Home+About, (B) Services+Properties, (C) Contact+Login+404, (D) Dashboard shell+Overview+Properties, (E) Bookings+Maintenance+Statements+Documents+Settings.
 3. **Phase 2/3 — automated review:** a Playwright script (`scripts/review.mjs`) and Lighthouse. It found and fixed the streaming-404 isolation bug (§8).
 4. **Round 2 (22 Sep 2026):** real company facts, the Bellavere spelling, the syndic service, the MUR/EUR switch, SEO (sitemap, robots, OG image, JSON-LD), privacy and terms pages, form spam protection, a newsletter endpoint, a photo/alt-text audit, and AA contrast fixes. See REVIEW.md "Round 2" and ASSUMPTIONS.md "Update — 22 September 2026".
+6. **Round 4 (22 Sep 2026):** every piece of fake filler stripped (multi-agent audit, 91 findings, three fix/verify rounds), public portfolio and newsletter removed, demo owners reduced to Sophie + Hamilton, testimonials renamed. See REVIEW.md "Round 4".
 5. **Round 3 (22 Sep 2026):** three admin accounts and the `/admin` area, signed sessions + hashed passwords + login rate limit, negotiable fees (≤15%, per-owner rates), island-wide coverage with the client's map, "Visit us" removed, onboarding 1–2 weeks, pre-launch `SITE_INDEXABLE` / `DEMO_MODE` switches. See REVIEW.md "Round 3".
 
 ---
@@ -138,8 +139,6 @@ app/
   not-found.tsx  icon.svg
   (site)/                    marketing: Header + Footer + JsonLd + page transition
     page.tsx  about/  services/  contact/  privacy/  terms/
-    properties/page.tsx      portfolio grid + animated filters
-    properties/[slug]/       detail pages
   (auth)/login/page.tsx      standalone login (owners -> /dashboard, admins -> /admin)
   admin/                     staff area: page.tsx (overview), clients/[id]/, layout, template
   dashboard/                 protected owner portal (layout, template, loading, not-found)
@@ -149,16 +148,15 @@ app/
     auth/login  auth/logout    signed session, failed-attempt rate limit
     admin/view-as/route.ts   admin opens / leaves an owner's portal
     contact/route.ts         validate + honeypot + rate limit + consent log (Resend TODO)
-    newsletter/route.ts      same pattern (Resend Audiences / Mailchimp TODO)
 
 components/
   ui/        Container Button Badge Card SectionHeading Reveal CountUp
              Input(+Field/Select/Textarea/Checkbox) Toggle Modal Tabs Skeleton
   currency/  CurrencyProvider(useMoney) Money(MoneyCountUp, ConversionNote) CurrencyToggle
-  site/      Header Footer Logo SocialIcons JsonLd NewsletterForm
+  site/      Header Footer Logo SocialIcons(+publishedSocialLinks) JsonLd
   admin/     AdminHeader AdminTable ViewAsButton AdminViewBanner
   motion/    MotionProvider PageTransition
-  home/ about/ services/ properties/ contact/ auth/
+  home/ about/ services/ contact/ auth/
   dashboard/ PageHeader ActivityIcon shell/ overview/ properties/ bookings/
              maintenance/ statements/ documents/ settings/(incl. DisplayCurrencySettings)
 
@@ -180,7 +178,7 @@ README.md  ASSUMPTIONS.md  REVIEW.md  HANDOFF.md
 The types are in `lib/types.ts`, and dates are ISO `yyyy-mm-dd` strings.
 
 - **Client**: id, name, email, password (plain, demo only), payoutAccount, **payoutCurrency**.
-- **Property**: 12 in total (p-01…p-09 owned by the demo clients; p-10…p-12 unowned portfolio fillers). nightlyRate is in EUR.
+- **Property**: 8 demo properties (p-01…p-03 Sophie, p-05…p-09 Hamilton), used only inside the portal demo; `managedSince` is 2026 so nothing implies history. nightlyRate is in EUR.
 - **Booking / MaintenanceTicket / OwnerDocument**: statuses, costs and expiry dates as before.
 - **Statement**: derived, never stored.
 
@@ -231,12 +229,12 @@ Lighthouse: `chrome-launcher` can't spawn Chrome in this environment. Launch Pla
 
 ## 10. Deliberate limitations of the demo
 
-- The maintenance "Report an issue" button and the settings forms only change local state; nothing is saved.
-- Contact and newsletter endpoints validate, rate-limit and **log**, but send no email yet.
+- The maintenance "Report an issue" button and the settings forms only change local state; nothing is saved or sent (the UI says so).
+- The contact endpoint validates, rate-limits and **logs**, but sends no email yet.
 - Rate limiting is in-memory, so it is per server instance.
 - Statement "Download PDF" opens a print window, and the document downloads are decorative.
-- Imagery is Unsplash stock; the 12 listings are fictional ("Demo listings" disclaimer, and "Managed since 2018–2024" years that imply history).
-- Testimonials are invented. The map is a stylised SVG.
+- Email notifications don't exist yet; the Settings card says so rather than showing fake toggles.
+- Imagery is Unsplash stock. The testimonials are illustrative, not real people.
 
 ---
 
@@ -254,14 +252,14 @@ Lighthouse: `chrome-launcher` can't spawn Chrome in this environment. Launch Pla
 
 Recreate `data/*.ts` + `lib/metrics.ts` as Supabase tables and queries, keeping the maths identical, with **row-level security on `client_id`**. Decide the booking source: manual entry, or a channel-manager sync (Beds24 / Smoobu / Hostaway; usually the largest single job). ✅ A **read-only staff admin area** exists (`/admin`). ⬜ Admins still can't *edit* anything (add bookings, update tickets, upload documents, publish statements) — that needs the database. Syndic clients (residences) will likely need a co-owner / common-area data model that the current owner-centric model doesn't cover.
 
-## 🟡 C. Content — 30 `TODO: confirm with client` markers
+## 🟡 C. Content — 15 `TODO: confirm with client` markers
 
 - ✅ Name, team, email, mission, currency, syndic service, fees (negotiable, ≤15%), onboarding (1–2 weeks), island-wide coverage + map, no walk-in office.
-- ⬜ In `data/company.ts`: tagline, **phone, address, office hours, social links**, **legal name + BRN**, whether the 15% cap is of gross rental income (syndic contracts may differ), surname spelling and bio wording.
+- ✅ All fake filler stripped: placeholder contact details hidden, invented metrics/response times/service extras/policies/features removed, public portfolio removed, demo owners reduced to two.
+- ⬜ In `data/company.ts`: **phone, office hours, social links, registered address, BRN** (each appears automatically once set), legal name, tagline, the 15% basis, surname spelling and bios.
 - ⬜ The **EUR→MUR rate** in `lib/format.ts`, or store real dual prices per record.
-- ⬜ Service claims in `app/(site)/services/page.tsx`: response times, concierge "+9%".
-- ⬜ FAQ answers (`components/contact/FaqAccordion.tsx`): payout day, long lets, onboarding time.
-- ⬜ **Real photography, real listings and real testimonials** (with permission). Then remove the "Demo listings" disclaimers and the footer "Demo website" line.
+- ⬜ **Real testimonials** (with permission) to replace the illustrative ones, and real photography.
+- ⬜ A public portfolio page once there are real listings (the old one is in git history: commit `cdb2f9f`).
 - ⬜ Whether to publish the team's direct emails (currently hidden).
 
 ## 🟡 D. Wire up the stubs
@@ -269,7 +267,7 @@ Recreate `data/*.ts` + `lib/metrics.ts` as Supabase tables and queries, keeping 
 | Stub | Status |
 |---|---|
 | Contact form | ✅ Honeypot, rate limit and consent record. ⬜ Send via Resend |
-| Newsletter | ✅ Endpoint + form. ⬜ Resend Audiences / Mailchimp |
+| Newsletter | Removed (Bellavere doesn't send one yet). Restore from git history when it does |
 | Rate limiting | ⬜ Move to Upstash Redis on Vercel |
 | Date-range selector | ✅ Removed (replaced by the currency switch) |
 | Statement PDF / document downloads | ⬜ Server-side PDFs; Supabase Storage with signed URLs |

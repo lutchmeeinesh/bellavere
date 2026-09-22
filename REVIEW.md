@@ -95,3 +95,27 @@ The first pass flagged a console error on the custom 404 page; it was Chromium l
 - `scripts/review.mjs`: **0 errors, 0 warnings, 23 checks** — adds forged cookie, tampered token, owner blocked from `/admin` and from view-as (403), wrong admin password (401), admin sign-in → `/admin`, overview lists all owners, open an owner's portal (banner, only that owner's data), isolation inside admin view (foreign property 404), leave view-as → `/admin`.
 - All three admin accounts sign in (200 → `/admin`), checked without printing any password.
 - Note for Lighthouse: with `SITE_INDEXABLE=false` (the default until launch) SEO scores are intentionally low because every page is `noindex`.
+
+---
+
+## Round 4 — 22 September 2026 (fake filler stripped)
+
+### Method
+
+A multi-agent workflow: three independent auditors, each with a different lens (numbers & history; service scope & features; promises & policies), swept every public-copy and portal-UI file against the list of confirmed facts. Findings were deduplicated, fixed by one agent per file (so no edits collided), then re-audited by a fresh-eyes critic, looping until clean (3 rounds, 91 distinct findings). The critic's last 7 findings were applied by hand (6 accepted, 1 rejected: "developers" is in the client's own prospect list).
+
+### Notable fixes
+
+- Services: response-time and yield claims replaced with confirmed statements; "What's included" lists trimmed to the confirmed scope; comparison table's empty owner column removed.
+- FAQ: invented payout date, long-lets answer and date-blocking feature removed; onboarding "one to two weeks from our first meeting".
+- Settings: fake notification toggles replaced with an honest "not available yet" notice; payout "by the 5th" removed.
+- Maintenance: the demo confirmation no longer claims the team "will be in touch" — it says it's a demo and isn't sent.
+- Newsletter removed (Bellavere doesn't send one); privacy policy updated to match.
+- Public portfolio (`/properties`, featured section) removed; `/properties` now 404s.
+
+### Verification
+
+- `npm run build`: 0 TypeScript errors, 0 lint errors.
+- `scripts/review.mjs`: **0 errors, 0 warnings.** New checks: a **fake-filler guard** scans the full HTML of every public page for the removed content (placeholder phone/address, response times, "+9%", "by the 5th", old testimonial names, "since 20xx", portfolio links); the sign-in page offers exactly **2** demo accounts; `/properties` returns 404. All earlier currency, security, admin and isolation checks still pass.
+- `TODO: confirm with client` markers: 30 → 15, all for facts only the client can supply.
+

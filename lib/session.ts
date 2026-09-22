@@ -99,7 +99,7 @@ export async function verifySession(
 }
 
 /**
- * Demo owner accounts (Sophie, Ravi, Hamilton) only work while DEMO_MODE is
+ * The two demo owner accounts (Sophie, Hamilton) only work while DEMO_MODE is
  * not "false". Set DEMO_MODE=false at launch to switch them off.
  */
 export function isDemoMode(): boolean {

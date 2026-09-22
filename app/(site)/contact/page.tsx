@@ -4,11 +4,7 @@ import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Reveal, RevealItem, RevealStagger } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import {
-  FacebookIcon,
-  InstagramIcon,
-  LinkedInIcon,
-} from "@/components/site/SocialIcons";
+import { publishedSocialLinks } from "@/components/site/SocialIcons";
 import { ContactForm } from "@/components/contact/ContactForm";
 import { FaqAccordion } from "@/components/contact/FaqAccordion";
 import { company } from "@/data/company";
@@ -19,23 +15,9 @@ export const metadata: Metadata = {
     "Talk to Bellavere about managing your villa or apartment anywhere in Mauritius — rentals, maintenance, client care and concierge under one roof.",
 };
 
-const SOCIAL_LINKS = [
-  {
-    label: "Bellavere on Instagram",
-    href: company.social.instagram,
-    Icon: InstagramIcon,
-  },
-  {
-    label: "Bellavere on Facebook",
-    href: company.social.facebook,
-    Icon: FacebookIcon,
-  },
-  {
-    label: "Bellavere on LinkedIn",
-    href: company.social.linkedin,
-    Icon: LinkedInIcon,
-  },
-];
+// Only details the client has confirmed are shown. Phone, hours and social
+// links appear automatically once they are filled in data/company.ts.
+const SOCIAL_LINKS = publishedSocialLinks(company.name, company.social);
 
 function DetailIcon({ children }: { children: React.ReactNode }) {
   return (
@@ -55,9 +37,8 @@ export default function ContactPage() {
             <p className="eyebrow mb-4">Contact</p>
             <h1>Let’s talk about your property</h1>
             <p className="mt-5 text-lg text-ink-500">
-              {/* TODO: confirm with client — response-time promise */}
-              Tell us about your villa or apartment and we’ll come back within
-              one working day with an honest view of what it could earn.
+              Tell us about your villa or apartment and a real person will
+              reply with an honest view of what it could earn.
             </p>
           </Reveal>
         </Container>
@@ -69,60 +50,73 @@ export default function ContactPage() {
           <div className="grid gap-16 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-20">
             {/* Contact details */}
             <RevealStagger className="space-y-8">
-              <RevealItem className="flex gap-4">
-                <DetailIcon>
-                  <Phone className="size-5" aria-hidden />
-                </DetailIcon>
-                <div>
-                  <p className="text-sm font-medium text-navy-900">Call us</p>
-                  <a
-                    href={`tel:${company.phone.replace(/\s/g, "")}`}
-                    className="mt-1 inline-block text-sm text-ink-500 transition-colors duration-150 hover:text-gold-700"
-                  >
-                    {company.phone}
-                  </a>
-                </div>
-              </RevealItem>
+              {company.phone ? (
+                <RevealItem className="flex gap-4">
+                  <DetailIcon>
+                    <Phone className="size-5" aria-hidden />
+                  </DetailIcon>
+                  <div>
+                    <p className="text-sm font-medium text-navy-900">Call us</p>
+                    <a
+                      href={`tel:${company.phone.replace(/\s/g, "")}`}
+                      className="mt-1 inline-block text-sm text-ink-500 transition-colors duration-150 hover:text-gold-700"
+                    >
+                      {company.phone}
+                    </a>
+                  </div>
+                </RevealItem>
+              ) : null}
 
               <RevealItem className="flex gap-4">
                 <DetailIcon>
                   <Mail className="size-5" aria-hidden />
                 </DetailIcon>
                 <div>
-                  <p className="text-sm font-medium text-navy-900">Write to us</p>
+                  <p className="text-sm font-medium text-navy-900">
+                    Write to us
+                  </p>
                   <a
                     href={`mailto:${company.email}`}
                     className="mt-1 inline-block text-sm text-ink-500 transition-colors duration-150 hover:text-gold-700"
                   >
                     {company.email}
                   </a>
+                  <p className="mt-1 text-xs text-ink-500">
+                    Answered by a person, never a bot.
+                  </p>
                 </div>
               </RevealItem>
 
-              <RevealItem className="flex gap-4">
-                <DetailIcon>
-                  <Clock className="size-5" aria-hidden />
-                </DetailIcon>
-                <div>
-                  <p className="text-sm font-medium text-navy-900">Office hours</p>
-                  <p className="mt-1 text-sm text-ink-500">{company.hours}</p>
-                </div>
-              </RevealItem>
+              {company.hours ? (
+                <RevealItem className="flex gap-4">
+                  <DetailIcon>
+                    <Clock className="size-5" aria-hidden />
+                  </DetailIcon>
+                  <div>
+                    <p className="text-sm font-medium text-navy-900">
+                      Office hours
+                    </p>
+                    <p className="mt-1 text-sm text-ink-500">{company.hours}</p>
+                  </div>
+                </RevealItem>
+              ) : null}
 
-              <RevealItem className="flex items-center gap-3 pl-15">
-                {SOCIAL_LINKS.map(({ label, href, Icon }) => (
-                  <a
-                    key={label}
-                    href={href}
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label={label}
-                    className="flex size-10 items-center justify-center rounded-full border border-sand-300 text-navy-900 transition-colors duration-150 hover:border-gold-500 hover:text-gold-700"
-                  >
-                    <Icon className="size-4" />
-                  </a>
-                ))}
-              </RevealItem>
+              {SOCIAL_LINKS.length > 0 ? (
+                <RevealItem className="flex items-center gap-3 pl-15">
+                  {SOCIAL_LINKS.map(({ label, href, Icon }) => (
+                    <a
+                      key={label}
+                      href={href}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label={label}
+                      className="flex size-10 items-center justify-center rounded-full border border-sand-300 text-navy-900 transition-colors duration-150 hover:border-gold-500 hover:text-gold-700"
+                    >
+                      <Icon className="size-4" />
+                    </a>
+                  ))}
+                </RevealItem>
+              ) : null}
             </RevealStagger>
 
             {/* Enquiry form */}

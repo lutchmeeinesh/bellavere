@@ -27,12 +27,13 @@ Passwords are **not in the code**. Temporary passwords were generated into `ADMI
 
 ## Demo accounts (owner dashboard)
 
+Two demo owners let visitors try the portal: a private owner and a company. Their properties and figures are fictional and appear only inside the portal demo; there is no public property portfolio.
+
 Every account sees **only its own properties** — server-side filtering plus 404s on foreign ids.
 
 | Email | Password | Portfolio |
 | --- | --- | --- |
 | `sophie@demo.bellavere.com` | `demo1234` | Sophie Laurent — 2 villas + 1 apartment |
-| `ravi@demo.bellavere.com` | `demo1234` | Ravi Naidoo — 1 villa |
 | `hamilton@demo.bellavere.com` | `demo1234` | Hamilton Estates Ltd — 5 apartments |
 
 The login page lists these with one-click "Use" buttons.
@@ -71,28 +72,20 @@ Team members' personal emails are stored in `data/company.ts` for internal use (
 
 ## Placeholders still waiting on company info
 
-Every remaining demo-invented fact is marked in the source with `{/* TODO: confirm with client */}` (30 markers). Search for that string to see each one in place.
+**All fake filler was stripped on 22 Sep 2026.** Anything unconfirmed is either removed or hidden until real. 15 `{/* TODO: confirm with client */}` markers remain; search for that string to see each one.
 
-| Placeholder | Demo value used | Where |
+| Still needed | Currently | Where |
 | --- | --- | --- |
+| Phone, office hours, social links | **not shown anywhere** — they appear automatically once set | `data/company.ts` |
+| Registered address, BRN | not shown; legal pages list them once set | `data/company.ts`, legal pages |
+| Legal name | "Bellavere Ltd" (inferred from the email) | `data/company.ts` |
 | Tagline | "Your property, perfectly managed." | `data/company.ts` |
-| Legal name + BRN | "Bellavere Ltd" (inferred from the email), no BRN | `data/company.ts`, legal pages |
-| Phone | +230 5 728 4410 | `data/company.ts` |
-| Address | La Croisette Business Centre, Grand Baie | `data/company.ts` |
-| Office hours | Mon–Sat 8:30–17:30 | `data/company.ts` |
-| Social links | demo Instagram/Facebook/LinkedIn URLs | `data/company.ts` |
-| Fee basis | the 15% cap is assumed to be of gross rental income | `data/company.ts` |
-| EUR→MUR rate | €1 = Rs 52 (whole number on purpose — see `lib/format.ts`) | `lib/format.ts` |
-| Surname spelling & bio wording | inferred from emails | `data/company.ts` |
-| About-page story wording | written from the mission | `app/(site)/about/page.tsx` |
-| Testimonials | 3 invented owner quotes | `data/testimonials.ts` |
-| Service response times & concierge yield claim | "under 2 hours", "within 4 hours", "+9%" | `app/(site)/services/page.tsx` |
-| FAQ answers (payout day, onboarding time, long lets) | see contact page | `components/contact/FaqAccordion.tsx` |
-| Payout day | "by the 5th" | statements/settings pages |
-| Legal pages | templates — need a lawyer's review | `app/(site)/privacy`, `app/(site)/terms` |
-| Imagery | Unsplash stock (alt text verified against each photo) | `data/properties.ts`, `data/siteImages.ts` |
-| Listings | 12 fictional properties, marked "Demo listings" | `data/properties.ts` |
-| Registered address | shown only on the legal pages (the contact page no longer shows an address) | privacy/terms pages |
+| Fee basis | 15% cap assumed to be of gross rental income | `data/company.ts` |
+| EUR→MUR rate | €1 = Rs 52 | `lib/format.ts` |
+| Surname spelling & bios | inferred from emails | `data/company.ts` |
+| Testimonials | 3 **illustrative** quotes (Élise M., Deepak R., Nathalie C. — not real people, not the demo owners). Replace with real quotes, with permission, before the site is public | `data/testimonials.ts` |
+| Legal pages | templates for a lawyer to review; retention periods TODO | `app/(site)/privacy`, `app/(site)/terms` |
+| Imagery | Unsplash stock (marketing pages + the portal demo) | `data/siteImages.ts`, `data/properties.ts` |
 
 ## Currency (EUR / MUR)
 
@@ -108,7 +101,7 @@ Every remaining demo-invented fact is marked in the source with `{/* TODO: confi
 - `app/sitemap.ts`, `app/robots.ts` (dashboard, login and API blocked from indexing), `app/opengraph-image.tsx`, and LocalBusiness JSON-LD (`components/site/JsonLd.tsx`).
 - `htmlLimitedBots: /.*/` in `next.config.ts` keeps `<meta>`/Open Graph tags in `<head>` for every visitor (pages are dynamic, and Next.js 15 would otherwise stream them into the body).
 - `/privacy` (Mauritius Data Protection Act 2017 + GDPR) and `/terms` — templates, to be reviewed by a lawyer. No cookie banner: the site sets only a strictly necessary session cookie and the user-requested currency preference. Add a consent banner as soon as analytics or marketing cookies are introduced.
-- Contact form and newsletter: honeypot field + IP rate limit (`lib/rateLimit.ts`; in-memory, so use Upstash Redis on Vercel), consent record logged with timestamp.
+- Contact form: honeypot field + IP rate limit (`lib/rateLimit.ts`; in-memory, so use Upstash Redis on Vercel), consent record logged with timestamp.
 
 ## Security model
 
@@ -125,7 +118,7 @@ Suggested: **Supabase** (auth + Postgres + storage).
 
 1. **Auth** — replace `lib/auth.ts` and `app/api/auth/*` with Supabase Auth (email/password or magic link). Keep `requireClient()`'s contract: every dashboard page calls it and filters by the returned client id. `middleware.ts` swaps its cookie check for Supabase session validation.
 2. **Data** — the `data/*.ts` modules and `lib/metrics.ts` are the only data surface. Recreate them as queries/views: tables `clients`, `properties`, `bookings`, `maintenance_tickets`, `documents`, `statements`. Row-level security on `client_id` gives you the same isolation guarantee the mock enforces in code.
-3. **Contact form & newsletter** — `app/api/contact/route.ts` and `app/api/newsletter/route.ts` validate, rate-limit and log; the file comments show where to plug in Resend (or Formspree/CRM/Mailchimp).
+3. **Contact form** — `app/api/contact/route.ts` validates, rate-limits and logs; the file comments show where to plug in Resend (or Formspree/CRM).
 4. **Statements PDF** — replace the print-window with a real renderer (e.g. react-pdf or a server route) once statements come from the database.
 
 ## Deploying to Vercel

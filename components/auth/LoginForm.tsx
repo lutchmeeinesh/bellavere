@@ -12,17 +12,12 @@ const DEMO_ACCOUNTS = [
   {
     email: "sophie@demo.bellavere.com",
     name: "Sophie Laurent",
-    note: "3 properties",
-  },
-  {
-    email: "ravi@demo.bellavere.com",
-    name: "Ravi Naidoo",
-    note: "1 villa",
+    note: "private owner · 3 properties",
   },
   {
     email: "hamilton@demo.bellavere.com",
     name: "Hamilton Estates Ltd",
-    note: "5 apartments",
+    note: "company · 5 apartments",
   },
 ] as const;
 

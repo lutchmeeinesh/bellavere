@@ -21,23 +21,23 @@ export const company = {
   market: "Across Mauritius",
   marketLong:
     "Villas, apartments and residences across Mauritius — north, west, east, south and the central plateau.",
-  // TODO: confirm with client — phone
-  phone: "+230 5 728 4410",
-  email: "BellavereLtd@gmail.com",
-  // TODO: confirm with client — address
-  address: {
-    line1: "Suite 4, La Croisette Business Centre",
-    line2: "Grand Baie 30510",
-    country: "Mauritius",
-  },
-  // TODO: confirm with client — office hours
-  hours: "Monday – Saturday, 8:30 – 17:30 (GMT+4)",
-  // TODO: confirm with client — social links
+  /**
+   * Not yet provided by the client, so not shown anywhere. Fill these in and
+   * the contact page, footer and structured data pick them up automatically.
+   */
+  // TODO: confirm with client — phone, office hours, social links,
+  // registered address (for the legal pages)
+  phone: null as string | null,
+  hours: null as string | null,
   social: {
-    instagram: "https://instagram.com/bellavere.mu",
-    facebook: "https://facebook.com/bellavere.mu",
-    linkedin: "https://linkedin.com/company/bellavere",
+    instagram: null as string | null,
+    facebook: null as string | null,
+    linkedin: null as string | null,
   },
+  registeredAddress: null as string | null,
+  email: "BellavereLtd@gmail.com",
+  /** No walk-in office: only the country is published. */
+  address: { country: "Mauritius" },
   /** The client's mission, in their own words. */
   mission:
     "Our mission is to provide the best service while maintaining full transparency. No hidden fees — and there will always be a human to answer you.",
