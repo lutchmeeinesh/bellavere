@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { requireClient } from "@/lib/auth";
 import { statementsForClient } from "@/lib/metrics";
 import { company } from "@/data/company";
-import { formatCurrency } from "@/lib/format";
+import { Money, ConversionNote } from "@/components/currency/Money";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { Card } from "@/components/ui/Card";
 import { RevealItem, RevealStagger, Reveal } from "@/components/ui/Reveal";
@@ -23,9 +23,9 @@ export default async function StatementsPage() {
     statements.length > 0 ? Math.round(totalNet / statements.length) : 0;
 
   const tiles = [
-    { label: "Gross rental, last 12 months", value: formatCurrency(totalGross) },
-    { label: "Net paid out, last 12 months", value: formatCurrency(totalNet) },
-    { label: "Average monthly net", value: formatCurrency(averageNet) },
+    { label: "Gross rental, last 12 months", eur: totalGross },
+    { label: "Net paid out, last 12 months", eur: totalNet },
+    { label: "Average monthly net", eur: averageNet },
   ];
 
   return (
@@ -38,7 +38,7 @@ export default async function StatementsPage() {
             <Card className="p-6">
               <p className="text-sm text-ink-500">{tile.label}</p>
               <p className="mt-2 font-serif text-3xl text-navy-900">
-                {tile.value}
+                <Money eur={tile.eur} />
               </p>
             </Card>
           </RevealItem>
@@ -49,13 +49,14 @@ export default async function StatementsPage() {
 
       <Reveal>
         <p className="mt-5 max-w-3xl text-xs leading-relaxed text-ink-500">
-          The BellaVere fee is {company.pricing.model} — no onboarding fee, no
-          fixed monthly charges. Expenses are the month&apos;s resolved
+          The Bellavere fee is {company.pricing.model} — no hidden fees, no
+          onboarding fee, no fixed monthly charges. Expenses are the month&apos;s resolved
           maintenance work plus recurring upkeep (pool, garden and
           housekeeping) for each property. Net payouts reach your account by
           the 5th of the following month.
           {/* TODO: confirm with client — payout timing */}
         </p>
+        <ConversionNote className="mt-2" />
       </Reveal>
     </div>
   );

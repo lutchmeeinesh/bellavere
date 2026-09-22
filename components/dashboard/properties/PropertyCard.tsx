@@ -3,7 +3,8 @@ import Link from "next/link";
 import { Badge, type BadgeTone } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import type { Booking, Property, PropertyStatus } from "@/lib/types";
-import { formatCurrency, formatDateShort, formatPercent } from "@/lib/format";
+import { formatDateShort, formatPercent } from "@/lib/format";
+import { Money } from "@/components/currency/Money";
 
 /** Dashboard property card: image, live status, and this month's headline stats. */
 
@@ -77,7 +78,7 @@ export function PropertyCard({
             <div className="flex items-center justify-between gap-3">
               <dt className="text-xs text-ink-500">Revenue YTD</dt>
               <dd className="font-medium text-navy-900">
-                {formatCurrency(revenueYtd)}
+                <Money eur={revenueYtd} />
               </dd>
             </div>
             <div className="flex items-center justify-between gap-3">

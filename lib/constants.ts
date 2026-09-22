@@ -4,7 +4,7 @@ export const CHART_COLORS = {
   secondary: "#3c8dad", // sea-500 — comparison series
   navy: "#0b1f33",
   grid: "rgba(11, 31, 51, 0.08)",
-  axis: "#6b6b6b", // ink-500
+  axis: "#666666", // ink-500
 } as const;
 
 export const CHART_FONT = {

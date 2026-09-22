@@ -17,22 +17,22 @@ import { company } from "@/data/company";
 export const metadata: Metadata = {
   title: "Contact",
   description:
-    "Talk to BellaVere about managing your villa or apartment in Mauritius — rentals, maintenance, client care and concierge under one roof.",
+    "Talk to Bellavere about managing your villa or apartment in Mauritius — rentals, maintenance, client care and concierge under one roof.",
 };
 
 const SOCIAL_LINKS = [
   {
-    label: "BellaVere on Instagram",
+    label: "Bellavere on Instagram",
     href: company.social.instagram,
     Icon: InstagramIcon,
   },
   {
-    label: "BellaVere on Facebook",
+    label: "Bellavere on Facebook",
     href: company.social.facebook,
     Icon: FacebookIcon,
   },
   {
-    label: "BellaVere on LinkedIn",
+    label: "Bellavere on LinkedIn",
     href: company.social.linkedin,
     Icon: LinkedInIcon,
   },
@@ -40,7 +40,7 @@ const SOCIAL_LINKS = [
 
 function DetailIcon({ children }: { children: React.ReactNode }) {
   return (
-    <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-sand-100 text-gold-600">
+    <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-sand-100 text-gold-700">
       {children}
     </span>
   );
@@ -94,7 +94,7 @@ export default function ContactPage() {
                   <p className="text-sm font-medium text-navy-900">Call us</p>
                   <a
                     href={`tel:${company.phone.replace(/\s/g, "")}`}
-                    className="mt-1 inline-block text-sm text-ink-500 transition-colors duration-150 hover:text-gold-600"
+                    className="mt-1 inline-block text-sm text-ink-500 transition-colors duration-150 hover:text-gold-700"
                   >
                     {company.phone}
                   </a>
@@ -109,7 +109,7 @@ export default function ContactPage() {
                   <p className="text-sm font-medium text-navy-900">Write to us</p>
                   <a
                     href={`mailto:${company.email}`}
-                    className="mt-1 inline-block text-sm text-ink-500 transition-colors duration-150 hover:text-gold-600"
+                    className="mt-1 inline-block text-sm text-ink-500 transition-colors duration-150 hover:text-gold-700"
                   >
                     {company.email}
                   </a>
@@ -134,7 +134,7 @@ export default function ContactPage() {
                     target="_blank"
                     rel="noreferrer"
                     aria-label={label}
-                    className="flex size-10 items-center justify-center rounded-full border border-sand-300 text-navy-900 transition-colors duration-150 hover:border-gold-500 hover:text-gold-600"
+                    className="flex size-10 items-center justify-center rounded-full border border-sand-300 text-navy-900 transition-colors duration-150 hover:border-gold-500 hover:text-gold-700"
                   >
                     <Icon className="size-4" />
                   </a>

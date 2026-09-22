@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
 import { requireClient } from "@/lib/auth";
 import { activityForClient } from "@/lib/metrics";
+import { getCurrency } from "@/lib/currency";
+import { formatMoney } from "@/lib/format";
 import { Sidebar } from "@/components/dashboard/shell/Sidebar";
 import { Topbar } from "@/components/dashboard/shell/Topbar";
 import { MobileNav } from "@/components/dashboard/shell/MobileNav";
 
 export const metadata: Metadata = {
-  title: "Owner dashboard — BellaVere",
+  title: "Owner dashboard — Bellavere",
   description:
-    "Your BellaVere owner portal: revenue, occupancy, bookings and property care in one place.",
+    "Your Bellavere owner portal: revenue, occupancy, bookings and property care in one place.",
 };
 
 /**
@@ -22,7 +24,10 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }) {
   const client = await requireClient();
-  const recentActivity = activityForClient(client.id, 3);
+  const currency = await getCurrency();
+  const recentActivity = activityForClient(client.id, 3, (eur) =>
+    formatMoney(eur, currency)
+  );
 
   return (
     <div className="min-h-svh bg-sand-50">

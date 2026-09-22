@@ -61,11 +61,11 @@ export function Field({
         className="block text-sm font-medium text-navy-900"
       >
         {label}
-        {required ? <span className="text-gold-600"> *</span> : null}
+        {required ? <span className="text-gold-700"> *</span> : null}
       </label>
       {children}
       {error ? (
-        <p role="alert" className="text-xs text-danger">
+        <p role="alert" className="text-xs text-danger-700">
           {error}
         </p>
       ) : null}

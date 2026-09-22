@@ -1,20 +1,22 @@
-# BellaVere website — handoff brief
+# Bellavere website — handoff brief
 
-Paste this whole file into a new chat to bring it fully up to speed. It describes what exists, how it is put together, the conventions to keep, and exactly what remains before the site can go live.
+Paste this whole file into a new chat to bring it fully up to speed. It covers what exists, how it fits together, the conventions to keep, and exactly what remains before the site can go live. **Last updated: 22 September 2026.**
 
 ---
 
 ## 1. What this is
 
-A polished **demo website for BellaVere**, a villa and apartment management company operating on the north and west coasts of Mauritius. Two halves:
+A polished **demo website for Bellavere** (trading as **Bellavere Property Care**), a property management and **syndic** company on the north and west coasts of Mauritius. It has two halves:
 
-- **Marketing site** — home, services, properties portfolio + per-property detail pages, about, contact, login, 404.
-- **Owner dashboard** (`/dashboard/*`, auth-protected) — every owner logs in and sees **only** their own properties: occupancy, bookings, revenue, maintenance, statements, documents, settings.
+- **Marketing site:** home, services (five, including syndic & residence management), properties portfolio + per-property detail pages, about, contact, privacy, terms, login, 404.
+- **Owner dashboard** (`/dashboard/*`, auth-protected): each owner logs in and sees **only** their own properties (occupancy, bookings, revenue, maintenance, statements, documents, settings).
 
-It is a **demo**: no backend, no database. All data is mock data in `data/*.ts`; auth is a mock cookie layer. It is feature-complete and visually finished, but **not safe to put in front of real owners yet** — see §11.
+Every price and figure displays in **EUR or MUR**, at the visitor's choice (§4e).
 
-**Location:** `C:\Users\user\bellavere` (its own git repo, 4 commits).
-*Note: the original session had been started inside `C:\Users\user\QS ESTIMATOR\.git` — the internals of an unrelated repo — so the project was deliberately created in a clean folder instead. It has no relationship to the QS ESTIMATOR project.*
+It is still a **demo**: there's no backend or database, all data is mock data in `data/*.ts`, and auth is a mock cookie layer. It is feature-complete and visually finished, but **not safe to put in front of real owners yet** (see §11).
+
+**Location:** `C:\Users\user\bellavere` (its own git repo).
+*Note: the original session had been started inside `C:\Users\user\QS ESTIMATOR\.git`, the internals of an unrelated repo, so the project was deliberately created in a clean folder. It has no relationship to QS ESTIMATOR.*
 
 **Run it:**
 
@@ -28,85 +30,88 @@ Node 20+ required (built and tested on Node 24).
 
 **Demo logins** (all password `demo1234`, listed on the login page with one-click fill):
 
-| Email | Owner | Portfolio |
-|---|---|---|
-| `sophie@demo.bellavere.com` | Sophie Laurent | 2 villas + 1 apartment |
-| `ravi@demo.bellavere.com` | Ravi Naidoo | 1 villa |
-| `hamilton@demo.bellavere.com` | Hamilton Estates Ltd | 5 apartments |
+| Email | Owner | Portfolio | Paid in |
+|---|---|---|---|
+| `sophie@demo.bellavere.com` | Sophie Laurent | 2 villas + 1 apartment | EUR |
+| `ravi@demo.bellavere.com` | Ravi Naidoo | 1 villa | MUR |
+| `hamilton@demo.bellavere.com` | Hamilton Estates Ltd | 5 apartments | EUR |
+
+### Confirmed company facts (from the client, 22 Sep 2026)
+
+- **Name:** Bellavere (lowercase v; the original brief's "BellaVere" was retired). Trading name "Bellavere Property Care".
+- **Team:** **Krit Goburdhan**, General Manager & Site Supervisor, and **Ankit Zoodookhorun**, Client Relations. Surnames were inferred from their email addresses. Their personal emails are stored in `data/company.ts` but deliberately **not published**.
+- **Company email:** BellavereLtd@gmail.com
+- **Mission:** "Our mission is to provide the best service while maintaining full transparency. No hidden fees — and there will always be a human to answer you."
+- **Currency:** MUR and EUR, user-selectable.
+- **Services:** also informed by the client's own syndic prospect list: syndic, common-area management, preventive maintenance, contractor coordination, inspections, pool/landscaping supervision, owner reporting, renovation follow-up. That list's third-party contact details are **not** used anywhere on the site.
 
 ---
 
-## 2. Stack (fixed by the original brief — do not substitute)
+## 2. Stack (fixed by the original brief; do not substitute)
 
 - **Next.js 15.5.24** (App Router) · **React 19.1** · **TypeScript 5** (strict)
-- **Tailwind CSS v4** (CSS-first config — tokens live in `app/globals.css` via `@theme inline`, there is **no `tailwind.config.js`**)
+- **Tailwind CSS v4** (CSS-first config: the tokens live in `app/globals.css` via `@theme inline`; there is **no `tailwind.config.js`**)
 - **Framer Motion 13** · **Recharts 3** · **lucide-react 1.x** · `next/font` (no external font links)
 - Dev-only: **Playwright** + **Lighthouse** for the automated review script
-- Images: `next/image`, Unsplash remote pattern whitelisted in `next.config.ts`
+- Images: `next/image`, with the Unsplash remote pattern whitelisted in `next.config.ts`
 
-⚠️ **lucide-react v1 removed all brand icons.** Instagram/Facebook/LinkedIn are hand-rolled inline SVGs in `components/site/SocialIcons.tsx`. If you need an icon, verify it exists first: `node -e "console.log('IconName' in require('lucide-react'))"`.
+⚠️ **lucide-react v1 removed all brand icons.** The Instagram, Facebook and LinkedIn icons are hand-rolled SVGs in `components/site/SocialIcons.tsx`. Check an icon exists before using it: `node -e "console.log('IconName' in require('lucide-react'))"`.
+
+⚠️ **`next/font/google` downloads the fonts at build time.** A network blip fails the build with a Turbopack "next/font/google import map" error; just rebuild.
 
 ---
 
 ## 3. How it was built (provenance)
 
-1. **Phase 0 — foundation, built first and carefully.** Scaffold, design tokens, fonts, motion primitives, the shared UI kit, mock data, the metrics engine, mock auth, middleware, header/footer. Everything else depends on this.
-2. **Phase 1 — five parallel agents**, each given the same written foundation brief so nothing was forked or duplicated: (A) Home+About, (B) Services+Properties, (C) Contact+Login+404+loading, (D) Dashboard shell+Overview+Properties, (E) Bookings+Maintenance+Statements+Documents+Settings. They shared only `components/ui`, `lib` and `data`.
-3. **Phase 2/3 — integration + automated review.** A Playwright script opens every route logged out and as each demo account, screenshots desktop (1440) and mobile (390), and checks console errors, auth redirects, data isolation, alt text and content. One real bug was found and fixed (§8).
+1. **Phase 0 — foundation:** design tokens, fonts, motion primitives, the shared UI kit, mock data, the metrics engine, mock auth, middleware, header and footer.
+2. **Phase 1 — five parallel agents,** each given the same written foundation brief: (A) Home+About, (B) Services+Properties, (C) Contact+Login+404, (D) Dashboard shell+Overview+Properties, (E) Bookings+Maintenance+Statements+Documents+Settings.
+3. **Phase 2/3 — automated review:** a Playwright script (`scripts/review.mjs`) and Lighthouse. It found and fixed the streaming-404 isolation bug (§8).
+4. **Round 2 (22 Sep 2026):** real company facts, the Bellavere spelling, the syndic service, the MUR/EUR switch, SEO (sitemap, robots, OG image, JSON-LD), privacy and terms pages, form spam protection, a newsletter endpoint, a photo/alt-text audit, and AA contrast fixes. See REVIEW.md "Round 2" and ASSUMPTIONS.md "Update — 22 September 2026".
 
 ---
 
-## 4. The four load-bearing ideas
-
-Understand these and the codebase makes sense.
+## 4. The five load-bearing ideas
 
 ### a. Design tokens — "luxury coastal"
 
-Defined once in `app/globals.css` as CSS variables and exposed to Tailwind through `@theme inline`. **Components must never use ad-hoc hex values.**
+These are defined once in `app/globals.css` and exposed to Tailwind. **Components must never use ad-hoc hex values.**
 
 | Token | Hex | Use |
 |---|---|---|
-| `navy-900` | `#0B1F33` | headings, dark sections, dashboard sidebar |
-| `navy-700` | `#163A5C` | secondary dark / hover |
-| `sand-50` | `#FAF7F2` | page background |
-| `sand-100` | `#F1EBE1` | cards, alternating sections |
-| `sand-300` | `#D9CDB8` | borders, dividers |
-| `gold-500` | `#C9A45C` | accent: buttons, links, active nav |
-| `gold-600` | `#B08D45` | accent hover |
-| `sea-500` | `#3C8DAD` | chart secondary, info badges |
-| `ink-900` / `ink-500` | `#1C1C1C` / `#6B6B6B` | body / muted text |
+| `navy-900` / `navy-700` | `#0B1F33` / `#163A5C` | headings, dark sections, sidebar / hover |
+| `sand-50` / `sand-100` / `sand-300` | `#FAF7F2` / `#F1EBE1` / `#D9CDB8` | page bg / cards & alt sections / borders |
+| `gold-500` / `gold-600` | `#C9A45C` / `#B08D45` | accent: buttons, fills, active nav / hover |
+| **`gold-700`** | `#7D6128` | **small gold text and icons** (eyebrows, badges) |
+| `sea-500` / **`sea-700`** | `#3C8DAD` / `#2C6F8A` | charts, fills / **info text** |
+| `ink-900` / `ink-500` | `#1C1C1C` / **`#666666`** | body / muted text |
+| `success` `warning` `danger` | `#3E8E5B` `#D9902A` `#C8443B` | tints and fills |
+| **`success-700` `warning-700` `danger-700`** | `#2F6E46` `#8F5A12` `#A8352D` | **semantic text** |
 
-Semantic: `success #3E8E5B`, `warning #D9902A`, `danger #C8443B`.
+**Rule:** small text and icons use the `-700` tones. The brief's gold-600, sea-500 and semantic colours fall below WCAG AA (2.4–4.2:1) on light surfaces, and `ink-500` was nudged from `#6B6B6B` to `#666666` for the same reason. On navy backgrounds, use `gold-500` and white with opacity (at least `/60`).
 
-Type: headings **Cormorant Garamond** (500/600), body **Inter**. `h1`–`h4` are styled globally, so a plain `<h2>` is already correct. `.eyebrow` = small uppercase gold label, `0.12em` tracking.
-
-Shape/rhythm: sections `py-24 lg:py-32`, content width 1200px via `<Container>`, cards `rounded-2xl` + 1px `sand-300` border, buttons pill-shaped, **shadows only on hover**. The feel is editorial hospitality, not SaaS.
+Type: headings **Cormorant Garamond**, body **Inter**. `h1`–`h4` are styled globally. `.eyebrow` is the small uppercase gold-700 label (`.eyebrow-light` for navy backgrounds). Sections use `py-24 lg:py-32` and `<Container>` (1200px). Cards are `rounded-2xl` with a 1px sand-300 border, and shadows appear only on hover.
 
 ### b. The metrics engine — one source of truth for every number
 
-`lib/metrics.ts` derives **everything** from the same generated bookings, so KPI tiles, charts and statements can never disagree:
-
-- Monthly revenue = bookings **pro-rated by nights actually stayed in that month**.
-- Statement gross comes from that same series; fee = 18% of gross; expenses = resolved maintenance ticket costs + recurring upkeep (villa €220/mo, apartment €90/mo); net = gross − fee − expenses.
-- Occupancy = booked nights ÷ days in month.
-
-Key exports: `kpisForClient`, `monthlyRevenueForClient` / `...ForProperty`, `occupancyForPropertyMonth` / `...ForClientMonth`, `propertyStatusToday`, `upcomingBookings`, `statementsForClient`, `propertySummariesForClient`, `activityForClient`, `documentsExpiringSoon`, `ticketsByStatus`, `lastMonths`.
-
-**Never hard-code a number in a component.** Pull it from here.
+`lib/metrics.ts` derives **everything** from the same generated bookings, so KPIs, charts and statements never disagree. Monthly revenue is bookings pro-rated by the nights stayed in each month; fee = 18% of gross; expenses = resolved ticket costs + recurring upkeep; net = gross − fee − expenses. `activityForClient(id, limit, formatAmount)` takes a money formatter so its sentences follow the visitor's currency. **Never hard-code a number in a component.**
 
 ### c. Mock auth + data isolation
 
-- `lib/auth.ts` (server-only): `getSessionClient()`, `requireClient()` (redirects to `/login`), `verifyCredentials()`, `SESSION_COOKIE = "bv_session"`.
-- `POST /api/auth/login` sets an httpOnly cookie; `POST /api/auth/logout` clears it (a plain form POST, 303 redirect).
-- `middleware.ts` redirects unauthenticated `/dashboard/*` → `/login?from=…` and authenticated `/login` → `/dashboard`.
-- **Rule:** every dashboard server page starts with `const client = await requireClient()` and filters all data by `client.id`. Detail pages `notFound()` on anything not owned by that client.
+`lib/auth.ts`: `getSessionClient()`, `requireClient()`. `POST /api/auth/login` sets an httpOnly `bv_session` cookie. `middleware.ts` guards `/dashboard/*` and enforces property ownership (§8). **Rule:** every dashboard server page starts with `const client = await requireClient()` and filters everything by `client.id`.
 
 ### d. Motion primitives
 
-- `app/(site)/template.tsx` and `app/dashboard/template.tsx` → `PageTransition` (fade + rise 12px, 0.45s easeOut on every route change).
-- `<Reveal>` / `<RevealStagger>` + `<RevealItem>` — scroll reveals, 0.6s, once, 0.08s stagger. Applied to every section, grid and stat.
-- `<CountUp>` — stats count up on reveal.
-- `prefers-reduced-motion` is honoured three ways: a global CSS kill-switch in `globals.css`, `MotionConfig reducedMotion="user"` in `components/motion/MotionProvider.tsx`, and per-component guards (Ken Burns, count-ups, carousel auto-advance).
+`template.tsx` → `PageTransition` (fade + rise 12px, 0.45s). `<Reveal>` / `<RevealStagger>` / `<RevealItem>` handle scroll reveals, and `<CountUp>` counts up stats. `prefers-reduced-motion` is honoured globally, through `MotionConfig`, and per component.
+
+### e. Currency — stored in EUR, shown in EUR or MUR
+
+- **Every amount in `data/` is EUR.** Display goes through `lib/format.ts`: `formatMoney(eur, currency)`, `formatMoneyPrecise`, `formatMoneyCompact` ("Rs 624k"), and `EUR_TO_MUR = 52` (TODO; deliberately a **whole number** so converted statements still add up to the rupee).
+- The choice lives in the **`bv_currency` cookie**. `app/layout.tsx` reads it with `getCurrency()` (`lib/currency.ts`) and passes it to `<CurrencyProvider>`, so the **first paint is already in the right currency**. Side effect: every route renders per request (not static). It is measured and negligible.
+- **Client components** use `useMoney()` → `{ currency, format, formatPrecise, formatCompact, convert, symbol, setCurrency }`. **Server components** render `<Money eur={x} />` (a client leaf), or call `formatMoney(x, await getCurrency())` when they need a string.
+- `setCurrency` updates the context, writes the cookie and calls `router.refresh()`, so client components update instantly and server components re-render.
+- The UI switch is `<CurrencyToggle>` (header on desktop and mobile, dashboard top bar, Settings → Display currency). `<ConversionNote>` shows "converted at €1 = Rs 52" whenever rupees are displayed.
+- A **payout currency** per owner (`Client.payoutCurrency`) is separate from the display currency.
+- **Never write a currency symbol by hand.**
 
 ---
 
@@ -114,74 +119,65 @@ Key exports: `kpisForClient`, `monthlyRevenueForClient` / `...ForProperty`, `occ
 
 ```
 app/
-  layout.tsx                 root: fonts, metadata, MotionProvider
+  layout.tsx                 root: fonts, metadata, MotionProvider, CurrencyProvider (reads bv_currency)
   globals.css                ALL design tokens + keyframes  <- edit tokens here only
-  not-found.tsx              branded 404 (standalone, no site chrome)
-  icon.svg                   favicon
-  (site)/                    marketing pages — Header + Footer + page transition
-    layout.tsx  template.tsx  loading.tsx
-    page.tsx                 HOME
-    about/  services/  contact/
+  sitemap.ts robots.ts opengraph-image.tsx   SEO
+  not-found.tsx  icon.svg
+  (site)/                    marketing: Header + Footer + JsonLd + page transition
+    page.tsx  about/  services/  contact/  privacy/  terms/
     properties/page.tsx      portfolio grid + animated filters
-    properties/[slug]/       detail (generateStaticParams over all 12 slugs)
-  (auth)/login/page.tsx      standalone full-screen login (no site chrome)
-  dashboard/                 protected owner portal
-    layout.tsx               shell: navy sidebar / topbar / mobile bottom nav
-    template.tsx  loading.tsx  not-found.tsx
-    page.tsx                 OVERVIEW (KPIs, charts, next 7 days, activity)
-    properties/  properties/[id]/  bookings/  maintenance/
+    properties/[slug]/       detail pages
+  (auth)/login/page.tsx      standalone login
+  dashboard/                 protected owner portal (layout, template, loading, not-found)
+    page.tsx  properties/  properties/[id]/  bookings/  maintenance/
     statements/  documents/  settings/
   api/
-    auth/login/route.ts  auth/logout/route.ts
-    contact/route.ts         logs + returns 200; documents where to add Resend
+    auth/login  auth/logout
+    contact/route.ts         validate + honeypot + rate limit + consent log (Resend TODO)
+    newsletter/route.ts      same pattern (Resend Audiences / Mailchimp TODO)
 
 components/
   ui/        Container Button Badge Card SectionHeading Reveal CountUp
              Input(+Field/Select/Textarea/Checkbox) Toggle Modal Tabs Skeleton
-  site/      Header Footer Logo SocialIcons MauritiusMap
+  currency/  CurrencyProvider(useMoney) Money(MoneyCountUp, ConversionNote) CurrencyToggle
+  site/      Header Footer Logo SocialIcons MauritiusMap JsonLd NewsletterForm
   motion/    MotionProvider PageTransition
-  home/  about/  services/  properties/  contact/  auth/
-  dashboard/ PageHeader ActivityIcon
-             shell/ overview/ properties/ bookings/ maintenance/
-             statements/ documents/ settings/
+  home/ about/ services/ properties/ contact/ auth/
+  dashboard/ PageHeader ActivityIcon shell/ overview/ properties/ bookings/
+             maintenance/ statements/ documents/ settings/(incl. DisplayCurrencySettings)
 
-data/        company clients properties bookings maintenance
-             documents testimonials siteImages
-lib/         types auth metrics format dates rng utils img constants
+data/        company clients properties bookings maintenance documents testimonials siteImages
+lib/         types auth currency format metrics dates rng rateLimit utils img constants
 middleware.ts              route protection + property-ownership 404
-scripts/review.mjs         Playwright review + screenshot harness
-screenshots/               32 PNGs: desktop + mobile of every route
-README.md  ASSUMPTIONS.md  REVIEW.md
+scripts/review.mjs         Playwright review: routes, isolation, currency switch, screenshots
+screenshots/               37 PNGs
+README.md  ASSUMPTIONS.md  REVIEW.md  HANDOFF.md
 ```
-
-**60 components · 15 routes · 3 API routes.**
 
 ---
 
 ## 6. Data model
 
-Types in `lib/types.ts`. All dates are ISO `yyyy-mm-dd` strings.
+The types are in `lib/types.ts`, and dates are ISO `yyyy-mm-dd` strings.
 
-- **Client** — id, name, shortName, email, password (plain, demo only), initials, phone, payoutAccount.
-- **Property** — id, slug, name, type (`villa|apartment`), location, bedrooms/bathrooms/sleeps, nightlyRate (EUR), `clientId` (**null = portfolio-only demo listing**), managedSince, featured, images[{src,alt}], amenities[], headline, description. **12 total; p-01…p-09 owned by demo clients, p-10…p-12 unowned.**
-- **Booking** — propertyId, clientId, guest, checkIn/checkOut, nights, amount, channel (`Direct|Airbnb|Booking.com`), status (`completed|checked_in|confirmed|cancelled`).
-- **MaintenanceTicket** — status (`reported|in_progress|resolved`), priority, category, contractor, cost.
-- **OwnerDocument** — category (`contract|insurance|compliance|other`), issuedAt, expiresAt (nullable), fileSizeKb.
-- **Statement** — derived, never stored: period, gross, fee, expenses, net.
+- **Client**: id, name, email, password (plain, demo only), payoutAccount, **payoutCurrency**.
+- **Property**: 12 in total (p-01…p-09 owned by the demo clients; p-10…p-12 unowned portfolio fillers). nightlyRate is in EUR.
+- **Booking / MaintenanceTicket / OwnerDocument**: statuses, costs and expiry dates as before.
+- **Statement**: derived, never stored.
 
-**Bookings are generated, not hand-written.** `data/bookings.ts` walks each managed property from ~13 months back to ~2.5 months forward using a seeded PRNG (`lib/rng.ts`), so stays never overlap per property, occupancy lands in a realistic band, and pricing follows Mauritian seasonality (peaks Nov–Jan, secondary European-summer bump). `TODAY` in `lib/dates.ts` is frozen to midnight so server and client render identically (no hydration mismatch) — the data rolls forward day by day, which is intentional.
+Bookings are **generated** by a seeded PRNG (`data/bookings.ts`) relative to `TODAY` (frozen at midnight), so the data rolls forward daily with no hydration mismatches.
 
 ---
 
-## 7. Verified quality bar
+## 7. Verified quality bar (22 Sep 2026)
 
-- `npm run build` — **0 TypeScript errors, 0 lint errors**; 12 property pages pre-rendered.
-- Automated review — **0 errors, 0 warnings** across every route × all 3 accounts.
-- **Lighthouse desktop on `/`: Performance 100 · Accessibility 96 · Best Practices 100.**
-- Isolation verified: each account sees only its own properties; foreign/unknown property URLs return a **genuine HTTP 404**.
-- Every `<img>` has `alt`; no lorem ipsum; no horizontal scroll at 390px or 1440px.
+- `npm run build`: **0 TypeScript errors, 0 lint errors.**
+- `node scripts/review.mjs`: **0 errors, 0 warnings.** It covers every route × 3 accounts, isolation 404s, logout, and the currency switch (click MUR → rupees; the choice persists across pages and into the dashboard).
+- **Lighthouse desktop:** every public page scores **99–100** in performance, accessibility, best practices and SEO. The dashboard scores 96–100 on accessibility. Login and dashboard SEO is 63–66 **by design**, because robots.txt blocks them.
+- Statements in MUR reconcile exactly: Rs 847,704 − 152,568 − 31,980 = Rs 663,156.
+- **Every photo has been visually checked against its alt text** (52 alts rewritten in round 2).
 
-**Re-run the review** (needs a running production build):
+**Re-run:**
 
 ```bash
 npm run build
@@ -189,122 +185,95 @@ npx next start -p 3010
 node scripts/review.mjs http://localhost:3010
 ```
 
-Lighthouse note: `chrome-launcher` could not spawn Chrome in this environment. Workaround — launch Playwright's Chromium with `--headless=new --remote-debugging-port=9222`, then run `npx lighthouse http://localhost:3010/ --port=9222 --preset=desktop`.
+Lighthouse: `chrome-launcher` can't spawn Chrome in this environment. Launch Playwright's Chromium with `--headless=new --remote-debugging-port=9222`, then run `npx lighthouse <url> --port=9222 --preset=desktop`. For dashboard pages, add `--extra-headers='{"Cookie":"bv_session=c-sophie"}'`.
 
 ---
 
-## 8. ⚠️ The one non-obvious gotcha (already fixed — do not regress it)
+## 8. ⚠️ Non-obvious gotchas (fixed; do not regress)
 
-**Symptom:** requesting another owner's property (`/dashboard/properties/p-04` as Sophie) returned **HTTP 200** even though it correctly rendered the not-found UI and leaked no data.
-
-**Cause:** the dashboard has a `loading.tsx`, so the route **streams**. Once streaming begins, Next.js 15 cannot change the HTTP status — an in-page `notFound()` (and even one inside `generateMetadata`, since Next 15 streams metadata too) only swaps the UI, leaving a 200.
-
-**Fix:** ownership of `/dashboard/properties/[id]` is enforced in **`middleware.ts`**, before rendering starts — a foreign or unknown id is rewritten to an unmatched route, producing the branded 404 page with a real 404 status. The page keeps its own `notFound()` check as defence in depth.
-
-**If you add more streamed detail routes that must 404 (bookings, documents, statements), replicate this middleware pattern.** A page-level `notFound()` alone is not enough.
+1. **Streaming kills 404 status codes.** The dashboard has `loading.tsx`, so it streams, and once streaming starts Next.js 15 can't change the HTTP status. An in-page `notFound()` only swaps the UI (you get a 200). Property ownership is therefore enforced in **`middleware.ts`**, which rewrites foreign or unknown ids to a genuine 404. **Any new streamed detail route that must 404 needs the same middleware pattern.**
+2. **Streaming also moves `<meta>` into `<body>`.** Because pages are dynamic, Next.js 15 streams metadata after `</head>` for browsers and even Googlebot. `htmlLimitedBots: /.*/` in `next.config.ts` keeps it in `<head>`. **Don't remove it**, or link previews and SEO degrade.
+3. **`Card` hard-codes `bg-white`.** Classes are joined with `cn()` (no tailwind-merge), so passing `bg-navy-900` does NOT override it; the white wins. For dark cards, use a plain element (see the syndic card in `components/home/ServicesOverview.tsx`).
+4. **Rupee formatting uses a non-breaking space** ("Rs\u00a024,960"). Tests and greps must match `\u00a0`, not a normal space.
 
 ---
 
 ## 9. Conventions to keep
 
-- Server components by default; `"use client"` only where interaction demands it. Server pages fetch data and pass **plain serializable props** down.
-- Next 15: `params` and `searchParams` are **Promises** — always `await` them.
-- Reuse `components/ui/*` — never fork a copy. New genuinely-generic primitives go there.
-- No ad-hoc hex; no `any`; no unused imports (lint is part of the build).
-- Every image needs meaningful `alt`; icon-only buttons need `aria-label`; decorative icons get `aria-hidden`.
-- Focus states come free from `globals.css` (gold outline) — don't suppress them.
-- Currency always via `lib/format.ts` helpers; dates via `formatDate` and friends.
-- Any invented company fact gets a `{/* TODO: confirm with client */}` marker.
+- Server components by default; `"use client"` only where needed. `params` and `searchParams` are Promises in Next 15, so await them.
+- Reuse `components/ui/*` and never fork it. Money goes through the currency helpers (§4e). Small text uses the `-700` tokens (§4a).
+- No ad-hoc hex; no `any`; lint is part of the build.
+- **Every image's alt text must describe what the photo actually shows.** Look at the image; a URL returning 200 proves nothing about its content.
+- No gendered pronouns for the team; use names or roles.
+- Invented company facts get `{/* TODO: confirm with client */}`. **Don't publish track-record claims** (property counts, years, ratings, testimonials) until they are real.
 
 ---
 
 ## 10. Deliberate limitations of the demo
 
-- Maintenance "Report an issue" adds to local state only (stated in the UI); resets on refresh.
-- Settings forms are mock — they flash "Saved — demo only".
-- Statement "Download PDF" opens a branded print-ready window and calls `window.print()` (no PDF library).
-- Document "Download" buttons are decorative — no files exist behind them.
-- Topbar date-range selector is decorative; the Overview revenue chart has its own working 3M/6M/12M toggle.
-- Newsletter input in the footer is not wired.
-- The Mauritius coverage map is a stylised SVG placeholder, not a real map.
-- Property images are Unsplash stock.
+- The maintenance "Report an issue" button and the settings forms only change local state; nothing is saved.
+- Contact and newsletter endpoints validate, rate-limit and **log**, but send no email yet.
+- Rate limiting is in-memory, so it is per server instance.
+- Statement "Download PDF" opens a print window, and the document downloads are decorative.
+- Imagery is Unsplash stock; the 12 listings are fictional ("Demo listings" disclaimer, and "Managed since 2018–2024" years that imply history).
+- Testimonials are invented. The map is a stylised SVG.
 
 ---
 
-# 11. WHAT'S MISSING TO GO LIVE
+# 11. WHAT'S LEFT TO GO LIVE
 
-Ordered by what blocks what. Items marked 🔴 are hard blockers before any real owner data touches this.
+✅ = done in round 2. 🔴 = hard blocker before real owner data.
 
-## 🔴 A. Replace the mock auth (the single biggest blocker)
+## 🔴 A. Replace the mock auth (biggest blocker)
 
-The current session cookie stores the **client id in plain text** — anyone can set `bv_session=c-hamilton` in devtools and open that portfolio. Passwords are plain text in `data/clients.ts`. Fine for a demo; unacceptable for real data.
+The cookie stores the **client id in plain text**, so anyone can set `bv_session=c-hamilton` in their browser and see that portfolio. Passwords are plain text too.
+**Do:** Supabase Auth (or Auth.js / Clerk). Swap only the internals of `lib/auth.ts`, `app/api/auth/*` and the cookie check in `middleware.ts`; the dashboard pages don't change. Add password reset and session expiry. Roughly one day.
 
-**Do:** adopt Supabase Auth (or Auth.js / Clerk). Keep the existing contract — `requireClient()` returns a client, pages filter by `client.id` — and replace only the internals of `lib/auth.ts`, `app/api/auth/*`, and the cookie check in `middleware.ts`. **None of the ~15 dashboard pages need to change.** Add password reset, email verification, and session expiry. Roughly one day of work.
+## 🔴 B. Real database + staff admin
 
-## 🔴 B. Real database behind the dashboard
+Recreate `data/*.ts` + `lib/metrics.ts` as Supabase tables and queries, keeping the maths identical, with **row-level security on `client_id`**. Decide the booking source: manual entry, or a channel-manager sync (Beds24 / Smoobu / Hostaway; usually the largest single job). Build a **staff admin side**, since today owners can only read. Syndic clients (residences) will likely need a co-owner / common-area data model that the current owner-centric model doesn't cover.
 
-`data/*.ts` + `lib/metrics.ts` are the entire data surface, which keeps this contained.
+## 🟡 C. Content — 32 `TODO: confirm with client` markers
 
-**Do:** create tables `clients, properties, bookings, maintenance_tickets, documents, statements`; reimplement the `lib/metrics.ts` function signatures as queries (keep the pro-rating and fee/expense maths identical so figures still reconcile); enable **row-level security on `client_id`** so isolation is enforced by the database, not only by application code. Then decide where bookings come from:
-
-- manual entry by BellaVere staff, **or**
-- a channel-manager sync (Airbnb / Booking.com via Beds24, Smoobu or Hostaway) — **usually the largest single piece of work in the project**; scope it early.
-
-Also needed: an **admin/staff side**. Owners can only read today; someone has to create bookings, update ticket status, upload documents and publish statements.
-
-## 🟡 C. Real content (35 `TODO: confirm with client` markers)
-
-Most resolve by editing **one file — `data/company.ts`**: tagline, market, founded, team + bios, phone, email, address, office hours, socials, mission, pricing %, trust-bar stats.
-
-Remaining markers: `app/(site)/services/page.tsx` (3 — response times, concierge yield claim), `app/(site)/contact/page.tsx` + `components/contact/FaqAccordion.tsx` (4 — payout day, long-let offering, onboarding timeline), `app/(site)/about/page.tsx` (5 — values, founding story, contractor vetting, notice period), `components/home/ServicesOverview.tsx` (2), `app/dashboard/statements/page.tsx`, `components/dashboard/settings/PayoutSettings.tsx`, `components/site/Footer.tsx`, `data/testimonials.ts`, `lib/format.ts`.
-
-Decide early: **EUR vs MUR** (`lib/format.ts`) — it flows through every statement, chart and price on the site.
-
-Also required before launch:
-
-- **Real photography.** Unsplash stock is placeholder-grade for a luxury brand, and commercial marketing use needs licence review. Replace images in `data/properties.ts` and `data/siteImages.ts`.
-- **Real owner testimonials with written permission** (`data/testimonials.ts`).
-- **Real property listings** — the 12 current ones are fictional. Remove the "Demo listings for illustration" disclaimers on `/properties` and the detail pages, and the "Demo website" line in the footer, once real.
+- ✅ Name, team, email, mission, currency and syndic service.
+- ⬜ In `data/company.ts`: tagline, **phone, address, office hours, social links**, **legal name + BRN**, **pricing %** (18% drives the statement maths), surname spelling and bio wording.
+- ⬜ The **EUR→MUR rate** in `lib/format.ts`, or store real dual prices per record.
+- ⬜ Service claims in `app/(site)/services/page.tsx`: response times, concierge "+9%".
+- ⬜ FAQ answers (`components/contact/FaqAccordion.tsx`): payout day, long lets, onboarding time.
+- ⬜ **Real photography, real listings and real testimonials** (with permission). Then remove the "Demo listings" disclaimers and the footer "Demo website" line.
+- ⬜ Whether to publish the team's direct emails (currently hidden).
 
 ## 🟡 D. Wire up the stubs
 
-| Stub | Work |
+| Stub | Status |
 |---|---|
-| `app/api/contact/route.ts` | Add Resend (the file's comment block shows exactly where) + rate limiting + honeypot field; persist enquiries so none are lost if email fails |
-| Footer newsletter | Connect to Mailchimp / Resend audience |
-| Statement PDF | Generate server-side once statements come from the DB |
-| Document downloads | Needs file storage (Supabase Storage / S3) with signed, per-owner URLs |
-| Maintenance tickets, settings forms | Persist to the database; add optimistic UI |
-| Dashboard date-range selector | Either wire it globally or remove it |
-| `components/site/MauritiusMap.tsx` | Swap for an embedded map once the real address exists |
+| Contact form | ✅ Honeypot, rate limit and consent record. ⬜ Send via Resend |
+| Newsletter | ✅ Endpoint + form. ⬜ Resend Audiences / Mailchimp |
+| Rate limiting | ⬜ Move to Upstash Redis on Vercel |
+| Date-range selector | ✅ Removed (replaced by the currency switch) |
+| Statement PDF / document downloads | ⬜ Server-side PDFs; Supabase Storage with signed URLs |
+| Maintenance tickets, settings | ⬜ Persist to the DB |
+| Map | ⬜ Embedded map once the address is confirmed |
 
 ## 🟢 E. Infrastructure & SEO
 
-- Domain + DNS → Vercel project (defaults are correct: `next build`, Node 20+).
-- Set `NEXT_PUBLIC_SITE_URL` (used by `metadataBase`).
-- Replace the Unsplash entry in `next.config.ts` `images.remotePatterns` with the real image host.
-- **Missing and needed:** `app/sitemap.ts`, `app/robots.ts`, OG/Twitter images (`opengraph-image.tsx`), structured data (`LocalBusiness` / `LodgingBusiness` JSON-LD).
-- Analytics (Plausible or GA4), error tracking (Sentry), uptime monitoring.
-- Re-run Lighthouse after swapping in real photography — the 100 score was achieved with the current image set.
+- ✅ `sitemap.ts`, `robots.ts`, OG image, LocalBusiness JSON-LD, metadata kept in `<head>`.
+- ⬜ Domain → Vercel; set `NEXT_PUBLIC_SITE_URL`; replace the Unsplash remote pattern; analytics (**requires adding a cookie-consent banner**), Sentry, uptime; Google Search Console + Business Profile.
 
 ## 🟢 F. Legal & compliance
 
-- Privacy policy, cookie consent banner (GDPR applies to European owners), terms of service.
-- The real management agreement as a downloadable document.
-- A genuine consent trail for contact-form submissions (store timestamp + IP + consent text).
-- Mauritius-specific: tourist accommodation licensing references in the copy should be checked by the client.
+- ✅ `/privacy` (Mauritius DPA 2017 + GDPR) and `/terms` templates; consent checkbox links to the privacy policy.
+- ⬜ **Lawyer review** of both pages; BRN, registered address and retention periods; the real management agreement.
 
-## 🟢 G. Nice-to-have next features
+## 🟢 G. Nice-to-have
 
-Owner date-blocking (the FAQ already promises it), multi-language (French is the obvious second language for Mauritius), guest-facing booking flow, in-dashboard messaging with the account manager, per-property document upload by owners, email notifications matching the settings toggles.
+Owner date-blocking (the FAQ promises it), a French version, in-dashboard messaging with Ankit, owner document upload, email notifications matching the settings toggles, and syndic-specific portal views (common-area tickets, co-owner statements).
 
 ---
 
 ## Suggested sequencing
 
-1. **Now, in parallel:** the client fills in `data/company.ts` and supplies photography (no code dependency) **while** a developer starts auth + database.
-2. **Then:** channel-manager integration, staff admin side, wire the stubs.
-3. **Then:** SEO, analytics, legal pages.
-4. **Launch:** remove all demo disclaimers, re-run `scripts/review.mjs` and Lighthouse, verify isolation with real accounts.
-
-Estimated: roughly 1–2 weeks for a solid backend and auth; longer if channel-manager sync is in scope. Content and photography are the usual long pole — start them today.
+1. **Now, in parallel:** the client supplies the ⬜ facts in C plus photography, **while** a developer builds auth + database (A, B).
+2. **Then:** the staff admin side, channel-manager sync, Resend, and persistence (D).
+3. **Then:** domain, analytics + consent banner, the legal review (E, F).
+4. **Launch:** remove the demo disclaimers and demo accounts, re-run `scripts/review.mjs` + Lighthouse, verify isolation with real accounts.

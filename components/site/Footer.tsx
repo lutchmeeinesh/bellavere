@@ -5,6 +5,7 @@ import {
   LinkedInIcon,
 } from "@/components/site/SocialIcons";
 import { Logo } from "@/components/site/Logo";
+import { NewsletterForm } from "@/components/site/NewsletterForm";
 import { Container } from "@/components/ui/Container";
 import { company } from "@/data/company";
 
@@ -24,6 +25,7 @@ const columns = [
       { href: "/services#maintenance", label: "Maintenance" },
       { href: "/services#client-care", label: "Client care" },
       { href: "/services#concierge", label: "Concierge & services" },
+      { href: "/services#syndic", label: "Syndic & residences" },
     ],
   },
   {
@@ -44,28 +46,28 @@ export function Footer() {
           <div className="max-w-sm">
             <Logo dark />
             <p className="mt-5 text-sm leading-relaxed text-white/60">
-              {company.tagline} Villa and apartment management across the north
-              and west coasts of Mauritius since {company.founded}.
+              {company.tagline} Property management and syndic services across
+              the north and west coasts of Mauritius.
             </p>
             <div className="mt-6 flex gap-3">
               {/* TODO: confirm with client — social links */}
               <a
                 href={company.social.instagram}
-                aria-label="BellaVere on Instagram"
+                aria-label={`${company.name} on Instagram`}
                 className="rounded-full border border-white/15 p-2.5 text-white/70 transition-colors duration-200 hover:border-gold-500 hover:text-gold-500"
               >
                 <InstagramIcon className="size-4" />
               </a>
               <a
                 href={company.social.facebook}
-                aria-label="BellaVere on Facebook"
+                aria-label={`${company.name} on Facebook`}
                 className="rounded-full border border-white/15 p-2.5 text-white/70 transition-colors duration-200 hover:border-gold-500 hover:text-gold-500"
               >
                 <FacebookIcon className="size-4" />
               </a>
               <a
                 href={company.social.linkedin}
-                aria-label="BellaVere on LinkedIn"
+                aria-label={`${company.name} on LinkedIn`}
                 className="rounded-full border border-white/15 p-2.5 text-white/70 transition-colors duration-200 hover:border-gold-500 hover:text-gold-500"
               >
                 <LinkedInIcon className="size-4" />
@@ -99,29 +101,26 @@ export function Footer() {
             <p className="text-sm font-medium text-white">
               A quiet monthly note on coastal property
             </p>
-            {/* Decorative newsletter capture — wire to an email provider later.
-                TODO: confirm with client */}
-            <form className="mt-3 flex max-w-sm gap-2" aria-label="Newsletter signup">
-              <label htmlFor="newsletter-email" className="sr-only">
-                Email address
-              </label>
-              <input
-                id="newsletter-email"
-                type="email"
-                placeholder="you@example.com"
-                className="w-full rounded-full border border-white/15 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-white/40 focus:border-gold-500 focus:outline-none"
-              />
-              <button
-                type="button"
-                className="shrink-0 rounded-full bg-gold-500 px-5 py-2.5 text-sm font-medium text-navy-900 transition-colors duration-200 hover:bg-gold-600 hover:text-white"
-              >
-                Subscribe
-              </button>
-            </form>
+            {/* Posts to /api/newsletter — connect a mailing-list provider there. */}
+            <NewsletterForm />
           </div>
-          <div className="text-xs leading-relaxed text-white/40 lg:text-right">
+          <div className="text-xs leading-relaxed text-white/60 lg:text-right">
             <p>
-              © {new Date().getFullYear()} {company.name}. All rights reserved.
+              © {new Date().getFullYear()} {company.legalName}. All rights reserved.
+            </p>
+            <p className="mt-1 flex gap-4 lg:justify-end">
+              <Link
+                href="/privacy"
+                className="transition-colors duration-200 hover:text-white"
+              >
+                Privacy policy
+              </Link>
+              <Link
+                href="/terms"
+                className="transition-colors duration-200 hover:text-white"
+              >
+                Terms of use
+              </Link>
             </p>
             <p className="mt-1">
               {company.address.line1}, {company.address.line2},{" "}

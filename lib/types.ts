@@ -17,6 +17,8 @@ export interface Client {
   phone: string;
   /** Masked payout account shown in settings. */
   payoutAccount: string;
+  /** Currency the owner is paid in. */
+  payoutCurrency: "EUR" | "MUR";
 }
 
 export interface PropertyImage {
@@ -38,7 +40,7 @@ export interface Property {
   nightlyRate: number;
   /** Owning demo client, or null for portfolio-only demo listings. */
   clientId: string | null;
-  /** Year BellaVere took over management. */
+  /** Year Bellavere took over management. */
   managedSince: number;
   /** Shown in the home page "Featured properties" section. */
   featured?: boolean;

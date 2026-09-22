@@ -14,6 +14,7 @@ export const clients: Client[] = [
     initials: "SL",
     phone: "+33 6 45 12 89 30",
     payoutAccount: "FR76 •••• •••• 4821",
+    payoutCurrency: "EUR",
   },
   {
     id: "c-ravi",
@@ -24,6 +25,7 @@ export const clients: Client[] = [
     initials: "RN",
     phone: "+230 5 912 6674",
     payoutAccount: "MU17 •••• •••• 0093",
+    payoutCurrency: "MUR",
   },
   {
     id: "c-hamilton",
@@ -35,6 +37,7 @@ export const clients: Client[] = [
     initials: "HE",
     phone: "+44 20 7946 0533",
     payoutAccount: "GB29 •••• •••• 7714",
+    payoutCurrency: "EUR",
   },
 ];
 

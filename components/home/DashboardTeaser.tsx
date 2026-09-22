@@ -48,7 +48,7 @@ export function DashboardTeaser() {
                   key={bullet.text}
                   className="flex items-start gap-3.5"
                 >
-                  <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-gold-500/15 text-gold-600">
+                  <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-gold-500/15 text-gold-700">
                     <bullet.icon className="size-4" aria-hidden />
                   </span>
                   <p className="pt-1 text-ink-900">{bullet.text}</p>

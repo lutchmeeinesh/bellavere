@@ -1,4 +1,5 @@
-import { formatCurrency, formatDateWeekday } from "@/lib/format";
+import { formatDateWeekday } from "@/lib/format";
+import { Money } from "@/components/currency/Money";
 
 /**
  * "Next 7 days" arrivals list on the overview. Receives bookings already
@@ -41,7 +42,7 @@ export function UpcomingList({ items }: { items: UpcomingArrival[] }) {
               </div>
               <div className="shrink-0 text-right">
                 <p className="text-sm font-medium text-navy-900">
-                  {formatCurrency(item.amount)}
+                  <Money eur={item.amount} />
                 </p>
                 <p className="mt-0.5 text-xs text-ink-500">
                   {item.nights} {item.nights === 1 ? "night" : "nights"}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/Button";
@@ -20,6 +21,8 @@ type FormValues = {
   propertyCount: string;
   message: string;
   consent: boolean;
+  /** Honeypot — hidden from humans, left empty by real visitors. */
+  company_website: string;
 };
 
 type FieldErrors = Partial<Record<keyof FormValues, string>>;
@@ -32,6 +35,7 @@ const EMPTY_VALUES: FormValues = {
   propertyCount: "",
   message: "",
   consent: false,
+  company_website: "",
 };
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -82,6 +86,13 @@ export function ContactForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
       });
+      if (response.status === 429) {
+        setStatus("idle");
+        setSubmitError(
+          "You’ve sent several messages in a short time. Please wait a few minutes and try again, or email us directly."
+        );
+        return;
+      }
       if (!response.ok) throw new Error(`Request failed (${response.status})`);
       setStatus("success");
     } catch {
@@ -212,6 +223,23 @@ export function ContactForm() {
             />
           </Field>
 
+          {/* Honeypot: off-screen (not display:none) so bots still fill it in. */}
+          <div
+            aria-hidden="true"
+            className="absolute -left-[10000px] top-auto size-px overflow-hidden"
+          >
+            <label htmlFor="contact-company-website">Company website</label>
+            <input
+              id="contact-company-website"
+              name="company_website"
+              type="text"
+              tabIndex={-1}
+              autoComplete="off"
+              value={values.company_website}
+              onChange={(e) => update("company_website", e.target.value)}
+            />
+          </div>
+
           <div className="space-y-1.5">
             <label
               htmlFor="contact-consent"
@@ -226,12 +254,19 @@ export function ContactForm() {
                 className="mt-0.5"
               />
               <span>
-                I agree to be contacted about my enquiry
-                <span className="text-gold-600"> *</span>
+                I agree to be contacted about my enquiry, as described in
+                the{" "}
+                <Link
+                  href="/privacy"
+                  className="text-navy-900 underline decoration-gold-500 underline-offset-2 hover:text-gold-700"
+                >
+                  privacy policy
+                </Link>
+                <span className="text-gold-700"> *</span>
               </span>
             </label>
             {errors.consent ? (
-              <p role="alert" className="text-xs text-danger">
+              <p role="alert" className="text-xs text-danger-700">
                 {errors.consent}
               </p>
             ) : null}
@@ -250,7 +285,7 @@ export function ContactForm() {
           {submitError ? (
             <p
               role="alert"
-              className="rounded-xl bg-danger/10 px-4 py-3 text-sm text-danger"
+              className="rounded-xl bg-danger/10 px-4 py-3 text-sm text-danger-700"
             >
               {submitError}
             </p>

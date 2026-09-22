@@ -9,13 +9,21 @@
   --sand-300: #d9cdb8;
   --gold-500: #c9a45c;
   --gold-600: #b08d45;
+  /* Deeper tones for small text and icons: 4.5:1+ on every light surface */
+  --gold-700: #7d6128;
   --sea-500: #3c8dad;
+  --sea-700: #2c6f8a;
   --ink-900: #1c1c1c;
-  --ink-500: #6b6b6b;
+  /* #666666 rather than #6b6b6b: 4.84:1 on sand-100 (the brief's value is 4.49) */
+  --ink-500: #666666;
   --white: #ffffff;
   --success: #3e8e5b;
   --warning: #d9902a;
   --danger: #c8443b;
+  /* Text-safe semantic tones (4.5:1+ on their own 10% tints and on sand) */
+  --success-700: #2f6e46;
+  --warning-700: #8f5a12;
+  --danger-700: #a8352d;
 }
 
 @theme inline {
@@ -26,12 +34,17 @@
   --color-sand-300: var(--sand-300);
   --color-gold-500: var(--gold-500);
   --color-gold-600: var(--gold-600);
+  --color-gold-700: var(--gold-700);
   --color-sea-500: var(--sea-500);
+  --color-sea-700: var(--sea-700);
   --color-ink-900: var(--ink-900);
   --color-ink-500: var(--ink-500);
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-danger: var(--danger);
+  --color-success-700: var(--success-700);
+  --color-warning-700: var(--warning-700);
+  --color-danger-700: var(--danger-700);
 
   --font-serif: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
   --font-sans: var(--font-inter), "Inter", system-ui, -apple-system, sans-serif;
@@ -103,7 +116,7 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: var(--tracking-label);
-    color: var(--gold-600);
+    color: var(--gold-700);
   }
 
   .eyebrow-light {

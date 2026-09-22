@@ -15,7 +15,7 @@ type FaqItem = {
 const FAQ_ITEMS: FaqItem[] = [
   {
     id: "fees",
-    question: "What does BellaVere charge?",
+    question: "What does Bellavere charge?",
     answer: company.pricing.detail,
   },
   {
@@ -73,7 +73,7 @@ export function FaqAccordion({ className }: { className?: string }) {
                 <span
                   className={cn(
                     "font-serif text-xl font-semibold transition-colors duration-150",
-                    open ? "text-gold-600" : "text-navy-900"
+                    open ? "text-gold-700" : "text-navy-900"
                   )}
                 >
                   {item.question}
@@ -81,7 +81,7 @@ export function FaqAccordion({ className }: { className?: string }) {
                 <ChevronDown
                   aria-hidden
                   className={cn(
-                    "size-5 shrink-0 text-gold-600 transition-transform duration-200",
+                    "size-5 shrink-0 text-gold-700 transition-transform duration-200",
                     open && "rotate-180"
                   )}
                 />

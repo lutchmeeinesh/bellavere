@@ -153,7 +153,7 @@ export function PasswordSettings() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.25 }}
-                  className="inline-flex items-center gap-1.5 text-sm text-success"
+                  className="inline-flex items-center gap-1.5 text-sm text-success-700"
                 >
                   <CheckCircle2 className="size-4" aria-hidden />
                   Password updated — demo only

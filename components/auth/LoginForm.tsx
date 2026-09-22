@@ -149,7 +149,7 @@ export function LoginForm({ from }: { from?: string }) {
         {error ? (
           <p
             role="alert"
-            className="rounded-xl bg-danger/10 px-4 py-3 text-sm text-danger"
+            className="rounded-xl bg-danger/10 px-4 py-3 text-sm text-danger-700"
           >
             {error}
           </p>
@@ -164,7 +164,7 @@ export function LoginForm({ from }: { from?: string }) {
         <div className="rounded-xl bg-sand-100 p-4">
           <p className="text-xs font-medium text-navy-900">
             Demo accounts — password{" "}
-            <code className="font-mono text-gold-600">{DEMO_PASSWORD}</code>
+            <code className="font-mono text-gold-700">{DEMO_PASSWORD}</code>
           </p>
           <ul className="mt-3 space-y-2.5">
             {DEMO_ACCOUNTS.map((account) => (
@@ -187,7 +187,7 @@ export function LoginForm({ from }: { from?: string }) {
                   onClick={() => fillAndSubmitDemo(account.email)}
                   disabled={submitting}
                   aria-label={`Sign in as ${account.name}`}
-                  className="shrink-0 cursor-pointer rounded-full border border-sand-300 bg-white px-3.5 py-1.5 text-xs font-medium text-navy-900 transition-colors duration-150 hover:border-gold-500 hover:text-gold-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500 disabled:opacity-50"
+                  className="shrink-0 cursor-pointer rounded-full border border-sand-300 bg-white px-3.5 py-1.5 text-xs font-medium text-navy-900 transition-colors duration-150 hover:border-gold-500 hover:text-gold-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500 disabled:opacity-50"
                 >
                   Use
                 </button>

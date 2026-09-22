@@ -3,8 +3,8 @@ import Link from "next/link";
 import { BedDouble, MapPin, Users } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
-import { formatCurrency } from "@/lib/format";
 import type { Property } from "@/lib/types";
+import { Money } from "@/components/currency/Money";
 
 /**
  * Portfolio grid card. The whole card is one link to the property detail
@@ -34,13 +34,13 @@ export function PropertyCard({ property }: { property: Property }) {
               {property.type === "villa" ? "Villa" : "Apartment"}
             </Badge>
             <p className="text-sm font-semibold text-navy-900">
-              {formatCurrency(property.nightlyRate)}
+              <Money eur={property.nightlyRate} />
               <span className="font-normal text-ink-500"> / night</span>
             </p>
           </div>
           <h3 className="mt-3">{property.name}</h3>
           <p className="mt-1.5 flex items-center gap-1.5 text-sm text-ink-500">
-            <MapPin className="size-4 shrink-0 text-gold-600" aria-hidden />
+            <MapPin className="size-4 shrink-0 text-gold-700" aria-hidden />
             {property.location}
           </p>
           <div className="mt-4 flex items-center gap-5 border-t border-sand-300 pt-4 text-sm text-ink-500">

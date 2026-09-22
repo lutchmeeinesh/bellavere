@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
-/** BellaVere wordmark: small gold lozenge + Cormorant wordmark. */
+/** Bellavere wordmark: small gold lozenge + Cormorant wordmark. */
 export function Logo({
   dark = false,
   href = "/",
@@ -19,7 +19,7 @@ export function Logo({
         "inline-flex items-center gap-2.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold-500",
         className
       )}
-      aria-label="BellaVere — home"
+      aria-label="Bellavere — home"
     >
       <svg
         width="18"
@@ -53,7 +53,7 @@ export function Logo({
           dark ? "text-white" : "text-navy-900"
         )}
       >
-        BellaVere
+        Bellavere
       </span>
     </Link>
   );

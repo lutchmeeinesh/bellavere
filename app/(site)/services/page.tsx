@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Clock, Phone, ShieldCheck, Sparkles } from "lucide-react";
+import { Building2, Clock, Phone, ShieldCheck, Sparkles } from "lucide-react";
 import { ComparisonTable } from "@/components/services/ComparisonTable";
 import { ServiceSection } from "@/components/services/ServiceSection";
 import { Button } from "@/components/ui/Button";
@@ -13,7 +13,7 @@ import { siteImages } from "@/data/siteImages";
 export const metadata: Metadata = {
   title: "Services",
   description:
-    "Rental management, maintenance, client care and concierge services for villas and apartments in Mauritius — one team, one all-in fee.",
+    "Rental management, maintenance, client care, concierge and syndic services for villas, apartments and residences in Mauritius — one team, no hidden fees.",
 };
 
 const ANCHORS = [
@@ -21,6 +21,7 @@ const ANCHORS = [
   { href: "#maintenance", label: "Maintenance" },
   { href: "#client-care", label: "Client care" },
   { href: "#concierge", label: "Concierge & services" },
+  { href: "#syndic", label: "Syndic & residences" },
 ];
 
 export default function ServicesPage() {
@@ -32,10 +33,10 @@ export default function ServicesPage() {
             <p className="eyebrow mb-4">Services</p>
             <h1>Everything your property needs</h1>
             <p className="mt-6 text-lg leading-relaxed text-ink-500">
-              Four disciplines, one team, one all-in fee. BellaVere looks after
-              villas and apartments end to end for {company.pricing.model} —
-              no onboarding fee, no fixed monthly charges, no mark-up on
-              contractor invoices. Everything on this page is covered.
+              Five services, one team, no hidden fees. Bellavere looks after
+              villas, apartments and whole residences end to end for{" "}
+              {company.pricing.model} — no onboarding fee, no fixed monthly
+              charges, and every cost itemised on your statement.
             </p>
             <ul className="mt-8 flex flex-wrap gap-2">
               {ANCHORS.map((anchor) => (
@@ -89,14 +90,15 @@ export default function ServicesPage() {
         tinted
         paragraphs={[
           "Salt air, cyclone season and back-to-back guests are hard on a coastal home. Our care team runs scheduled inspections, keeps pools and gardens immaculate, and coordinates repairs before small issues become expensive ones.",
-          "Every job is photographed, logged against your property and billed at cost — contractors come from our vetted network and are never marked up.",
+          "Every job is photographed, logged against your property and itemised on your statement, with contractors supervised on site — no hidden fees.",
         ]}
         included={[
           "Scheduled inspections with photo reports",
+          "Renovation follow-up",
           "Pool & garden care",
           "Housekeeping & linen",
-          "24/7 emergency call-out",
-          "Vetted contractor network, no invoice mark-up",
+          "Emergency coordination",
+          "Supervised contractors, every invoice itemised",
           "Cyclone-season preparation",
         ]}
         detailIcon={ShieldCheck}
@@ -115,11 +117,11 @@ export default function ServicesPage() {
         image={siteImages.services.clientCare}
         imageSide="left"
         paragraphs={[
-          "Your dedicated account manager is the single point of contact for everything that touches your property: statements, compliance, insurance, utility bills, tenant and guest matters.",
+          "Your client-relations contact is the single point of contact for everything that touches your property: statements, compliance, insurance, utility bills, tenant and guest matters — and a real person always answers.",
           "You receive one clear statement every month, a performance review every year, and straight answers in between — without chasing.",
         ]}
         included={[
-          "Dedicated account manager",
+          "Dedicated client-relations contact",
           "Monthly owner statements",
           "Licence & compliance renewals",
           "Insurance & utilities administration",
@@ -158,11 +160,33 @@ export default function ServicesPage() {
         }
       />
 
+      <ServiceSection
+        id="syndic"
+        eyebrow="05 — Syndic & residences"
+        title="Common areas cared for, co-owners kept informed"
+        image={siteImages.services.syndic}
+        imageSide="left"
+        paragraphs={[
+          "For residences, villa estates and apartment complexes, Bellavere acts as syndic and facilities coordinator. We look after the shared spaces — pools, gardens, common areas and security — so every co-owner can enjoy them without having to manage them.",
+          "Preventive maintenance plans, supervised contractors and clear owner reporting keep the building in good order and the service charges easy to understand, with one reliable point of contact for day-to-day property care.",
+        ]}
+        included={[
+          "Common-area management & cleaning coordination",
+          "Preventive maintenance plans",
+          "Pool & landscaping supervision",
+          "Contractor coordination & on-site supervision",
+          "Security & emergency coordination",
+          "Owner reporting & renovation follow-up",
+        ]}
+        detailIcon={Building2}
+        detail={<>One point of contact for every co-owner.</>}
+      />
+
       <section className="py-24 lg:py-32">
         <Container>
           <SectionHeading
             eyebrow="Who does what"
-            title="What owners handle vs. what BellaVere handles"
+            title="What owners handle vs. what Bellavere handles"
             sub="The honest division of labour. You keep the decisions that matter; we take everything else off your desk."
             align="center"
             className="max-w-3xl"

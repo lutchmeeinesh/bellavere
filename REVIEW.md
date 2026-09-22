@@ -40,5 +40,40 @@ The first pass flagged a console error on the custom 404 page; it was Chromium l
 
 - Maintenance "Report an issue" tickets, settings edits and the contact form live in local state / a logging route handler — nothing persists (stated in the UI where relevant).
 - Statement "Download PDF" opens a print-ready window rather than generating a binary PDF.
-- The topbar date-range selector is decorative; the overview revenue chart has its own working 3M/6M/12M toggle.
+- ~~The topbar date-range selector is decorative~~ — replaced by the EUR/MUR switch in round 2; the overview revenue chart keeps its own 3M/6M/12M toggle.
 - `prefers-reduced-motion` is handled globally (CSS kill-switch + `MotionConfig reducedMotion="user"` + per-component guards for Ken Burns, count-ups and the testimonial auto-advance).
+
+---
+
+## Round 2 — 22 September 2026 (company facts, MUR/EUR, SEO & legal)
+
+### Findings & fixes
+
+1. **Alt text described the wrong photos (fixed).** A visual contact-sheet audit of all 30 Unsplash images found about 18 whose alt text described something else. Examples: a living room labelled as a bedroom (Bain Bœuf's cover photo), a dark facade labelled as a "bright living room", a *scuba diver* labelled "aerial view of a lagoon" (home CTA band), and a *forest dome tent* labelled "pool deck with parasols". Root cause: the original check only verified HTTP 200. All 52 alt entries were rewritten from the actual images, and the diver and dome photos were replaced.
+2. **The syndic card rendered blank (fixed).** The new navy card inherited `bg-white` from `Card`, so its white text was invisible. It now uses its own navy container.
+3. **Map labels collided (fixed).** Adding Grand Gaube and Pointe aux Piments made the north-coast labels overlap. Labels now have per-marker placement (right, left, above or none). Unlabelled dots are still listed in the chips beside the map.
+4. **Metadata was streamed into `<body>` (fixed).** Once pages became dynamic (because of the currency cookie), Next.js 15 streamed `<meta>` and Open Graph tags after `</head>` for browsers *and Googlebot*. That is fragile for link previews and non-JS crawlers, and Lighthouse flagged it. `htmlLimitedBots: /.*/` keeps them in `<head>` for every user agent (verified with Chrome, Googlebot and WhatsApp user agents).
+5. **Colour contrast was below AA (fixed).** Affected: eyebrow labels (gold-600, 2.9:1), gold, sea and semantic badges (2.4–4.2:1), muted grey on sand-100 (4.49:1), footer small print (3.75:1) and the newsletter error text (red on navy, 3.5:1). Fixed with text-safe `-700` tokens, a slightly darker ink-500, and light error text with a red icon. See ASSUMPTIONS.md.
+6. **Heading order on /properties (fixed).** A visually hidden `h2` now precedes the card `h3`s.
+7. **Transient build failure (not a code issue).** One build failed with a Turbopack `next/font/google` import-map error, and the identical code then rebuilt cleanly. `next/font/google` fetches fonts at build time, so a network blip fails the build; just rebuild. Noted in the README.
+
+### Verification
+
+- `npm run build`: 0 TypeScript errors, 0 lint errors.
+- `scripts/review.mjs`: **0 errors, 0 warnings.** It covers all public and dashboard routes for all three accounts, the isolation 404s and logout. New currency checks: clicking MUR re-renders prices in rupees, the choice persists across navigation (Villa Azure shows "from Rs 24,960", which is €480 × 52), and the dashboard statements follow it.
+- MUR statements reconcile exactly, e.g. Rs 847,704 − 152,568 − 31,980 = Rs 663,156 (the net shown).
+- **Lighthouse (desktop), all 16 routes** (performance / accessibility / best practices / SEO):
+
+| Route | Perf | A11y | BP | SEO |
+| --- | --- | --- | --- | --- |
+| `/` | 99 | 100 | 100 | 100 |
+| `/services` | 100 | 100 | 100 | 100 |
+| `/properties` | 99 | 100 | 100 | 100 |
+| `/properties/villa-azure` | 100 | 100 | 100 | 100 |
+| `/about`, `/contact`, `/privacy`, `/terms` | 100 | 100 | 100 | 100 |
+| `/login` | 100 | 100 | 100 | 66* |
+| `/dashboard/*` (7 pages) | 100 | 96–100 | 100 | 63–66* |
+
+\* Intentional: `robots.txt` blocks the login page and the owner portal from search engines, which Lighthouse scores as "blocked from indexing".
+
+- 37 screenshots in `/screenshots`, including the new legal pages and a statements page in MUR.

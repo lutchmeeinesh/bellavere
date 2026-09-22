@@ -87,7 +87,7 @@ export function ServiceSection({
                   className="flex items-start gap-3 text-sm leading-relaxed text-ink-900"
                 >
                   <Check
-                    className="mt-0.5 size-4 shrink-0 text-gold-600"
+                    className="mt-0.5 size-4 shrink-0 text-gold-700"
                     aria-hidden
                   />
                   {item}
@@ -97,7 +97,7 @@ export function ServiceSection({
 
             <Reveal delay={0.15}>
               <div className="mt-9 inline-flex items-center gap-4 rounded-2xl border border-gold-500/40 bg-gold-500/5 px-5 py-4">
-                <span className="grid size-10 shrink-0 place-items-center rounded-full bg-gold-500/15 text-gold-600">
+                <span className="grid size-10 shrink-0 place-items-center rounded-full bg-gold-500/15 text-gold-700">
                   <DetailIcon className="size-5" aria-hidden />
                 </span>
                 <p className="text-sm font-medium text-navy-900">{detail}</p>

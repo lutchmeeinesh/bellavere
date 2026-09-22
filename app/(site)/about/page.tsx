@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import { Check, Eye, Sparkles, TrendingUp } from "lucide-react";
+import { Check, Eye, HeartHandshake, Receipt } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Reveal, RevealItem, RevealStagger } from "@/components/ui/Reveal";
@@ -14,46 +14,48 @@ import { siteImages } from "@/data/siteImages";
 export const metadata: Metadata = {
   title: "About",
   description:
-    "BellaVere has managed villas and apartments on the north and west coasts of Mauritius since 2016 — hotel-grade care, full transparency and a live dashboard for every owner.",
+    "Meet Bellavere: property management and syndic services on the north and west coasts of Mauritius — full transparency, no hidden fees, and always a human to answer you.",
 };
 
-// TODO: confirm with client — invented positioning for the three values
+// The three promises come straight from the client's mission statement.
 const VALUES = [
   {
     icon: Eye,
-    title: "Transparency first",
-    copy: "Every euro in and out of your property is itemised on your dashboard and your monthly statement. No hidden margins, no surprises.",
+    title: "Full transparency",
+    copy: "Every rupee and euro in and out of your property is itemised on your dashboard and your monthly statement. You see exactly what we see.",
   },
   {
-    icon: Sparkles,
-    title: "Hotel-grade care",
-    copy: "Our team comes from five-star hospitality, and it shows: crisp linen, spotless pools, guests welcomed by name. Your home is kept to the standard it deserves.",
+    icon: Receipt,
+    title: "No hidden fees",
+    copy: "One clearly stated management fee. No surprise charges and no invented extras — if something costs you money, it is on your statement with a line explaining why.",
   },
   {
-    icon: TrendingUp,
-    title: "Performance, proven",
-    copy: "We measure everything — occupancy, rate, guest reviews — and report it plainly. When we say a strategy is working, the numbers are on screen to prove it.",
+    icon: HeartHandshake,
+    title: "Always a human",
+    copy: "Call or write and a real person answers — never a chatbot, never a ticket queue. Someone who knows your property by name.",
   },
 ];
 
 const WHY_ITEMS = [
-  "One dedicated point of contact who knows your home",
-  `One transparent all-in fee — ${company.pricing.model}, nothing hidden`,
-  // TODO: confirm with client — contractor vetting & insurance claim
-  "Vetted, insured contractors at pre-agreed rates",
+  "One reliable point of contact for everything",
+  `One clearly stated fee — ${company.pricing.model}. No hidden fees.`,
+  "A person answers every call and message — never a bot",
+  "Work on your property supervised on site, in person",
   "A live owner dashboard, day and night, from anywhere",
-  // TODO: confirm with client — scope of licensing/compliance service
-  "Tourism licensing and compliance handled for you",
-  // TODO: confirm with client — notice period
-  "No lock-in — leave with 30 days' notice",
+  "Prices and statements in rupees or euros — your choice",
+  "Preventive maintenance, inspections and owner reporting as standard",
+  "Syndic and common-area management for whole residences",
 ];
 
 const COVERAGE_AREAS = [
-  "Grand Baie",
-  "Pereybere",
+  "Grand Gaube",
   "Cap Malheureux",
-  "Trou aux Biches",
+  "Pereybere",
+  "Grand Baie",
+  "Pointe aux Canonniers",
   "Mont Choisy",
+  "Trou aux Biches",
+  "Pointe aux Piments",
   "Albion",
   "Flic-en-Flac",
   "Tamarin",
@@ -67,12 +69,11 @@ export default function AboutPage() {
       <div className="pt-32 lg:pt-40">
         <Container>
           <Reveal className="max-w-3xl">
-            <p className="eyebrow mb-4">About BellaVere</p>
-            <h1>Care for the coast&rsquo;s finest homes</h1>
+            <p className="eyebrow mb-4">About Bellavere</p>
+            <h1>Care you can see, from people you can reach</h1>
             <p className="mt-6 text-lg text-ink-500">
-              {company.marketLong} Since {company.founded}, we have looked
-              after them the way a great hotel looks after its guests — and
-              shown our owners everything, openly.
+              {company.marketLong} Looked after in person, reported openly,
+              and never a hidden fee.
             </p>
           </Reveal>
         </Container>
@@ -96,28 +97,26 @@ export default function AboutPage() {
             <div>
               <SectionHeading
                 eyebrow="Our story"
-                title="Founded on a simple promise"
+                title="Built around two promises"
               />
               <Reveal delay={0.1}>
-                {/* TODO: confirm with client — founding story specifics */}
+                {/* TODO: confirm with client — story wording */}
                 <p className="mt-6 leading-relaxed text-ink-900">
-                  BellaVere began in Grand Baie in {company.founded}, when
-                  Isabelle Verlaine — after fifteen years running five-star
-                  properties across the Indian Ocean — took on three villas
-                  for owners she knew personally. The promise she made them
-                  was simple: you will always know exactly how your home is
-                  doing.
+                  {company.name} was set up by {company.team[0].name} and{" "}
+                  {company.team[1].name} to fix two things owners too often
+                  put up with: fees that appear out of nowhere, and nobody
+                  answering when something goes wrong.
                 </p>
                 <p className="mt-5 leading-relaxed text-ink-900">
-                  A decade later, that promise scales to{" "}
-                  {company.stats.propertiesManaged} villas and apartments from
-                  Cap Malheureux to Rivière Noire — kept by the same
-                  disciplines, and now made visible through a dashboard every
-                  owner can open from anywhere in the world.
+                  So the promises are simple. Every cost is itemised and
+                  visible on your dashboard. And whenever you call or write, a
+                  person answers — Krit on the ground, Ankit at the other end
+                  of the line. From single villas to the common areas of whole
+                  residences, that is how we look after every property.
                 </p>
-                <p className="mt-5 leading-relaxed text-ink-500">
-                  {company.mission}
-                </p>
+                <blockquote className="mt-8 border-l-2 border-gold-500 pl-5 font-serif text-xl leading-snug text-navy-900">
+                  &ldquo;{company.mission}&rdquo;
+                </blockquote>
               </Reveal>
             </div>
           </div>
@@ -129,14 +128,14 @@ export default function AboutPage() {
         <Container>
           <SectionHeading
             eyebrow="What we stand for"
-            title="Three things we refuse to compromise on"
+            title="Three promises we make to every owner"
             align="center"
           />
           <RevealStagger className="mt-14 grid gap-6 md:grid-cols-3">
             {VALUES.map((value) => (
               <RevealItem key={value.title}>
                 <Card lift className="h-full p-8">
-                  <span className="flex size-12 items-center justify-center rounded-full bg-gold-500/15 text-gold-600">
+                  <span className="flex size-12 items-center justify-center rounded-full bg-gold-500/15 text-gold-700">
                     <value.icon className="size-5" aria-hidden />
                   </span>
                   <h3 className="mt-5">{value.title}</h3>
@@ -155,8 +154,8 @@ export default function AboutPage() {
         <Container>
           <SectionHeading
             eyebrow="The team"
-            title="The people behind the properties"
-            sub="A small senior team, each with deep hospitality roots — and each one reachable when you need them."
+            title="The people you will actually speak to"
+            sub="Two people, one standard. Small enough that you always deal with the people in charge."
             align="center"
             className="mb-14"
           />
@@ -177,7 +176,7 @@ export default function AboutPage() {
           >
             {WHY_ITEMS.map((item) => (
               <RevealItem as="li" key={item} className="flex items-start gap-3.5">
-                <span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-gold-500/15 text-gold-600">
+                <span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-gold-500/15 text-gold-700">
                   <Check className="size-4" aria-hidden />
                 </span>
                 <p className="pt-0.5 text-ink-900">{item}</p>
@@ -195,7 +194,7 @@ export default function AboutPage() {
               <SectionHeading
                 eyebrow="Where we work"
                 title="The north & west coasts, and nowhere else"
-                sub="We stay close to every property we manage. From our Grand Baie office, the whole coverage area is within easy reach — so inspections happen often and problems get fixed fast."
+                sub="We stay close to every property we look after, so inspections happen often and problems get fixed fast — from Grand Gaube in the north to Rivière Noire in the west."
               />
               <RevealStagger as="ul" className="mt-8 flex flex-wrap gap-2.5">
                 {COVERAGE_AREAS.map((area) => (

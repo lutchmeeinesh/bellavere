@@ -17,12 +17,12 @@ import { cn } from "@/lib/utils";
  */
 
 const GLYPHS: Record<ActivityType, { icon: LucideIcon; classes: string }> = {
-  booking: { icon: CalendarCheck, classes: "bg-gold-500/15 text-gold-600" },
+  booking: { icon: CalendarCheck, classes: "bg-gold-500/15 text-gold-700" },
   checkout: { icon: LogOut, classes: "bg-sand-100 text-ink-500" },
-  payout: { icon: Banknote, classes: "bg-success/10 text-success" },
-  maintenance: { icon: Wrench, classes: "bg-warning/10 text-warning" },
-  inspection: { icon: ClipboardList, classes: "bg-sea-500/10 text-sea-500" },
-  document: { icon: FileText, classes: "bg-danger/10 text-danger" },
+  payout: { icon: Banknote, classes: "bg-success/10 text-success-700" },
+  maintenance: { icon: Wrench, classes: "bg-warning/10 text-warning-700" },
+  inspection: { icon: ClipboardList, classes: "bg-sea-500/10 text-sea-700" },
+  document: { icon: FileText, classes: "bg-danger/10 text-danger-700" },
 };
 
 export function ActivityIcon({

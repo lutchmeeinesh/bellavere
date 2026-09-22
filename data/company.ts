@@ -1,23 +1,28 @@
 /**
  * Single source of truth for company facts used across the site.
- * Everything marked "TODO: confirm with client" is realistic demo copy
- * standing in for a placeholder in the brief — see README for the full list.
+ *
+ * Confirmed by the client (September 2026): company name, team members and
+ * roles, company email, mission, and dual MUR/EUR pricing. Service scope
+ * (incl. syndic) comes from the client's own prospect-list outreach copy.
+ * Everything still marked "TODO: confirm with client" is demo copy.
  */
 
 export const company = {
-  name: "BellaVere",
+  /** Brand name as the client writes it. */
+  name: "Bellavere",
+  /** Trading name used on the client's own outreach material. */
+  tradingName: "Bellavere Property Care",
+  // TODO: confirm with client — registered legal name (inferred from the
+  // company email address) and Business Registration Number (BRN)
+  legalName: "Bellavere Ltd",
   // TODO: confirm with client — tagline
   tagline: "Your property, perfectly managed.",
-  // TODO: confirm with client — location / market
   market: "North & west coast, Mauritius",
   marketLong:
-    "Villas and apartments from Grand Baie to Rivière Noire, on the north and west coasts of Mauritius.",
-  // TODO: confirm with client — founding year
-  founded: 2016,
+    "Villas, apartments and residences from Grand Gaube to Rivière Noire, on the north and west coasts of Mauritius.",
   // TODO: confirm with client — phone
   phone: "+230 5 728 4410",
-  // TODO: confirm with client — email
-  email: "hello@bellavere.mu",
+  email: "BellavereLtd@gmail.com",
   // TODO: confirm with client — address
   address: {
     line1: "Suite 4, La Croisette Business Centre",
@@ -32,45 +37,50 @@ export const company = {
     facebook: "https://facebook.com/bellavere.mu",
     linkedin: "https://linkedin.com/company/bellavere",
   },
-  // TODO: confirm with client — mission / story
+  /** The client's mission, in their own words. */
   mission:
-    "BellaVere exists so that owning a home on the coast of Mauritius feels effortless from anywhere in the world. We combine hotel-grade guest service with meticulous property care and complete financial transparency, so every owner knows exactly how their property is performing — down to the last rupee or euro.",
-  // TODO: confirm with client — pricing model
+    "Our mission is to provide the best service while maintaining full transparency. No hidden fees — and there will always be a human to answer you.",
+  // TODO: confirm with client — pricing model (the fee rate also drives the
+  // owner-statement maths in lib/metrics.ts)
   pricing: {
     model: "18% of gross rental income",
     detail:
-      "One transparent management fee of 18% of gross rental income. No onboarding fee, no fixed monthly charges, no mark-up on contractor invoices.",
+      "One clearly stated management fee of 18% of gross rental income. No hidden fees — every cost is itemised on your monthly statement.",
     feeRate: 0.18,
   },
-  // TODO: confirm with client — team members & bios
+  /**
+   * The team. Surnames are inferred from the team's email addresses.
+   * `email` is kept for internal use (e.g. routing enquiries) and is NOT
+   * rendered on the public site — personal addresses attract spam.
+   */
+  // TODO: confirm with client — surname spelling and bio wording
   team: [
     {
-      name: "Isabelle Verlaine",
-      role: "Founder & Managing Director",
-      bio: "Fifteen years in luxury hospitality across Mauritius and the Seychelles before founding BellaVere in 2016.",
-      initials: "IV",
+      name: "Krit Goburdhan",
+      role: "General Manager & Site Supervisor",
+      bio: "Runs Bellavere day to day and is on site in person — supervising maintenance, inspections and every contractor who works on your property.",
+      initials: "KG",
+      email: "Kritgoburdhan@gmail.com",
     },
     {
-      name: "Marc Duval",
-      role: "Head of Property Care",
-      bio: "Former resort chief engineer; leads inspections, maintenance and our network of vetted contractors.",
-      initials: "MD",
-    },
-    {
-      name: "Priya Ramgoolam",
-      role: "Head of Guest Experience",
-      bio: "Runs reservations, concierge and housekeeping — the team your guests will rave about.",
-      initials: "PR",
+      name: "Ankit Zoodookhorun",
+      role: "Client Relations",
+      bio: "Your first point of contact for statements, bookings and questions — answered by a person who knows your property, never a chatbot.",
+      initials: "AZ",
+      email: "zoodookhorun@gmail.com",
     },
   ],
-  // Demo stats used in the home trust bar.
-  // TODO: confirm with client — real figures
-  stats: {
-    propertiesManaged: 68,
-    averageOccupancy: 81,
-    yearsOperating: 10,
-    ownerRating: 4.9,
-  },
+  /**
+   * Commitments shown in the home trust bar. These are true by definition of
+   * the service, unlike track-record figures (properties managed, years
+   * operating, ratings), which should only be published once real.
+   */
+  commitments: [
+    { value: 0, label: "Hidden fees" },
+    { value: 1, label: "Point of contact" },
+    { value: 2, label: "Currencies — MUR & EUR" },
+    { value: 100, suffix: "%", label: "Human answers, no bots" },
+  ],
 } as const;
 
 export type Company = typeof company;

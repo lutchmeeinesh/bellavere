@@ -41,7 +41,7 @@ export function Hero() {
           animate={reduceMotion ? undefined : { opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.1, ease: EASE }}
         >
-          Villa &amp; apartment management · Mauritius
+          Property management &amp; syndic · Mauritius
         </motion.p>
 
         <h1 className="max-w-3xl text-white">
@@ -65,9 +65,10 @@ export function Hero() {
           animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.55, ease: EASE }}
         >
-          We manage villas and apartments across the north and west coasts of
-          Mauritius — hotel-grade care for your guests, and a live dashboard
-          that shows you exactly how your home is performing.
+          We look after villas, apartments and residences across the north and
+          west coasts of Mauritius — no hidden fees, always a real person to
+          answer you, and a live dashboard that shows exactly how your property
+          is performing.
         </motion.p>
 
         <motion.div

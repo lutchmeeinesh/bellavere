@@ -9,7 +9,7 @@ import type {
   TicketStatus,
 } from "@/lib/types";
 import { TODAY, toISODate } from "@/lib/dates";
-import { formatCurrency, formatDate } from "@/lib/format";
+import { formatDate } from "@/lib/format";
 import { Badge, type BadgeTone } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -17,6 +17,7 @@ import { Field, Input, Select, Textarea } from "@/components/ui/Input";
 import { Modal } from "@/components/ui/Modal";
 import { RevealItem, RevealStagger } from "@/components/ui/Reveal";
 import { PageHeader } from "@/components/dashboard/PageHeader";
+import { useMoney } from "@/components/currency/CurrencyProvider";
 
 type PropertyOption = { id: string; name: string };
 
@@ -53,6 +54,7 @@ function TicketCard({
   ticket: MaintenanceTicket;
   propertyName: string;
 }) {
+  const money = useMoney();
   const priority = PRIORITY_META[ticket.priority];
   return (
     <Card className="p-5">
@@ -74,7 +76,7 @@ function TicketCard({
         ) : null}
         {ticket.status === "resolved" && ticket.cost != null ? (
           <p className="font-medium text-navy-900">
-            {formatCurrency(ticket.cost)}
+            {money.format(ticket.cost)}
           </p>
         ) : null}
       </div>
@@ -189,7 +191,7 @@ export function MaintenanceBoard({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="mb-5 flex items-center gap-2 rounded-xl border border-success/30 bg-success/10 px-4 py-3 text-sm text-success"
+              className="mb-5 flex items-center gap-2 rounded-xl border border-success/30 bg-success/10 px-4 py-3 text-sm text-success-700"
             >
               <CheckCircle2 className="size-4 shrink-0" aria-hidden />
               {confirmation}

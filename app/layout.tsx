@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Inter } from "next/font/google";
 import { MotionProvider } from "@/components/motion/MotionProvider";
+import { CurrencyProvider } from "@/components/currency/CurrencyProvider";
+import { getCurrency } from "@/lib/currency";
 import "./globals.css";
 
 const cormorant = Cormorant_Garamond({
@@ -21,26 +23,34 @@ export const metadata: Metadata = {
     process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
   ),
   title: {
-    default: "BellaVere — Villa & Apartment Management in Mauritius",
-    template: "%s · BellaVere",
+    default: "Bellavere — Villa & Apartment Management in Mauritius",
+    template: "%s · Bellavere",
   },
   description:
-    "BellaVere manages villas and apartments on the north and west coasts of Mauritius: rentals, maintenance, client care, concierge services and a live owner dashboard.",
+    "Bellavere manages villas, apartments and residences on the north and west coasts of Mauritius: rentals, maintenance, syndic services, client care, concierge and a live owner dashboard.",
 };
 
 export const viewport: Viewport = {
   themeColor: "#faf7f2",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Reading the currency cookie here renders every page in the visitor's
+  // chosen currency from the first paint (it also makes routes dynamic).
+  const currency = await getCurrency();
+
   return (
     <html lang="en">
       <body className={`${cormorant.variable} ${inter.variable} antialiased`}>
-        <MotionProvider>{children}</MotionProvider>
+        <MotionProvider>
+          <CurrencyProvider initialCurrency={currency}>
+            {children}
+          </CurrencyProvider>
+        </MotionProvider>
       </body>
     </html>
   );

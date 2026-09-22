@@ -2,12 +2,13 @@ import { RevealItem, RevealStagger } from "@/components/ui/Reveal";
 import { company } from "@/data/company";
 
 /**
- * The three-person leadership team. No stock portraits — serif initials in
- * a gold-on-navy circle keep the demo honest until real photography exists.
+ * The Bellavere team. No stock portraits — serif initials in a gold-on-navy
+ * circle until real photographs exist. Personal emails in the data are
+ * deliberately not rendered here (see data/company.ts).
  */
 export function TeamGrid() {
   return (
-    <RevealStagger className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
+    <RevealStagger className="mx-auto grid max-w-3xl gap-12 sm:grid-cols-2">
       {company.team.map((member) => (
         <RevealItem key={member.name} className="text-center">
           <span

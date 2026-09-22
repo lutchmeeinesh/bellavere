@@ -5,14 +5,28 @@ interface Marker {
   x: number;
   y: number;
   label: string;
+  /**
+   * Label placement. Defaults to the right of the dot. The north coast is
+   * dense, so some labels sit above or to the left, and the tightest dots
+   * go unlabelled ("none") — every area is also listed beside the map.
+   */
+  labelAt?: "right" | "left" | "above" | "none";
 }
 
+const LABEL_OFFSETS = {
+  right: { dx: 14, dy: 4, anchor: "start" },
+  left: { dx: -12, dy: -8, anchor: "end" },
+  above: { dx: 8, dy: -14, anchor: "start" },
+} as const;
+
 const DEFAULT_MARKERS: Marker[] = [
-  { x: 172, y: 52, label: "Cap Malheureux" },
-  { x: 138, y: 74, label: "Grand Baie" },
-  { x: 158, y: 62, label: "Pereybere" },
-  { x: 108, y: 92, label: "Trou aux Biches" },
-  { x: 118, y: 82, label: "Mont Choisy" },
+  { x: 208, y: 64, label: "Grand Gaube" },
+  { x: 172, y: 52, label: "Cap Malheureux", labelAt: "above" },
+  { x: 138, y: 74, label: "Grand Baie", labelAt: "left" },
+  { x: 158, y: 62, label: "Pereybere", labelAt: "none" },
+  { x: 108, y: 92, label: "Trou aux Biches", labelAt: "none" },
+  { x: 118, y: 82, label: "Mont Choisy", labelAt: "none" },
+  { x: 84, y: 134, label: "Pointe aux Piments" },
   { x: 62, y: 196, label: "Albion" },
   { x: 58, y: 238, label: "Flic-en-Flac" },
   { x: 66, y: 292, label: "Tamarin" },
@@ -37,7 +51,7 @@ export function MauritiusMap({
     <svg
       viewBox="0 0 300 420"
       role="img"
-      aria-label="Map of Mauritius showing BellaVere's coverage on the north and west coasts"
+      aria-label="Map of Mauritius showing Bellavere's coverage on the north and west coasts"
       className={cn("h-auto w-full", className)}
     >
       {/* Island silhouette (simplified) */}
@@ -88,10 +102,11 @@ export function MauritiusMap({
             strokeWidth="1"
             opacity="0.4"
           />
-          {showLabels ? (
+          {showLabels && m.labelAt !== "none" ? (
             <text
-              x={m.x + 14}
-              y={m.y + 4}
+              x={m.x + LABEL_OFFSETS[m.labelAt ?? "right"].dx}
+              y={m.y + LABEL_OFFSETS[m.labelAt ?? "right"].dy}
+              textAnchor={LABEL_OFFSETS[m.labelAt ?? "right"].anchor}
               fontSize="11"
               fill="var(--ink-500)"
               fontFamily="var(--font-sans)"

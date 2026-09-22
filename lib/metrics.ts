@@ -21,7 +21,7 @@ import {
   toISODate,
 } from "@/lib/dates";
 import { hashSeed } from "@/lib/rng";
-import { formatCurrency } from "@/lib/format";
+import { formatMoney } from "@/lib/format";
 
 /**
  * Every number on the dashboard — KPI tiles, charts, statements — is derived
@@ -308,7 +308,15 @@ export function propertySummariesForClient(
 }
 
 /** Recent activity feed, derived from bookings, tickets and statements. */
-export function activityForClient(clientId: string, limit = 10): ActivityItem[] {
+/**
+ * `formatAmount` renders money inside the activity sentences; pass one bound
+ * to the visitor's currency (defaults to EUR).
+ */
+export function activityForClient(
+  clientId: string,
+  limit = 10,
+  formatAmount: (eur: number) => string = (eur) => formatMoney(eur, "EUR")
+): ActivityItem[] {
   const items: ActivityItem[] = [];
   const todayIso = toISODate(TODAY);
   const twoWeeksAgo = new Date(TODAY);
@@ -350,7 +358,7 @@ export function activityForClient(clientId: string, limit = 10): ActivityItem[] 
         clientId,
         date: t.resolvedAt,
         type: "maintenance",
-        message: `Resolved: ${t.title.toLowerCase()} at ${propertyName(t.propertyId)}${t.cost ? ` (${formatCurrency(t.cost)})` : ""}`,
+        message: `Resolved: ${t.title.toLowerCase()} at ${propertyName(t.propertyId)}${t.cost ? ` (${formatAmount(t.cost)})` : ""}`,
         propertyId: t.propertyId,
       });
     } else if (t.status !== "resolved" && t.reportedAt >= monthAgoIso) {
@@ -374,7 +382,7 @@ export function activityForClient(clientId: string, limit = 10): ActivityItem[] 
         clientId,
         date: toISODate(payoutDate),
         type: "payout",
-        message: `${latest.period} statement paid — net ${formatCurrency(latest.net)}`,
+        message: `${latest.period} statement paid — net ${formatAmount(latest.net)}`,
       });
     }
   }

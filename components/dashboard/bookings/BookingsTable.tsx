@@ -13,12 +13,13 @@ import {
 } from "lucide-react";
 import type { Booking, BookingStatus } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { formatCurrency, formatDate } from "@/lib/format";
+import { formatDate } from "@/lib/format";
 import { Badge, type BadgeTone } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Reveal } from "@/components/ui/Reveal";
+import { useMoney } from "@/components/currency/CurrencyProvider";
 
 export type BookingRow = Booking & { propertyName: string };
 
@@ -45,6 +46,7 @@ const STATUS_FILTERS: { value: StatusFilter; label: string }[] = [
 
 /** Detail block shared by the desktop expanded row and the mobile card. */
 function BookingDetail({ booking }: { booking: BookingRow }) {
+  const money = useMoney();
   const nightly = booking.nights > 0 ? booking.amount / booking.nights : 0;
   const items: { label: string; value: string }[] = [
     { label: "Channel", value: booking.channel },
@@ -52,7 +54,7 @@ function BookingDetail({ booking }: { booking: BookingRow }) {
       label: "Party size",
       value: `${booking.guests} guest${booking.guests === 1 ? "" : "s"}`,
     },
-    { label: "Avg nightly rate", value: formatCurrency(nightly) },
+    { label: "Avg nightly rate", value: money.format(nightly) },
     { label: "Booking id", value: booking.id },
   ];
   return (
@@ -72,6 +74,7 @@ function BookingDetail({ booking }: { booking: BookingRow }) {
 }
 
 export function BookingsTable({ rows }: { rows: BookingRow[] }) {
+  const money = useMoney();
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<StatusFilter>("all");
   const [sortKey, setSortKey] = useState<SortKey>("checkIn");
@@ -134,9 +137,9 @@ export function BookingsTable({ rows }: { rows: BookingRow[] }) {
       return <ArrowUpDown className="size-3.5 text-ink-500/50" aria-hidden />;
     }
     return sortDir === "asc" ? (
-      <ArrowUp className="size-3.5 text-gold-600" aria-hidden />
+      <ArrowUp className="size-3.5 text-gold-700" aria-hidden />
     ) : (
-      <ArrowDown className="size-3.5 text-gold-600" aria-hidden />
+      <ArrowDown className="size-3.5 text-gold-700" aria-hidden />
     );
   };
 
@@ -309,7 +312,7 @@ export function BookingsTable({ rows }: { rows: BookingRow[] }) {
                           {b.nights} night{b.nights === 1 ? "" : "s"}
                         </span>
                         <span className="font-medium text-navy-900">
-                          {formatCurrency(b.amount)}
+                          {money.format(b.amount)}
                         </span>
                       </div>
                     </button>
@@ -382,6 +385,7 @@ function BookingRowGroup({
   isExpanded: boolean;
   onToggle: () => void;
 }) {
+  const money = useMoney();
   return (
     <>
       <tr
@@ -408,7 +412,7 @@ function BookingRowGroup({
         <td className="px-5 py-4 text-ink-900">{formatDate(booking.checkOut)}</td>
         <td className="px-5 py-4 text-right text-ink-900">{booking.nights}</td>
         <td className="px-5 py-4 text-right font-medium text-navy-900">
-          {formatCurrency(booking.amount)}
+          {money.format(booking.amount)}
         </td>
         <td className="px-5 py-4">
           <Badge tone={meta.tone}>{meta.label}</Badge>

@@ -7,6 +7,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { Logo } from "@/components/site/Logo";
 import { Button } from "@/components/ui/Button";
+import { CurrencyToggle } from "@/components/currency/CurrencyToggle";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
@@ -47,7 +48,7 @@ export function Header() {
         "fixed inset-x-0 top-0 z-40 transition-all duration-300",
         overHero
           ? "border-b border-transparent bg-transparent"
-          : "border-b border-sand-300 bg-sand-50/80 backdrop-blur-md"
+          : "border-b border-sand-300 bg-sand-50/80 backdrop-blur-md",
       )}
     >
       <div className="mx-auto flex h-18 w-full max-w-[1200px] items-center justify-between px-5 sm:px-8">
@@ -70,7 +71,7 @@ export function Header() {
                       overHero
                         ? "text-white/85 hover:text-white"
                         : "text-ink-900 hover:text-navy-900",
-                      active && (overHero ? "text-white" : "text-navy-900")
+                      active && (overHero ? "text-white" : "text-navy-900"),
                     )}
                   >
                     {link.label}
@@ -89,7 +90,15 @@ export function Header() {
         </nav>
 
         <div className="hidden items-center gap-3 lg:flex">
-          <Button href="/login" variant={overHero ? "light" : "outline"} size="sm">
+          <CurrencyToggle
+            tone={overHero ? "light" : "default"}
+            layoutId="currency-pill-header"
+          />
+          <Button
+            href="/login"
+            variant={overHero ? "light" : "outline"}
+            size="sm"
+          >
             Owner login
           </Button>
           <Button href="/contact" variant="primary" size="sm">
@@ -97,19 +106,29 @@ export function Header() {
           </Button>
         </div>
 
-        <button
-          type="button"
-          className={cn(
-            "rounded-full p-2 transition-colors lg:hidden",
-            overHero ? "text-white" : "text-navy-900"
-          )}
-          aria-expanded={menuOpen}
-          aria-controls="mobile-menu"
-          aria-label={menuOpen ? "Close menu" : "Open menu"}
-          onClick={() => setMenuOpen((v) => !v)}
-        >
-          {menuOpen ? <X className="size-6" aria-hidden /> : <Menu className="size-6" aria-hidden />}
-        </button>
+        <div className="flex items-center gap-2 lg:hidden">
+          <CurrencyToggle
+            tone={overHero ? "light" : "default"}
+            layoutId="currency-pill-header-mobile"
+          />
+          <button
+            type="button"
+            className={cn(
+              "rounded-full p-2 transition-colors",
+              overHero ? "text-white" : "text-navy-900",
+            )}
+            aria-expanded={menuOpen}
+            aria-controls="mobile-menu"
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            onClick={() => setMenuOpen((v) => !v)}
+          >
+            {menuOpen ? (
+              <X className="size-6" aria-hidden />
+            ) : (
+              <Menu className="size-6" aria-hidden />
+            )}
+          </button>
+        </div>
       </div>
 
       <AnimatePresence>
@@ -138,7 +157,7 @@ export function Header() {
                         "block rounded-xl px-4 py-3 text-base font-medium transition-colors",
                         active
                           ? "bg-sand-100 text-navy-900"
-                          : "text-ink-900 hover:bg-sand-100"
+                          : "text-ink-900 hover:bg-sand-100",
                       )}
                     >
                       {link.label}
@@ -147,10 +166,20 @@ export function Header() {
                 );
               })}
               <li className="flex gap-3 px-4 pt-3 pb-1">
-                <Button href="/login" variant="outline" size="sm" className="flex-1">
+                <Button
+                  href="/login"
+                  variant="outline"
+                  size="sm"
+                  className="flex-1"
+                >
                   Owner login
                 </Button>
-                <Button href="/contact" variant="primary" size="sm" className="flex-1">
+                <Button
+                  href="/contact"
+                  variant="primary"
+                  size="sm"
+                  className="flex-1"
+                >
                   List your property
                 </Button>
               </li>

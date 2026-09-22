@@ -15,7 +15,7 @@ export default async function DashboardPropertiesPage() {
         title="Your properties"
         sub={`${summaries.length} ${
           summaries.length === 1 ? "property" : "properties"
-        } managed by BellaVere`}
+        } managed by Bellavere`}
       />
 
       <RevealStagger className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">

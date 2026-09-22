@@ -22,12 +22,12 @@ import type {
   TicketStatus,
 } from "@/lib/types";
 import {
-  formatCurrency,
   formatDate,
   formatDateShort,
   formatDateWeekday,
   formatPercent,
 } from "@/lib/format";
+import { useMoney } from "@/components/currency/CurrencyProvider";
 
 /**
  * Tabbed body of the property detail page. Everything rendered here comes in
@@ -123,6 +123,7 @@ export function PropertyDetailTabs({
 }
 
 function OverviewPanel({ property }: { property: Property }) {
+  const money = useMoney();
   const hero = property.images[0];
   const facts = [
     { icon: BedDouble, label: "Bedrooms", value: String(property.bedrooms) },
@@ -131,7 +132,7 @@ function OverviewPanel({ property }: { property: Property }) {
     {
       icon: Banknote,
       label: "Nightly rate",
-      value: `${formatCurrency(property.nightlyRate)}/night`,
+      value: `${money.format(property.nightlyRate)}/night`,
     },
   ];
 
@@ -150,7 +151,7 @@ function OverviewPanel({ property }: { property: Property }) {
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         {facts.map((fact) => (
           <Card key={fact.label} className="p-4">
-            <fact.icon className="size-4.5 text-gold-600" aria-hidden />
+            <fact.icon className="size-4.5 text-gold-700" aria-hidden />
             <p className="mt-2 text-xs text-ink-500">{fact.label}</p>
             <p className="mt-0.5 text-sm font-medium text-navy-900">
               {fact.value}
@@ -174,7 +175,7 @@ function OverviewPanel({ property }: { property: Property }) {
               key={amenity}
               className="flex items-center gap-2.5 text-sm text-ink-900"
             >
-              <Check className="size-4 shrink-0 text-gold-600" aria-hidden />
+              <Check className="size-4 shrink-0 text-gold-700" aria-hidden />
               {amenity}
             </li>
           ))}
@@ -191,6 +192,7 @@ function BookingsPanel({
   bookings: Booking[];
   todayIso: string;
 }) {
+  const money = useMoney();
   const active = bookings.filter((b) => b.status !== "cancelled");
   const calendarBookings: CalendarBooking[] = active.map((b) => ({
     id: b.id,
@@ -234,7 +236,7 @@ function BookingsPanel({
                 </div>
                 <div className="shrink-0 text-right">
                   <p className="text-sm font-medium text-navy-900">
-                    {formatCurrency(b.amount)}
+                    {money.format(b.amount)}
                   </p>
                   <p className="mt-0.5 text-xs text-ink-500">
                     {b.nights} {b.nights === 1 ? "night" : "nights"}
@@ -250,6 +252,7 @@ function BookingsPanel({
 }
 
 function FinancialsPanel({ months }: { months: PropertyMonthRow[] }) {
+  const money = useMoney();
   const totalRevenue = months.reduce((sum, m) => sum + m.revenue, 0);
   const averageOccupancy =
     months.length > 0
@@ -295,7 +298,7 @@ function FinancialsPanel({ months }: { months: PropertyMonthRow[] }) {
                 <tr key={m.key}>
                   <td className="px-6 py-3 text-ink-900">{m.labelLong}</td>
                   <td className="px-6 py-3 text-right font-medium text-navy-900">
-                    {formatCurrency(m.revenue)}
+                    {money.format(m.revenue)}
                   </td>
                   <td className="px-6 py-3 text-right text-ink-900">
                     {formatPercent(m.occupancy)}
@@ -309,7 +312,7 @@ function FinancialsPanel({ months }: { months: PropertyMonthRow[] }) {
                   Total
                 </th>
                 <td className="px-6 py-3.5 text-right font-semibold text-navy-900">
-                  {formatCurrency(totalRevenue)}
+                  {money.format(totalRevenue)}
                 </td>
                 <td className="px-6 py-3.5 text-right text-ink-900">
                   {formatPercent(averageOccupancy)} avg
@@ -324,6 +327,7 @@ function FinancialsPanel({ months }: { months: PropertyMonthRow[] }) {
 }
 
 function MaintenancePanel({ tickets }: { tickets: MaintenanceTicket[] }) {
+  const money = useMoney();
   if (tickets.length === 0) {
     return (
       <p className="rounded-xl bg-sand-100/60 px-4 py-10 text-center text-sm text-ink-500">
@@ -350,7 +354,7 @@ function MaintenancePanel({ tickets }: { tickets: MaintenanceTicket[] }) {
                 <Badge tone={priority.tone}>{priority.label} priority</Badge>
                 {ticket.cost !== undefined ? (
                   <span className="ml-auto text-sm font-medium text-navy-900">
-                    {formatCurrency(ticket.cost)}
+                    {money.format(ticket.cost)}
                   </span>
                 ) : null}
               </div>

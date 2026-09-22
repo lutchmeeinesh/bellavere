@@ -94,7 +94,7 @@ export function NotificationBell({ items }: { items: ActivityItem[] }) {
               <Link
                 href="/dashboard"
                 onClick={() => setOpen(false)}
-                className="text-sm font-medium text-gold-600 transition-colors duration-150 hover:text-navy-900"
+                className="text-sm font-medium text-gold-700 transition-colors duration-150 hover:text-navy-900"
               >
                 View all activity
               </Link>

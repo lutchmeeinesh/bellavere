@@ -9,7 +9,8 @@ import {
 } from "@/lib/metrics";
 import { getPropertyById } from "@/data/properties";
 import { TODAY } from "@/lib/dates";
-import { formatDate } from "@/lib/format";
+import { formatDate, formatMoney } from "@/lib/format";
+import { getCurrency } from "@/lib/currency";
 import { Card } from "@/components/ui/Card";
 import { Reveal, RevealItem, RevealStagger } from "@/components/ui/Reveal";
 import { KpiTile } from "@/components/dashboard/overview/KpiTile";
@@ -49,7 +50,10 @@ export default async function DashboardOverviewPage() {
     nights: b.nights,
     amount: b.amount,
   }));
-  const activity = activityForClient(client.id, 10);
+  const currency = await getCurrency();
+  const activity = activityForClient(client.id, 10, (eur) =>
+    formatMoney(eur, currency)
+  );
 
   return (
     <div className="space-y-8">
@@ -67,7 +71,7 @@ export default async function DashboardOverviewPage() {
           <KpiTile
             label="This month's revenue"
             value={kpis.revenueThisMonth}
-            prefix="€"
+            money
             icon={Banknote}
             delta={kpis.revenueDelta}
             deltaSuffix="%"

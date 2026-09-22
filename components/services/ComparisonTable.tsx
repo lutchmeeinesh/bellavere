@@ -30,7 +30,7 @@ const ROWS: Row[] = [
   {
     area: "Repairs & contractors",
     owner: { included: false },
-    bellavere: { included: true, note: "Vetted trades, no invoice mark-up" },
+    bellavere: { included: true, note: "Supervised on site, every invoice itemised" },
   },
   {
     area: "Statements & payouts",
@@ -60,7 +60,7 @@ function ComparisonCell({ side, accent }: { side: Side; accent: boolean }) {
           <Check
             className={
               accent
-                ? "mt-0.5 size-4 shrink-0 text-gold-600"
+                ? "mt-0.5 size-4 shrink-0 text-gold-700"
                 : "mt-0.5 size-4 shrink-0 text-navy-900"
             }
             aria-hidden
@@ -81,7 +81,7 @@ function ComparisonCell({ side, accent }: { side: Side; accent: boolean }) {
 }
 
 /**
- * "What owners handle vs. what BellaVere handles" — the whole services page
+ * "What owners handle vs. what Bellavere handles" — the whole services page
  * in seven rows. Wide table scrolls inside its own container on small screens.
  */
 export function ComparisonTable() {
@@ -90,7 +90,7 @@ export function ComparisonTable() {
       <div className="overflow-x-auto">
         <table className="w-full min-w-[640px] border-collapse text-left">
           <caption className="sr-only">
-            Which responsibilities the owner keeps and which BellaVere handles
+            Which responsibilities the owner keeps and which Bellavere handles
           </caption>
           <thead>
             <tr className="border-b border-sand-300 bg-sand-100/70">
@@ -108,9 +108,9 @@ export function ComparisonTable() {
               </th>
               <th
                 scope="col"
-                className="px-6 py-4 text-xs font-semibold tracking-(--tracking-label) text-gold-600 uppercase"
+                className="px-6 py-4 text-xs font-semibold tracking-(--tracking-label) text-gold-700 uppercase"
               >
-                BellaVere
+                Bellavere
               </th>
             </tr>
           </thead>

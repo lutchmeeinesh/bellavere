@@ -42,19 +42,19 @@ export const properties: Property[] = [
       },
       {
         src: unsplash("1600585154526-990dced4db0d"),
-        alt: "Bright open-plan living room with linen sofas and rattan accents",
+        alt: "Villa facade in dark cladding and warm timber, lit at dusk",
       },
       {
         src: unsplash("1512918728675-ed5a9ecdebfd"),
-        alt: "Master bedroom with crisp white bedding and garden view",
+        alt: "Bedroom with crisp white bedding and a padded headboard",
       },
       {
         src: unsplash("1584622650111-993a426fbf0a"),
-        alt: "Marble bathroom with double vanity and walk-in shower",
+        alt: "Bright bathroom with a glass walk-in shower and double vanity",
       },
       {
         src: unsplash("1600566753190-17f0baa2a6c3"),
-        alt: "Poolside loungers under a pergola at dusk",
+        alt: "Villa entrance court in timber, glass and white render",
       },
     ],
   },
@@ -86,19 +86,19 @@ export const properties: Property[] = [
     images: [
       {
         src: unsplash("1600596542815-ffad4c1539a9"),
-        alt: "Modern villa exterior with pool reflecting the evening sky",
+        alt: "Modern white villa with a pool under a blue sky",
       },
       {
         src: unsplash("1600607687939-ce8a6c25118c"),
-        alt: "Open living and dining space with floor-to-ceiling glazing",
+        alt: "Modern open-plan living room with a pale sofa and timber feature wall",
       },
       {
         src: unsplash("1578683010236-d716f9a3f461"),
-        alt: "Bedroom with upholstered headboard and warm reading lights",
+        alt: "Spacious bedroom with a glass-walled en-suite and wide windows",
       },
       {
         src: unsplash("1540541338287-41700207dee6"),
-        alt: "Palm-fringed pool with sun loungers",
+        alt: "Infinity pool framed by palm trees above the ocean",
       },
     ],
   },
@@ -129,15 +129,15 @@ export const properties: Property[] = [
     images: [
       {
         src: unsplash("1522708323590-d24dbb6b0267"),
-        alt: "Apartment living room with sofa, plants and warm wood floor",
+        alt: "Compact apartment living and kitchen area with a red armchair",
       },
       {
         src: unsplash("1502672260266-1c1ef2d93688"),
-        alt: "Sunlit bedroom with white linen and rattan pendant light",
+        alt: "Bright living room with plants, bookshelves and a mid-century chair",
       },
       {
         src: unsplash("1584622650111-993a426fbf0a"),
-        alt: "Modern tiled bathroom with walk-in shower",
+        alt: "Bright bathroom with a glass walk-in shower and double vanity",
       },
     ],
   },
@@ -171,23 +171,23 @@ export const properties: Property[] = [
     images: [
       {
         src: unsplash("1602343168117-bb8ffe3e2e9f"),
-        alt: "Hillside villa with long pool overlooking the bay",
+        alt: "Contemporary white villa with a long swimming pool",
       },
       {
         src: unsplash("1615571022219-eb45cf7faa9d"),
-        alt: "Villa pool terrace with loungers facing the ocean",
+        alt: "Contemporary beach house perched above breaking waves",
       },
       {
         src: unsplash("1600607687920-4e2a09cf159d"),
-        alt: "Double-height living room with sea-facing glazing",
+        alt: "Modern dining space beside a floating staircase",
       },
       {
         src: unsplash("1512918728675-ed5a9ecdebfd"),
-        alt: "Guest suite with king bed and terrace access",
+        alt: "Bedroom with crisp white bedding and a padded headboard",
       },
       {
         src: unsplash("1519046904884-53103b34b206"),
-        alt: "White-sand beach with turquoise lagoon nearby",
+        alt: "White-sand beach with a palm tree and a thatched parasol",
       },
     ],
   },
@@ -217,15 +217,15 @@ export const properties: Property[] = [
     images: [
       {
         src: unsplash("1493809842364-78817add7ffb"),
-        alt: "Loft apartment with tall windows and open-plan living space",
+        alt: "Living room with a blue sofa, herringbone floor and tall windows",
       },
       {
         src: unsplash("1560448204-e02f11c3d0e2"),
-        alt: "Compact modern kitchen and dining nook",
+        alt: "Light-filled living and dining room with tall windows",
       },
       {
         src: unsplash("1578683010236-d716f9a3f461"),
-        alt: "Mezzanine bedroom with soft evening lighting",
+        alt: "Spacious bedroom with a glass-walled en-suite and wide windows",
       },
     ],
   },
@@ -258,19 +258,19 @@ export const properties: Property[] = [
     images: [
       {
         src: unsplash("1520250497591-112f2f40a3f4"),
-        alt: "Penthouse terrace with plunge pool overlooking the sea",
+        alt: "Lagoon-style pool framed by palms and mountains",
       },
       {
         src: unsplash("1522708323590-d24dbb6b0267"),
-        alt: "Living room opening onto a wide terrace",
+        alt: "Compact apartment living and kitchen area with a red armchair",
       },
       {
         src: unsplash("1510414842594-a61c69b5ae57"),
-        alt: "Turquoise lagoon water seen from above",
+        alt: "Turquoise cove beneath wooded cliffs",
       },
       {
         src: unsplash("1584622650111-993a426fbf0a"),
-        alt: "En-suite bathroom with double basin",
+        alt: "Bright bathroom with a glass walk-in shower and double vanity",
       },
     ],
   },
@@ -301,15 +301,15 @@ export const properties: Property[] = [
     images: [
       {
         src: unsplash("1560448204-e02f11c3d0e2"),
-        alt: "Neat apartment interior with sofa and dining table",
+        alt: "Light-filled living and dining room with tall windows",
       },
       {
         src: unsplash("1493809842364-78817add7ffb"),
-        alt: "Light-filled living area with large windows",
+        alt: "Living room with a blue sofa, herringbone floor and tall windows",
       },
       {
         src: unsplash("1512918728675-ed5a9ecdebfd"),
-        alt: "Bedroom with white bedding and soft morning light",
+        alt: "Bedroom with crisp white bedding and a padded headboard",
       },
     ],
   },
@@ -339,15 +339,15 @@ export const properties: Property[] = [
     images: [
       {
         src: unsplash("1600607687939-ce8a6c25118c"),
-        alt: "Compact stylish living room with sofa and workspace",
+        alt: "Modern open-plan living room with a pale sofa and timber feature wall",
       },
       {
         src: unsplash("1502672260266-1c1ef2d93688"),
-        alt: "Bright bedroom with garden view",
+        alt: "Bright living room with plants, bookshelves and a mid-century chair",
       },
       {
         src: unsplash("1584622650111-993a426fbf0a"),
-        alt: "Bathroom with rainfall shower",
+        alt: "Bright bathroom with a glass walk-in shower and double vanity",
       },
     ],
   },
@@ -378,15 +378,15 @@ export const properties: Property[] = [
     images: [
       {
         src: unsplash("1502672260266-1c1ef2d93688"),
-        alt: "Bedroom with sea breeze curtains and white linen",
+        alt: "Bright living room with plants, bookshelves and a mid-century chair",
       },
       {
         src: unsplash("1505142468610-359e7d316be0"),
-        alt: "Palm tree leaning over a white-sand beach",
+        alt: "Aerial view of a wave breaking on white sand",
       },
       {
         src: unsplash("1578683010236-d716f9a3f461"),
-        alt: "Cosy second bedroom with reading lamps",
+        alt: "Spacious bedroom with a glass-walled en-suite and wide windows",
       },
     ],
   },
@@ -418,15 +418,15 @@ export const properties: Property[] = [
     images: [
       {
         src: unsplash("1600585154340-be6161a56a0c"),
-        alt: "Elegant villa facade with manicured lawn",
+        alt: "Modern villa with glowing windows and a lawn at dusk",
       },
       {
         src: unsplash("1600566752355-35792bedcfea"),
-        alt: "Pool house and covered terrace beside the pool",
+        alt: "Bathroom with a freestanding bath and walk-in shower",
       },
       {
         src: unsplash("1512918728675-ed5a9ecdebfd"),
-        alt: "Airy bedroom with white bedding",
+        alt: "Bedroom with crisp white bedding and a padded headboard",
       },
     ],
   },
@@ -457,15 +457,15 @@ export const properties: Property[] = [
     images: [
       {
         src: unsplash("1600047509807-ba8f99d2cdde"),
-        alt: "Contemporary villa exterior in late-afternoon light",
+        alt: "Contemporary villa with timber cladding and a landscaped lawn",
       },
       {
-        src: unsplash("1521401830884-6c03c1c87ebb"),
-        alt: "Pool deck with white parasols by the sea",
+        src: unsplash("1540541338287-41700207dee6"),
+        alt: "Infinity pool framed by palm trees above the ocean",
       },
       {
         src: unsplash("1600607687939-ce8a6c25118c"),
-        alt: "Open-plan lounge with ocean-facing windows",
+        alt: "Modern open-plan living room with a pale sofa and timber feature wall",
       },
     ],
   },
@@ -495,15 +495,15 @@ export const properties: Property[] = [
     images: [
       {
         src: unsplash("1499793983690-e29da59ef1c2"),
-        alt: "Coastal apartment terrace with ocean glimpse",
+        alt: "Thatched beachfront pavilion over a turquoise lagoon",
       },
       {
-        src: unsplash("1544551763-46a013bb70d5"),
-        alt: "Aerial view of turquoise reef water",
+        src: unsplash("1507525428034-b723cf961d3e"),
+        alt: "Calm beach at sunrise with gentle waves",
       },
       {
         src: unsplash("1522708323590-d24dbb6b0267"),
-        alt: "Relaxed living room with plants and soft textiles",
+        alt: "Compact apartment living and kitchen area with a red armchair",
       },
     ],
   },

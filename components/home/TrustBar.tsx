@@ -3,39 +3,26 @@ import { CountUp } from "@/components/ui/CountUp";
 import { RevealItem, RevealStagger } from "@/components/ui/Reveal";
 import { company } from "@/data/company";
 
-// Demo figures — sourced (and TODO-marked) in data/company.ts.
-const STATS = [
-  { value: company.stats.propertiesManaged, label: "Properties managed" },
-  {
-    value: company.stats.averageOccupancy,
-    label: "Average occupancy",
-    suffix: "%",
-  },
-  { value: company.stats.yearsOperating, label: "Years on the coast" },
-  {
-    value: company.stats.ownerRating,
-    label: "Owner rating",
-    suffix: "/5",
-    decimals: 1,
-  },
-] as const;
-
-/** Four key figures under the hero, counting up on reveal. */
+/**
+ * Four commitments under the hero, counting up on reveal. These are promises
+ * that are true by definition of the service (see data/company.ts). Swap in
+ * track-record figures — properties managed, occupancy, ratings — only once
+ * they are real.
+ */
 export function TrustBar() {
   return (
     <section className="border-b border-sand-300 py-24 lg:py-32">
       <Container>
         <RevealStagger className="grid grid-cols-2 gap-x-6 gap-y-12 lg:grid-cols-4">
-          {STATS.map((stat) => (
-            <RevealItem key={stat.label} className="text-center">
+          {company.commitments.map((item) => (
+            <RevealItem key={item.label} className="text-center">
               <div className="font-serif text-5xl text-navy-900 lg:text-6xl">
                 <CountUp
-                  value={stat.value}
-                  decimals={"decimals" in stat ? stat.decimals : 0}
-                  suffix={"suffix" in stat ? stat.suffix : ""}
+                  value={item.value}
+                  suffix={"suffix" in item ? item.suffix : ""}
                 />
               </div>
-              <p className="eyebrow mt-3">{stat.label}</p>
+              <p className="eyebrow mt-3">{item.label}</p>
             </RevealItem>
           ))}
         </RevealStagger>

@@ -19,7 +19,9 @@ import { Container } from "@/components/ui/Container";
 import { Reveal, RevealItem, RevealStagger } from "@/components/ui/Reveal";
 import { company } from "@/data/company";
 import { getPropertyBySlug, properties } from "@/data/properties";
-import { formatCurrency } from "@/lib/format";
+import { formatMoney } from "@/lib/format";
+import { getCurrency } from "@/lib/currency";
+import { ConversionNote } from "@/components/currency/Money";
 
 type Params = { slug: string };
 
@@ -46,6 +48,7 @@ export default async function PropertyDetailPage({
   const { slug } = await params;
   const property = getPropertyBySlug(slug);
   if (!property) notFound();
+  const currency = await getCurrency();
 
   const facts = [
     {
@@ -65,7 +68,7 @@ export default async function PropertyDetailPage({
     },
     {
       icon: Moon,
-      value: `from ${formatCurrency(property.nightlyRate)}`,
+      value: `from ${formatMoney(property.nightlyRate, currency)}`,
       label: "per night",
     },
   ];
@@ -90,7 +93,7 @@ export default async function PropertyDetailPage({
             </Badge>
             <h1 className="mt-4">{property.name}</h1>
             <p className="mt-3 flex items-center gap-2 text-ink-500">
-              <MapPin className="size-4 shrink-0 text-gold-600" aria-hidden />
+              <MapPin className="size-4 shrink-0 text-gold-700" aria-hidden />
               {property.location}
             </p>
             <p className="mt-5 text-lg leading-relaxed text-ink-500">
@@ -124,6 +127,7 @@ export default async function PropertyDetailPage({
                   </RevealItem>
                 ))}
               </RevealStagger>
+              <ConversionNote className="mt-5" />
             </Card>
           </Reveal>
         </Container>
@@ -157,7 +161,7 @@ export default async function PropertyDetailPage({
                     className="flex items-start gap-3 text-sm leading-relaxed text-ink-900"
                   >
                     <Check
-                      className="mt-0.5 size-4 shrink-0 text-gold-600"
+                      className="mt-0.5 size-4 shrink-0 text-gold-700"
                       aria-hidden
                     />
                     {amenity}
@@ -168,11 +172,11 @@ export default async function PropertyDetailPage({
 
             <Reveal delay={0.1} className="self-start lg:sticky lg:top-28">
               <div className="rounded-2xl border border-gold-500/40 bg-gold-500/5 p-8">
-                <span className="grid size-11 place-items-center rounded-full bg-gold-500/15 text-gold-600">
+                <span className="grid size-11 place-items-center rounded-full bg-gold-500/15 text-gold-700">
                   <KeyRound className="size-5" aria-hidden />
                 </span>
                 <p className="mt-5 font-serif text-2xl text-navy-900">
-                  Managed by BellaVere since {property.managedSince}
+                  Managed by Bellavere since {property.managedSince}
                 </p>
                 <p className="mt-3 text-sm leading-relaxed text-ink-500">
                   Pricing, guest care, housekeeping, maintenance and monthly
@@ -191,9 +195,10 @@ export default async function PropertyDetailPage({
             <p className="eyebrow mb-4">Own something similar?</p>
             <h2>List a property like this</h2>
             <p className="mt-5 text-lg leading-relaxed text-ink-500">
-              BellaVere manages {company.stats.propertiesManaged} villas and
-              apartments across the north and west coasts of Mauritius. Tell
-              us about your home and we&rsquo;ll show you what it could earn.
+              Bellavere looks after villas, apartments and residences across
+              the north and west coasts of Mauritius. Tell us about your home
+              and we&rsquo;ll show you what it could earn — with no hidden
+              fees.
             </p>
             <div className="mt-9 flex flex-wrap justify-center gap-4">
               <Button href="/contact" size="lg">

@@ -2,7 +2,8 @@
 
 import { motion } from "framer-motion";
 import type { ClientKpis, RevenuePoint } from "@/lib/metrics";
-import { formatCurrency, formatPercent } from "@/lib/format";
+import { formatPercent } from "@/lib/format";
+import { useMoney } from "@/components/currency/CurrencyProvider";
 
 /**
  * Self-contained, non-interactive "screenshot" of the owner dashboard,
@@ -39,7 +40,7 @@ function Delta({ value, unit }: { value: number | null; unit: string }) {
   return (
     <p
       className={
-        value >= 0 ? "text-[9px] text-success" : "text-[9px] text-danger"
+        value >= 0 ? "text-[9px] text-success-700" : "text-[9px] text-danger-700"
       }
     >
       {value >= 0 ? "+" : ""}
@@ -56,6 +57,7 @@ export function DashboardPreview({
   kpis: ClientKpis;
   revenue: RevenuePoint[];
 }) {
+  const money = useMoney();
   const { line, area } = sparklinePaths(
     revenue.map((p) => p.revenue),
     260,
@@ -67,7 +69,7 @@ export function DashboardPreview({
     <div style={{ perspective: 1200 }}>
       <motion.div
         role="img"
-        aria-label="Preview of the BellaVere owner dashboard showing live revenue, occupancy and bookings"
+        aria-label="Preview of the Bellavere owner dashboard showing live revenue, occupancy and bookings"
         className="rounded-2xl border border-sand-300 bg-white shadow-(--shadow-soft) will-change-transform"
         whileHover={{ rotateX: 4, rotateY: -4 }}
         transition={{ duration: 0.2, ease: "easeOut" }}
@@ -106,7 +108,7 @@ export function DashboardPreview({
                     Revenue · {currentMonth.label}
                   </p>
                   <p className="mt-0.5 text-sm font-semibold text-navy-900">
-                    {formatCurrency(kpis.revenueThisMonth)}
+                    {money.format(kpis.revenueThisMonth)}
                   </p>
                   <Delta value={kpis.revenueDelta} unit="%" />
                 </div>

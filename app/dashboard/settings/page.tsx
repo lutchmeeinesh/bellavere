@@ -5,6 +5,7 @@ import { RevealItem, RevealStagger } from "@/components/ui/Reveal";
 import { ProfileSettings } from "@/components/dashboard/settings/ProfileSettings";
 import { NotificationSettings } from "@/components/dashboard/settings/NotificationSettings";
 import { PayoutSettings } from "@/components/dashboard/settings/PayoutSettings";
+import { DisplayCurrencySettings } from "@/components/dashboard/settings/DisplayCurrencySettings";
 import { PasswordSettings } from "@/components/dashboard/settings/PasswordSettings";
 
 export const metadata: Metadata = { title: "Settings" };
@@ -31,10 +32,16 @@ export default async function SettingsPage() {
           <ProfileSettings initial={profile} />
         </RevealItem>
         <RevealItem>
+          <DisplayCurrencySettings />
+        </RevealItem>
+        <RevealItem>
           <NotificationSettings />
         </RevealItem>
         <RevealItem>
-          <PayoutSettings payoutAccount={client.payoutAccount} />
+          <PayoutSettings
+            payoutAccount={client.payoutAccount}
+            payoutCurrency={client.payoutCurrency}
+          />
         </RevealItem>
         <RevealItem>
           <PasswordSettings />

@@ -1,8 +1,16 @@
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
+import type { Currency } from "@/lib/format";
 
 /** Payout details card — read-only in the portal by design. */
-export function PayoutSettings({ payoutAccount }: { payoutAccount: string }) {
+export function PayoutSettings({
+  payoutAccount,
+  payoutCurrency,
+}: {
+  payoutAccount: string;
+  /** Currency the owner is actually paid in (independent of display). */
+  payoutCurrency: Currency;
+}) {
   return (
     <Card className="p-6">
       <h2 className="text-xl">Payout details</h2>
@@ -13,7 +21,7 @@ export function PayoutSettings({ payoutAccount }: { payoutAccount: string }) {
         <span className="font-mono text-sm tracking-wide text-navy-900">
           {payoutAccount}
         </span>
-        <Badge tone="gold">EUR</Badge>
+        <Badge tone="gold">{payoutCurrency}</Badge>
       </div>
       <p className="mt-3 text-sm text-ink-500">
         Payouts are made monthly by the 5th.
@@ -29,7 +37,7 @@ export function PayoutSettings({ payoutAccount }: { payoutAccount: string }) {
           Update payout account
         </button>
         <p className="mt-2 text-xs text-ink-500">
-          Contact your account manager to change payout details.
+          Ask Ankit, your client-relations contact, to change payout details.
         </p>
       </div>
     </Card>

@@ -8,7 +8,7 @@ import { Container } from "@/components/ui/Container";
 import { Reveal, RevealItem, RevealStagger } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { getFeaturedProperties } from "@/data/properties";
-import { formatCurrency } from "@/lib/format";
+import { Money } from "@/components/currency/Money";
 
 /** Three featured listings from the demo portfolio, linking to their pages. */
 export function FeaturedProperties() {
@@ -57,7 +57,7 @@ export function FeaturedProperties() {
                         {property.bedrooms} bedrooms
                       </span>
                       <span className="font-medium text-navy-900">
-                        {formatCurrency(property.nightlyRate)}
+                        <Money eur={property.nightlyRate} />
                         <span className="font-normal text-ink-500"> / night</span>
                       </span>
                     </div>

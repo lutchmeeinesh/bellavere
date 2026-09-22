@@ -10,7 +10,7 @@ export default function DashboardNotFound() {
         <h1 className="mt-2 text-2xl lg:text-3xl">Nothing here</h1>
         <p className="mt-3 text-sm text-ink-500">
           This page or property isn&apos;t in your portfolio. If you believe it
-          should be, get in touch with your BellaVere account manager.
+          should be, get in touch with Ankit, your Bellavere client-relations contact.
         </p>
         <Button href="/dashboard" variant="dark" className="mt-6">
           Back to overview

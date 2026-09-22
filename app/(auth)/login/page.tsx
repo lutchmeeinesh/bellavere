@@ -7,7 +7,7 @@ import { siteImages } from "@/data/siteImages";
 export const metadata: Metadata = {
   title: "Owner login",
   description:
-    "Sign in to the BellaVere owner portal to follow bookings, revenue and the care of your property.",
+    "Sign in to the Bellavere owner portal to follow bookings, revenue and the care of your property.",
 };
 
 export default async function LoginPage({

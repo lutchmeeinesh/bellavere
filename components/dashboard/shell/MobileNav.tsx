@@ -125,7 +125,7 @@ export function MobileNav() {
                   <form method="post" action="/api/auth/logout">
                     <button
                       type="submit"
-                      className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-base font-medium text-danger transition-colors duration-150 hover:bg-danger/5"
+                      className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-base font-medium text-danger-700 transition-colors duration-150 hover:bg-danger/5"
                     >
                       <LogOut className="size-5" aria-hidden />
                       Log out

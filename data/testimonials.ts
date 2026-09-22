@@ -11,7 +11,7 @@ export const testimonials: Testimonial[] = [
   },
   {
     quote:
-      "BellaVere took over after two seasons of chaos with a big agency. Occupancy went up, my stress went down, and the statements finally add up to the cent.",
+      "Bellavere took over after two seasons of chaos with a big agency. Occupancy went up, my stress went down, and the statements finally add up to the cent.",
     name: "Ravi Naidoo",
     role: "Owner, Villa Tamarin Bay",
   },

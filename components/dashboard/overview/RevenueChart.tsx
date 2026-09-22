@@ -11,7 +11,7 @@ import {
   YAxis,
 } from "recharts";
 import { CHART_COLORS, CHART_FONT } from "@/lib/constants";
-import { formatCurrency } from "@/lib/format";
+import { useMoney } from "@/components/currency/CurrencyProvider";
 import { cn } from "@/lib/utils";
 
 /**
@@ -33,10 +33,6 @@ const RANGES = [
   { id: "12m", label: "12M", months: 12 },
 ] as const;
 
-function compactEuro(value: number): string {
-  return value >= 1000 ? `€${Math.round(value / 1000)}k` : `€${value}`;
-}
-
 function RevenueTooltip({
   active,
   payload,
@@ -44,19 +40,21 @@ function RevenueTooltip({
   active?: boolean;
   payload?: ReadonlyArray<{ value?: number | string; payload?: RevenueDatum }>;
 }) {
+  const money = useMoney();
   if (!active || !payload || payload.length === 0) return null;
   const point = payload[0];
   return (
     <div className="rounded-xl border border-sand-300 bg-white px-3.5 py-2.5 shadow-(--shadow-soft)">
       <p className="text-xs text-ink-500">{point.payload?.labelLong}</p>
       <p className="text-sm font-medium text-navy-900">
-        {formatCurrency(Number(point.value ?? 0))}
+        {money.format(Number(point.value ?? 0))}
       </p>
     </div>
   );
 }
 
 export function RevenueChart({ data }: { data: RevenueDatum[] }) {
+  const money = useMoney();
   const [rangeId, setRangeId] = useState<(typeof RANGES)[number]["id"]>("12m");
   const months = RANGES.find((r) => r.id === rangeId)?.months ?? 12;
   const visible = data.slice(-months);
@@ -118,11 +116,11 @@ export function RevenueChart({ data }: { data: RevenueDatum[] }) {
               tick={{ fill: CHART_COLORS.axis, ...CHART_FONT }}
             />
             <YAxis
-              width={46}
+              width={money.currency === "MUR" ? 64 : 46}
               tickLine={false}
               axisLine={false}
               tick={{ fill: CHART_COLORS.axis, ...CHART_FONT }}
-              tickFormatter={(value: number) => compactEuro(value)}
+              tickFormatter={(value: number) => money.formatCompact(value)}
             />
             <Tooltip
               content={<RevenueTooltip />}

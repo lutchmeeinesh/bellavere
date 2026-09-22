@@ -23,7 +23,7 @@ const ACCOUNTS = {
   hamilton: { email: "hamilton@demo.bellavere.com", own: ["p-05", "p-06", "p-07", "p-08", "p-09"], foreign: "p-02", ownNames: ["Cap Ouest Penthouse", "Les Salines Loft"], foreignNames: ["Villa Azure", "Villa Tamarin Bay"] },
 };
 
-const PUBLIC_ROUTES = ["/", "/services", "/properties", "/properties/villa-azure", "/about", "/contact", "/login"];
+const PUBLIC_ROUTES = ["/", "/services", "/properties", "/properties/villa-azure", "/about", "/contact", "/privacy", "/terms", "/login"];
 const DASH_ROUTES = ["/dashboard", "/dashboard/properties", "/dashboard/bookings", "/dashboard/maintenance", "/dashboard/statements", "/dashboard/documents", "/dashboard/settings"];
 
 const findings = [];
@@ -115,6 +115,34 @@ const browser = await chromium.launch();
   const { finalUrl } = await inspectPage(page, "/dashboard", "unauth /dashboard");
   if (finalUrl && !finalUrl.includes("/login")) note("ERROR", "auth", `unauthenticated /dashboard did not redirect to /login (got ${finalUrl})`);
   else console.log("OK: unauthenticated /dashboard -> /login");
+  await ctx.close();
+}
+
+// ---------- currency switch ----------
+// Click MUR in the header, then confirm prices re-render in rupees and the
+// choice persists across navigation (cookie) and into the dashboard.
+{
+  const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  const page = await ctx.newPage();
+  const RUPEE = /Rs \d[\d,]*/;
+  await page.goto(`${BASE}/properties`, { waitUntil: "networkidle" });
+  const before = await page.evaluate(() => document.body.innerText);
+  if (!/€\d/.test(before)) note("ERROR", "currency", "default /properties does not show euro prices");
+  await page.getByRole("radio", { name: /Mauritian rupee/ }).first().click();
+  await page.waitForTimeout(1500);
+  const after = await page.evaluate(() => document.body.innerText);
+  if (!RUPEE.test(after)) note("ERROR", "currency", "clicking MUR did not switch /properties prices to rupees");
+  else console.log("OK: MUR switch re-renders prices in rupees");
+  await page.goto(`${BASE}/properties/villa-azure`, { waitUntil: "networkidle" });
+  const detail = await page.evaluate(() => document.body.innerText);
+  if (!detail.includes("Rs 24,960")) note("ERROR", "currency", "MUR choice did not persist to /properties/villa-azure (expected Rs 24,960)");
+  else console.log("OK: MUR persists across navigation (villa-azure from Rs 24,960)");
+  await ctx.request.post(`${BASE}/api/auth/login`, { data: { email: "sophie@demo.bellavere.com", password: "demo1234" } });
+  await page.goto(`${BASE}/dashboard/statements`, { waitUntil: "networkidle" });
+  const stmt = await page.evaluate(() => document.body.innerText);
+  if (!RUPEE.test(stmt)) note("ERROR", "currency", "dashboard statements not in rupees after choosing MUR");
+  else console.log("OK: dashboard statements follow the MUR choice");
+  await page.screenshot({ path: path.join(OUT, "dashboard-statements-mur-desktop.png"), fullPage: true });
   await ctx.close();
 }
 

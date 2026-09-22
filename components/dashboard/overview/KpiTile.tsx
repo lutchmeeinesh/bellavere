@@ -2,6 +2,7 @@ import type { LucideIcon } from "lucide-react";
 import { TrendingDown, TrendingUp } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { CountUp } from "@/components/ui/CountUp";
+import { MoneyCountUp } from "@/components/currency/Money";
 import { cn } from "@/lib/utils";
 
 /**
@@ -14,6 +15,7 @@ export function KpiTile({
   value,
   prefix,
   suffix,
+  money = false,
   icon: Icon,
   delta,
   deltaSuffix = "%",
@@ -22,6 +24,8 @@ export function KpiTile({
   value: number;
   prefix?: string;
   suffix?: string;
+  /** Treat `value` as an EUR amount shown in the visitor's currency. */
+  money?: boolean;
   icon: LucideIcon;
   /** number = show trend; null = show "—"; undefined = no delta row. */
   delta?: number | null;
@@ -36,13 +40,17 @@ export function KpiTile({
         </p>
         <span
           aria-hidden
-          className="flex size-8 shrink-0 items-center justify-center rounded-full bg-gold-500/15 text-gold-600"
+          className="flex size-8 shrink-0 items-center justify-center rounded-full bg-gold-500/15 text-gold-700"
         >
           <Icon className="size-4" />
         </span>
       </div>
       <p className="mt-2 font-serif text-3xl font-semibold text-navy-900 lg:text-4xl">
-        <CountUp value={value} prefix={prefix} suffix={suffix} />
+        {money ? (
+          <MoneyCountUp eur={value} />
+        ) : (
+          <CountUp value={value} prefix={prefix} suffix={suffix} />
+        )}
       </p>
       {showDeltaRow ? (
         <p className="mt-2 flex items-center gap-1.5 text-xs">
@@ -52,7 +60,7 @@ export function KpiTile({
             <span
               className={cn(
                 "inline-flex items-center gap-1 font-medium",
-                delta >= 0 ? "text-success" : "text-danger"
+                delta >= 0 ? "text-success-700" : "text-danger-700"
               )}
             >
               {delta >= 0 ? (

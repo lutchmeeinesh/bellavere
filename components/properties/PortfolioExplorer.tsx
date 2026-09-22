@@ -140,6 +140,9 @@ export function PortfolioExplorer({ properties }: { properties: Property[] }) {
         </div>
       </Reveal>
 
+      {/* Keeps the heading outline sequential (h1 → h2 → card h3s). */}
+      <h2 className="sr-only">Properties matching your filters</h2>
+
       {filtered.length > 0 ? (
         <motion.ul
           layout
