@@ -24,7 +24,7 @@ export const company = {
   /**
    * Confirmed by the client (22 Sep 2026): the people to call, both
    * reachable every day, 24/7. Shown on the contact page and in structured
-   * data. Ankit's email is published at the client's request.
+   * data. Ankit's and Nihal's emails are published at the client's request.
    */
   contacts: [
     {
@@ -37,7 +37,7 @@ export const company = {
       name: "Nihal Lutchmee",
       role: null as string | null,
       phone: "+230 5817 4529",
-      email: null as string | null,
+      email: "executive@wwwbellavere.com" as string | null,
     },
   ],
   /** Main line (Ankit) for the footer and structured data. */

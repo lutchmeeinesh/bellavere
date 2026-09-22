@@ -40,7 +40,7 @@ Node 20+ required (built and tested on Node 24).
 
 - **Name:** Bellavere (lowercase v; the original brief's "BellaVere" was retired). Trading name "Bellavere Property Care".
 - **Team:** **Krit Goburdhan**, General Manager & Site Supervisor (surname inferred from the email); **Ankit Dookhorun**, Client Relations (surname confirmed — his email is zoodookhorun@gmail.com); **Nihal Lutchmee** (no role given, so none shown).
-- **Contacts (confirmed 22 Sep):** Ankit +230 5531 0734 and zoodookhorun@gmail.com; Nihal +230 5817 4529. Both reachable **every day, 24/7**. **Every query is answered the same day.** Social: Instagram and Facebook **bellavere.ltd**. Krit's email is **not** published.
+- **Contacts (confirmed 22 Sep):** Ankit +230 5531 0734 and zoodookhorun@gmail.com; Nihal +230 5817 4529 and executive@wwwbellavere.com. Both reachable **every day, 24/7**. **Every query is answered the same day.** Social: Instagram and Facebook **bellavere.ltd**. Krit's email is **not** published.
 - **Company email:** BellavereLtd@gmail.com
 - **Mission:** "Our mission is to provide the best service while maintaining full transparency. No hidden fees — and there will always be a human to answer you."
 - **Currency:** MUR and EUR, user-selectable.

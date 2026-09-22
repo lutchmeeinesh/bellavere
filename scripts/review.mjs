@@ -149,7 +149,7 @@ const browser = await chromium.launch();
   // Confirmed contact details are published where they belong.
   await page.goto(`${BASE}/contact`, { waitUntil: "networkidle" });
   const contactHtml = await page.evaluate(() => document.documentElement.outerHTML);
-  for (const expected of ["Ankit Dookhorun", "+230 5531 0734", "zoodookhorun@gmail.com", "Nihal Lutchmee", "+230 5817 4529", "24/7", "the same day", "instagram.com/bellavere.ltd", "facebook.com/bellavere.ltd"]) {
+  for (const expected of ["Ankit Dookhorun", "+230 5531 0734", "zoodookhorun@gmail.com", "Nihal Lutchmee", "+230 5817 4529", "executive@wwwbellavere.com", "24/7", "the same day", "instagram.com/bellavere.ltd", "facebook.com/bellavere.ltd"]) {
     if (!contactHtml.includes(expected)) note("ERROR", "contact", `contact page is missing "${expected}"`);
   }
   console.log("OK: contact page shows Ankit, Nihal, 24/7, same-day replies and both social accounts");

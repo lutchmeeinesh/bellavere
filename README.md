@@ -60,7 +60,7 @@ The login page lists these with one-click "Use" buttons.
 | --- | --- | --- |
 | Name | Bellavere (trading name: Bellavere Property Care) | `data/company.ts` |
 | Team | Krit Goburdhan — General Manager & Site Supervisor; Ankit Dookhorun — Client Relations; Nihal Lutchmee | `data/company.ts` |
-| Contacts | Ankit Dookhorun +230 5531 0734, zoodookhorun@gmail.com · Nihal Lutchmee +230 5817 4529 — both reachable every day, 24/7 | `data/company.ts` (`contacts`) |
+| Contacts | Ankit Dookhorun +230 5531 0734, zoodookhorun@gmail.com · Nihal Lutchmee +230 5817 4529, executive@wwwbellavere.com — both reachable every day, 24/7 | `data/company.ts` (`contacts`) |
 | Response time | Every query answered the same day | `data/company.ts` (`responseTime`) |
 | Social | Instagram and Facebook: bellavere.ltd | `data/company.ts` (`social`) |
 | Company email | BellavereLtd@gmail.com | `data/company.ts` |
@@ -71,7 +71,7 @@ The login page lists these with one-click "Use" buttons.
 | Coverage | All around Mauritius (the client's own map) | `public/images/coverage-map.webp`, About page |
 | Services incl. syndic | From the client's own prospect-list outreach copy | `app/(site)/services/page.tsx` |
 
-Ankit's email and both phone numbers are published on the contact page at the client's request. **Krit's email is not published** and is kept only in `data/admins.ts` (server-side) — `data/company.ts` is bundled into browser code, so it must never hold private data. Krit's surname is still inferred from the email address.
+Ankit's and Nihal's emails and both phone numbers are published on the contact page at the client's request. **Krit's email is not published** and is kept only in `data/admins.ts` (server-side) — `data/company.ts` is bundled into browser code, so it must never hold private data. Krit's surname is still inferred from the email address.
 
 ## Placeholders still waiting on company info
 
