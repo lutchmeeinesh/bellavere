@@ -12,9 +12,15 @@ export const company = {
   name: "Bellavere",
   /** Trading name used on the client's own outreach material. */
   tradingName: "Bellavere Property Care",
-  // TODO: confirm with client — registered legal name (inferred from the
-  // company email address) and Business Registration Number (BRN)
+  /**
+   * From the Certificate of Incorporation (Registrar of Companies,
+   * Mauritius; CB No 82650 of 19/08/2026).
+   */
   legalName: "Bellavere Ltd",
+  companyNumber: "238321",
+  /** ISO date of incorporation. */
+  incorporated: "2026-08-19",
+  companyType: "private company limited by shares",
   // TODO: confirm with client — tagline
   tagline: "Your property, perfectly managed.",
   /** Coverage confirmed by the client's own map (22 Sep 2026): island-wide. */
@@ -65,8 +71,7 @@ export const company = {
    * meeting, and never exceeds 15%. Each owner's agreed rate lives on their
    * record (Client.feeRate) and drives their statements.
    */
-  // TODO: confirm with client — the 15% cap is assumed to be of gross
-  // rental income (syndic contracts may be priced differently)
+  // Wording confirmed by the client as it stands (22 Sep 2026).
   pricing: {
     maxFeeRate: 0.15,
     /** Short form for badges and lists. */
@@ -78,12 +83,13 @@ export const company = {
   },
   /**
    * The people shown on the About page. Ankit's surname is confirmed by the
-   * client; Krit's is inferred from the email address. No personal emails
+   * client, as is Krit's. No personal emails
    * here: this object is bundled into browser code, so anything in it is
    * public. Admin logins live server-side in data/admins.ts. Nihal's role
    * was not given, so none is shown.
    */
-  // TODO: confirm with client — Krit's surname spelling and bio wording
+  // Surnames confirmed by the client (22 Sep 2026).
+  // TODO: confirm with client — bio wording
   team: [
     {
       name: "Krit Goburdhan",

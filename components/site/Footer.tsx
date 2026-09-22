@@ -111,7 +111,9 @@ export function Footer() {
               © {new Date().getFullYear()} {company.legalName}. All rights
               reserved.
             </p>
-            <p className="mt-1">{company.address.country}</p>
+            <p className="mt-1">
+              Company No. {company.companyNumber} · {company.address.country}
+            </p>
           </div>
           <div className="lg:text-right">
             <p className="flex gap-4 lg:justify-end">

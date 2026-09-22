@@ -40,6 +40,12 @@ export function JsonLd() {
     name: company.name,
     alternateName: company.tradingName,
     legalName: company.legalName,
+    foundingDate: company.incorporated,
+    identifier: {
+      "@type": "PropertyValue",
+      propertyID: "Company number (Registrar of Companies, Mauritius)",
+      value: company.companyNumber,
+    },
     url: SITE_URL,
     email: company.email,
     ...(company.phone ? { telephone: company.phone } : {}),

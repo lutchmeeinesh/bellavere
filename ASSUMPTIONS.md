@@ -118,3 +118,15 @@ The client asked to strip everything fake, keep two demo accounts, and rename th
 - **Trust bar:** "1 point of contact" was replaced by "Same day — every query answered" (two people are now published), and "2 currencies" by "24/7 — always reachable". Both new tiles are fixed text, not count-ups.
 - **24/7 is scoped to people, not an office or a call-out service:** the structured data carries no organisation-wide opening hours (there is no walk-in office), and no "24/7 emergency call-out" claim was reintroduced.
 - **Same-day** applies to replying to queries only — the contact page keeps it separate from the earnings assessment (fees are set after a first meeting).
+
+---
+
+## Update 5 — 22 September 2026 (registration, confirmations, email delivery)
+
+- **Registration** from the Certificate of Incorporation: Bellavere Ltd, Company No. 238321, incorporated 19 August 2026, private company limited by shares. The legal pages show the company number in place of the former "BRN: to be confirmed" placeholder; a separate BRN is not on the certificate and was not invented. The certificate carries no registered address, so the legal pages still omit it.
+- **Confirmed as-is by the client:** Krit's surname (Goburdhan), the fee wording ("never more than 15% of gross rental income"), the €1 = Rs 52 rate, and keeping the three illustrative testimonials. The related TODO markers were resolved.
+- **Enquiries go to BellavereLtd@gmail.com via Resend.** Resend was chosen because its free tier needs no DNS work to start: signing up with BellavereLtd@gmail.com lets the default test sender deliver to that address immediately. Verifying wwwbellavere.com later improves deliverability without touching the Google Workspace records.
+- **No silent loss of enquiries:** without an API key in production, or if Resend fails, the visitor is told and given the direct email and phone numbers — the real safeguard. The enquiry is also written to the runtime log, but Vercel keeps those for only about 1 hour on Hobby (1 day on Pro), so it is a short-term net, not storage.
+- **Production secrets:** a separate `SESSION_SECRET` was generated for Vercel (`.env.vercel.local`, git-ignored); the admin password hashes are the same as locally, so the temporary passwords in `ADMIN-CREDENTIALS.local.md` work on the live site too.
+- **Hosting plan:** deploying on Vercel Hobby for now at the client's choice; the docs note that Hobby is for non-commercial use and Pro is needed once the site is used commercially.
+

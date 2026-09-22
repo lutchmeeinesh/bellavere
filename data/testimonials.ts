@@ -5,8 +5,8 @@ import type { Testimonial } from "@/lib/types";
  * differ from the demo accounts. Initial-only surnames so no quote reads as
  * a specific real person.
  */
-// TODO: confirm with client — replace with real owner quotes (with written
-// permission) before the site is public
+// Client decision (22 Sep 2026): keep these quotes as they are. They are
+// illustrative, not from real owners — replace them if real quotes arrive.
 export const testimonials: Testimonial[] = [
   {
     quote:

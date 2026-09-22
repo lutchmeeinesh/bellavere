@@ -38,8 +38,10 @@ Node 20+ required (built and tested on Node 24).
 
 ### Confirmed company facts (from the client, 22 Sep 2026)
 
+- **Legal entity:** **Bellavere Ltd**, Company No. **238321**, incorporated **19 August 2026** in Mauritius as a private company limited by shares (Certificate of Incorporation). Registered address not yet provided (not on the certificate).
+- **Domain:** **wwwbellavere.com** (bought via Google Domains → now Squarespace Domains); email on **Google Workspace** — never touch its MX/SPF records.
 - **Name:** Bellavere (lowercase v; the original brief's "BellaVere" was retired). Trading name "Bellavere Property Care".
-- **Team:** **Krit Goburdhan**, General Manager & Site Supervisor (surname inferred from the email); **Ankit Dookhorun**, Client Relations (surname confirmed — his email is zoodookhorun@gmail.com); **Nihal Lutchmee** (no role given, so none shown).
+- **Team:** **Krit Goburdhan**, General Manager & Site Supervisor (surname confirmed by the client); **Ankit Dookhorun**, Client Relations (surname confirmed — his email is zoodookhorun@gmail.com); **Nihal Lutchmee** (no role given, so none shown).
 - **Contacts (confirmed 22 Sep):** Ankit +230 5531 0734 and zoodookhorun@gmail.com; Nihal +230 5817 4529 and executive@wwwbellavere.com. Both reachable **every day, 24/7**. **Every query is answered the same day.** Social: Instagram and Facebook **bellavere.ltd**. Krit's email is **not** published.
 - **Company email:** BellavereLtd@gmail.com
 - **Mission:** "Our mission is to provide the best service while maintaining full transparency. No hidden fees — and there will always be a human to answer you."
@@ -49,7 +51,7 @@ Node 20+ required (built and tested on Node 24).
 - **Coverage:** all around Mauritius, per the client's own map (`public/images/coverage-map.webp`, OpenStreetMap-based: keep the attribution caption).
 - **No walk-in office:** no address on the contact page or in the footer.
 - **Admins:** Krit (kritgoburdhan@gmail.com), Ankit (zoodookhorun@gmail.com), Inesh (lutchmeeinesh@gmail.com).
-- **No fake filler (22 Sep 2026):** the client asked for every invented fact to be removed. Only the registered address (and BRN) remain `null` in `data/company.ts` and hidden until provided; no invented numbers, response times, service extras, policies or features; testimonials are kept (client's request) as clearly illustrative, initial-only names that differ from the demo owners.
+- **No fake filler (22 Sep 2026):** the client asked for every invented fact to be removed. Only the registered address remains `null` (and no BRN has been supplied) in `data/company.ts` and hidden until provided; no invented numbers, response times, service extras, policies or features; testimonials are kept (client's request) as clearly illustrative, initial-only names that differ from the demo owners.
 - **Services:** also informed by the client's own syndic prospect list: syndic, common-area management, preventive maintenance, contractor coordination, inspections, pool/landscaping supervision, owner reporting, renovation follow-up. That list's third-party contact details are **not** used anywhere on the site.
 
 ---
@@ -74,6 +76,7 @@ Node 20+ required (built and tested on Node 24).
 2. **Phase 1 — five parallel agents,** each given the same written foundation brief: (A) Home+About, (B) Services+Properties, (C) Contact+Login+404, (D) Dashboard shell+Overview+Properties, (E) Bookings+Maintenance+Statements+Documents+Settings.
 3. **Phase 2/3 — automated review:** a Playwright script (`scripts/review.mjs`) and Lighthouse. It found and fixed the streaming-404 isolation bug (§8).
 4. **Round 2 (22 Sep 2026):** real company facts, the Bellavere spelling, the syndic service, the MUR/EUR switch, SEO (sitemap, robots, OG image, JSON-LD), privacy and terms pages, form spam protection, a newsletter endpoint, a photo/alt-text audit, and AA contrast fixes. See REVIEW.md "Round 2" and ASSUMPTIONS.md "Update — 22 September 2026".
+8. **Round 6 (22 Sep 2026):** registration details from the Certificate of Incorporation, remaining facts confirmed (Krit's surname, 15% wording, Rs 52 rate, testimonials kept), **contact form now emails BellavereLtd@gmail.com via Resend** (17/17 end-to-end tests against a mock), `.env.vercel.local` prepared, deployment steps for wwwbellavere.com. See REVIEW.md "Round 6".
 7. **Round 5 (22 Sep 2026):** real contacts (Ankit Dookhorun, Nihal Lutchmee, 24/7, same-day replies, Instagram/Facebook bellavere.ltd); an independent verification workflow caught a privacy leak (Krit's email in browser bundles), fixed along with the trust bar and count-up SSR values. See REVIEW.md "Round 5".
 6. **Round 4 (22 Sep 2026):** every piece of fake filler stripped (multi-agent audit, 91 findings, three fix/verify rounds), public portfolio and newsletter removed, demo owners reduced to Sophie + Hamilton, testimonials renamed. See REVIEW.md "Round 4".
 5. **Round 3 (22 Sep 2026):** three admin accounts and the `/admin` area, signed sessions + hashed passwords + login rate limit, negotiable fees (≤15%, per-owner rates), island-wide coverage with the client's map, "Visit us" removed, onboarding 1–2 weeks, pre-launch `SITE_INDEXABLE` / `DEMO_MODE` switches. See REVIEW.md "Round 3".
@@ -121,7 +124,7 @@ Type: headings **Cormorant Garamond**, body **Inter**. `h1`–`h4` are styled gl
 
 ### e. Currency — stored in EUR, shown in EUR or MUR
 
-- **Every amount in `data/` is EUR.** Display goes through `lib/format.ts`: `formatMoney(eur, currency)`, `formatMoneyPrecise`, `formatMoneyCompact` ("Rs 624k"), and `EUR_TO_MUR = 52` (TODO; deliberately a **whole number** so converted statements still add up to the rupee).
+- **Every amount in `data/` is EUR.** Display goes through `lib/format.ts`: `formatMoney(eur, currency)`, `formatMoneyPrecise`, `formatMoneyCompact` ("Rs 624k"), and `EUR_TO_MUR = 52` (confirmed by the client; deliberately a **whole number** so converted statements still add up to the rupee).
 - The choice lives in the **`bv_currency` cookie**. `app/layout.tsx` reads it with `getCurrency()` (`lib/currency.ts`) and passes it to `<CurrencyProvider>`, so the **first paint is already in the right currency**. Side effect: every route renders per request (not static). It is measured and negligible.
 - **Client components** use `useMoney()` → `{ currency, format, formatPrecise, formatCompact, convert, symbol, setCurrency }`. **Server components** render `<Money eur={x} />` (a client leaf), or call `formatMoney(x, await getCurrency())` when they need a string.
 - `setCurrency` updates the context, writes the cookie and calls `router.refresh()`, so client components update instantly and server components re-render.
@@ -149,7 +152,7 @@ app/
   api/
     auth/login  auth/logout    signed session, failed-attempt rate limit
     admin/view-as/route.ts   admin opens / leaves an owner's portal
-    contact/route.ts         validate + honeypot + rate limit + consent log (Resend TODO)
+    contact/route.ts         validate + honeypot + rate limit + consent log + Resend email to BellavereLtd@gmail.com
 
 components/
   ui/        Container Button Badge Card SectionHeading Reveal CountUp
@@ -233,7 +236,7 @@ Lighthouse: `chrome-launcher` can't spawn Chrome in this environment. Launch Pla
 ## 10. Deliberate limitations of the demo
 
 - The maintenance "Report an issue" button and the settings forms only change local state; nothing is saved or sent (the UI says so).
-- The contact endpoint validates, rate-limits and **logs**, but sends no email yet.
+- The contact endpoint emails each enquiry through Resend; `RESEND_API_KEY` is required in production — without it (or if Resend fails) the visitor is shown the direct contacts.
 - Rate limiting is in-memory, so it is per server instance.
 - Statement "Download PDF" opens a print window, and the document downloads are decorative.
 - Email notifications don't exist yet; the Settings card says so rather than showing fake toggles.
@@ -255,14 +258,16 @@ Lighthouse: `chrome-launcher` can't spawn Chrome in this environment. Launch Pla
 
 Recreate `data/*.ts` + `lib/metrics.ts` as Supabase tables and queries, keeping the maths identical, with **row-level security on `client_id`**. Decide the booking source: manual entry, or a channel-manager sync (Beds24 / Smoobu / Hostaway; usually the largest single job). ✅ A **read-only staff admin area** exists (`/admin`). ⬜ Admins still can't *edit* anything (add bookings, update tickets, upload documents, publish statements) — that needs the database. Syndic clients (residences) will likely need a co-owner / common-area data model that the current owner-centric model doesn't cover.
 
-## 🟡 C. Content — 15 `TODO: confirm with client` markers
+## 🟡 C. Content — 8 `TODO: confirm with client` markers
 
 - ✅ Name, team, email, mission, currency, syndic service, fees (negotiable, ≤15%), onboarding (1–2 weeks), island-wide coverage + map, no walk-in office.
 - ✅ All fake filler stripped: placeholder contact details hidden, invented metrics/response times/service extras/policies/features removed, public portfolio removed, demo owners reduced to two.
 - ✅ Phone numbers, 24/7 availability, same-day replies, Instagram and Facebook (round 5).
-- ⬜ In `data/company.ts`: **registered address, BRN** (they appear on the legal pages once set), legal name, tagline, the 15% basis, Krit's surname spelling, and bios — including a role for Nihal if there is one.
-- ⬜ The **EUR→MUR rate** in `lib/format.ts`, or store real dual prices per record.
-- ⬜ **Real testimonials** (with permission) to replace the illustrative ones, and real photography.
+- ✅ Legal name Bellavere Ltd, Company No. 238321, incorporated 19 Aug 2026 (private company limited by shares); Krit's surname; the 15% wording.
+- ⬜ In `data/company.ts`: **registered address and BRN** (neither is on the certificate), tagline, bios, and a role for Nihal if there is one.
+- ✅ EUR→MUR rate confirmed at €1 = Rs 52 (storing real dual prices per record stays optional).
+- ✅ Testimonials kept as they are by client decision (22 Sep 2026); swap in real quotes if any arrive.
+- ⬜ Real photography.
 - ⬜ A public portfolio page once there are real listings (the old one is in git history: commit `cdb2f9f`).
 - ✅ Ankit's email is published (client's request); Krit's stays private.
 
@@ -270,7 +275,7 @@ Recreate `data/*.ts` + `lib/metrics.ts` as Supabase tables and queries, keeping 
 
 | Stub | Status |
 |---|---|
-| Contact form | ✅ Honeypot, rate limit and consent record. ⬜ Send via Resend |
+| Contact form | ✅ Honeypot, rate limit, consent record, same-site JSON only, delivery via Resend. ⬜ Verified sending domain (`CONTACT_FROM_EMAIL`) |
 | Newsletter | Removed (Bellavere doesn't send one yet). Restore from git history when it does |
 | Rate limiting | ⬜ Move to Upstash Redis on Vercel |
 | Date-range selector | ✅ Removed (replaced by the currency switch) |

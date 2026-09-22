@@ -19,7 +19,7 @@ export const CURRENCY_COOKIE = "bv_currency";
  * converted statement lines (gross - fee - expenses = net) still add up to
  * the rupee. If this becomes fractional, convert statement totals as a set.
  */
-// TODO: confirm with client — conversion rate (or store real MUR prices)
+// Confirmed by the client (22 Sep 2026).
 export const EUR_TO_MUR = 52;
 
 export function isCurrency(value: unknown): value is Currency {

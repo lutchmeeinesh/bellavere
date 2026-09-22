@@ -54,8 +54,8 @@ export default function PrivacyPage() {
             </p>
             <ul>
               <li>
-                {/* TODO: confirm with client — Business Registration Number (BRN) */}
-                Business Registration Number (BRN): to be confirmed
+                Company number {company.companyNumber}, incorporated in Mauritius
+                on 19 August 2026 as a {company.companyType}.
               </li>
               {/* TODO: confirm with client — registered address (appears once
                   set in data/company.ts) */}

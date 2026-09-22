@@ -59,6 +59,8 @@ The login page lists these with one-click "Use" buttons.
 | Fact | Value | Where |
 | --- | --- | --- |
 | Name | Bellavere (trading name: Bellavere Property Care) | `data/company.ts` |
+| Legal entity | **Bellavere Ltd**, Company No. **238321**, incorporated 19 Aug 2026 in Mauritius as a private company limited by shares (Certificate of Incorporation, CB No 82650) | `data/company.ts` |
+| Enquiries | Contact form emails **BellavereLtd@gmail.com** (via Resend) | `app/api/contact/route.ts` |
 | Team | Krit Goburdhan — General Manager & Site Supervisor; Ankit Dookhorun — Client Relations; Nihal Lutchmee | `data/company.ts` |
 | Contacts | Ankit Dookhorun +230 5531 0734, zoodookhorun@gmail.com · Nihal Lutchmee +230 5817 4529, executive@wwwbellavere.com — both reachable every day, 24/7 | `data/company.ts` (`contacts`) |
 | Response time | Every query answered the same day | `data/company.ts` (`responseTime`) |
@@ -71,21 +73,18 @@ The login page lists these with one-click "Use" buttons.
 | Coverage | All around Mauritius (the client's own map) | `public/images/coverage-map.webp`, About page |
 | Services incl. syndic | From the client's own prospect-list outreach copy | `app/(site)/services/page.tsx` |
 
-Ankit's and Nihal's emails and both phone numbers are published on the contact page at the client's request. **Krit's email is not published** and is kept only in `data/admins.ts` (server-side) — `data/company.ts` is bundled into browser code, so it must never hold private data. Krit's surname is still inferred from the email address.
+Ankit's and Nihal's emails and both phone numbers are published on the contact page at the client's request. **Krit's email is not published** and is kept only in `data/admins.ts` (server-side) — `data/company.ts` is bundled into browser code, so it must never hold private data. Krit's surname (Goburdhan) was confirmed by the client on 22 Sep 2026.
 
 ## Placeholders still waiting on company info
 
-**All fake filler was stripped on 22 Sep 2026.** Anything unconfirmed is either removed or hidden until real. 15 `{/* TODO: confirm with client */}` markers remain; search for that string to see each one.
+**All fake filler was stripped on 22 Sep 2026.** Anything unconfirmed is either removed or hidden until real. 8 `{/* TODO: confirm with client */}` markers remain; search for that string to see each one.
 
 | Still needed | Currently | Where |
 | --- | --- | --- |
-| Registered address, BRN | not shown; legal pages list them once set | `data/company.ts`, legal pages |
-| Legal name | "Bellavere Ltd" (inferred from the email) | `data/company.ts` |
+| Registered address | not shown (it isn't on the Certificate of Incorporation); legal pages list it once set | `data/company.ts` |
 | Tagline | "Your property, perfectly managed." | `data/company.ts` |
-| Fee basis | 15% cap assumed to be of gross rental income | `data/company.ts` |
-| EUR→MUR rate | €1 = Rs 52 | `lib/format.ts` |
-| Krit's surname & the bios | inferred from the email / written from the roles | `data/company.ts` |
-| Testimonials | 3 **illustrative** quotes (Élise M., Deepak R., Nathalie C. — not real people, not the demo owners). Replace with real quotes, with permission, before the site is public | `data/testimonials.ts` |
+| Bios | written from the confirmed roles | `data/company.ts` |
+| Testimonials | **kept by client decision (22 Sep 2026)** — 3 illustrative quotes (Élise M., Deepak R., Nathalie C. — not real people, not the demo owners). Replace with real quotes, with permission, before the site is public | `data/testimonials.ts` |
 | Legal pages | templates for a lawyer to review; retention periods TODO | `app/(site)/privacy`, `app/(site)/terms` |
 | Imagery | Unsplash stock (marketing pages + the portal demo) | `data/siteImages.ts`, `data/properties.ts` |
 
@@ -120,17 +119,36 @@ Suggested: **Supabase** (auth + Postgres + storage).
 
 1. **Auth** — replace `lib/auth.ts` and `app/api/auth/*` with Supabase Auth (email/password or magic link). Keep `requireClient()`'s contract: every dashboard page calls it and filters by the returned client id. `middleware.ts` swaps its cookie check for Supabase session validation.
 2. **Data** — the `data/*.ts` modules and `lib/metrics.ts` are the only data surface. Recreate them as queries/views: tables `clients`, `properties`, `bookings`, `maintenance_tickets`, `documents`, `statements`. Row-level security on `client_id` gives you the same isolation guarantee the mock enforces in code.
-3. **Contact form** — `app/api/contact/route.ts` validates, rate-limits and logs; the file comments show where to plug in Resend (or Formspree/CRM).
+3. **Contact form** — `app/api/contact/route.ts` validates, rate-limits and emails each enquiry to BellavereLtd@gmail.com through Resend (see "Contact form email"). A CRM can be added later next to the Resend call.
 4. **Statements PDF** — replace the print-window with a real renderer (e.g. react-pdf or a server route) once statements come from the database.
 
-## Deploying to Vercel
+## Deploying (wwwbellavere.com)
 
-1. Push this repo to a **private** GitHub repository and import it in Vercel — the Next.js defaults are correct (build `next build`, Node 20+).
-2. In Vercel → Settings → Environment Variables, add every variable from `.env.example`: `NEXT_PUBLIC_SITE_URL` (your domain), a new random `SESSION_SECRET`, the three `ADMIN_*_PASSWORD_HASH` values, `DEMO_MODE`, `SITE_INDEXABLE`. Without `SESSION_SECRET`, sign-in is refused in production (fail-closed).
-3. Vercel → Settings → Domains: add the domain and `www`, then create the DNS records Vercel shows at your registrar.
-4. `next/font/google` downloads fonts at build time — a transient network failure shows up as a Turbopack `next/font/google` import-map error; simply rebuild.
-5. Unsplash imagery is whitelisted in `next.config.ts` (`images.remotePatterns`); replace with your own CDN/domain when real photography lands.
-6. Cookies are `secure` in production automatically. Move owner accounts to a database before real owners sign up.
+The domain **wwwbellavere.com** was bought through Google Domains, which now lives at **Squarespace Domains** (domains.squarespace.com). Its email runs on **Google Workspace** — the DNS records for that must be left alone.
+
+1. **GitHub:** create an empty **private** repository (no README), then push this project to it (`git remote add origin <url>` and `git push -u origin master`; Git's credential manager opens a GitHub sign-in window).
+2. **Vercel:** Add New → Project → import the repository. The Next.js defaults are correct.
+3. **Environment variables:** in Vercel → Settings → Environment Variables, paste the contents of **`.env.vercel.local`** (git-ignored; it has a fresh production `SESSION_SECRET`, the admin password hashes, `DEMO_MODE=true`, `SITE_INDEXABLE=false` and `CONTACT_TO_EMAIL`). Then add your own **`RESEND_API_KEY`** (see "Contact form email" below). Without `SESSION_SECRET`, sign-in is refused (fail-closed); without `RESEND_API_KEY`, the contact form shows the direct contacts instead of sending.
+4. **Deploy**, then test everything on the temporary `*.vercel.app` address: `node scripts/review.mjs https://<project>.vercel.app`.
+5. **Domain:** Vercel → Settings → Domains → add `wwwbellavere.com` (primary) and `www.wwwbellavere.com` (redirect).
+6. **DNS at domains.squarespace.com → wwwbellavere.com → DNS:**
+   - Remove the **Squarespace Defaults** website records (the `@` and `www` A/CNAME records pointing to Squarespace).
+   - Add the records Vercel shows (typically an `A` record for `@` and a `CNAME` for `www`).
+   - **Do not touch** the `MX` record (`smtp.google.com`) or the `TXT` record starting `v=spf1` — they carry the Google Workspace email (executive@wwwbellavere.com).
+   HTTPS is issued automatically once DNS propagates (minutes to a few hours).
+7. **Launch:** when ready to be found on Google, set `SITE_INDEXABLE=true` and redeploy; add the site to Google Search Console and submit `/sitemap.xml`.
+
+Notes: Vercel's free **Hobby** plan is for personal, non-commercial use — a business site needs **Pro**. `next/font/google` downloads fonts at build time; a transient network failure shows up as a Turbopack `next/font/google` import-map error — simply redeploy. Cookies are `secure` in production automatically.
+
+## Contact form email (Resend)
+
+Enquiries are emailed to **BellavereLtd@gmail.com** with *Reply-To* set to the enquirer, so replying answers the customer directly.
+
+1. Sign up at **resend.com with BellavereLtd@gmail.com** (free tier: 3,000 emails/month). Until a domain is verified, Resend's test sender only delivers to the account's own email address — which is exactly where enquiries should go.
+2. Resend → API Keys → create a key → paste it into Vercel as `RESEND_API_KEY` (never into chat or the code).
+3. Optional, better deliverability: Resend → Domains → add `wwwbellavere.com` and add the DNS records it shows at Squarespace (they sit on a `send.` subdomain, alongside Google Workspace), then set `CONTACT_FROM_EMAIL="Bellavere website <website@wwwbellavere.com>"`.
+
+If sending fails, the visitor is shown the company email and both phone numbers (the real safeguard); the enquiry is also written to the runtime log, which Vercel keeps for only about 1 hour on Hobby (1 day on Pro). Resend's free plan allows 100 emails a day; the form only accepts same-site JSON requests so other sites can't use up that quota.
 
 ## Review artifacts
 

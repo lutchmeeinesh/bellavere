@@ -143,3 +143,29 @@ A read-only workflow ran three reviewers with different lenses (exactness of the
 
 - `npm run build`: 0 TypeScript errors, 0 lint errors.
 - `scripts/review.mjs`: **0 errors, 0 warnings** — adds: bundle secret scan; contact page must show Ankit Dookhorun, +230 5531 0734, zoodookhorun@gmail.com, Nihal Lutchmee, +230 5817 4529, 24/7, same-day, and both bellavere.ltd social links; the old surname must not reappear.
+
+---
+
+## Round 6 — 22 September 2026 (registration, contact-form email, go-live prep)
+
+### What changed
+
+- Registration details from the Certificate of Incorporation (Bellavere Ltd, Company No. 238321, incorporated 19 Aug 2026, private company limited by shares) replace the visible "BRN: to be confirmed" placeholder on the legal pages, and appear in the footer and structured data. The certificate has no registered address, so none is shown.
+- The contact form now emails **BellavereLtd@gmail.com** through Resend, with Reply-To set to the enquirer.
+- `.env.vercel.local` (git-ignored) was prepared with a fresh production `SESSION_SECRET`.
+
+### Independent review (security + accuracy, skeptic-adjudicated): 12 confirmed, 9 rejected — all fixed
+
+1. **Raw control bytes in the contact route** made git treat the file as binary (no diffs on GitHub, skipped by search). Rewritten with escaped hex code points; 0 control bytes remain and git shows normal line diffs. (Cause: an editing tool decoded unicode escape sequences into real characters.)
+2. **Cross-site posting:** a third-party page could submit through its visitors' browsers, dodging the per-IP limit and burning Resend's 100-emails/day free quota. The route now accepts only same-site JSON (415 for other content types, 403 for a foreign Origin).
+3. **Honeypot named "company_website"** could be autofilled by browsers, silently discarding a real enquiry. Renamed to a neutral field, and a hit now leaves a one-line trace.
+4. **Length limits** existed only on the server with a misleading "complete the required fields" error. Limits are now shared (`lib/contactLimits.ts`), enforced in the form with field-level messages, and the server explains over-long input.
+5. **Email typos** (double dot, trailing dot, comma) would have made Resend reject the send. The shared pattern now rejects them up front.
+6. **Log retention overstated:** Vercel keeps runtime logs about 1 hour on Hobby, so the docs no longer call the log a recovery mechanism. The direct contacts shown to the visitor are the safeguard.
+7–12. Stale doc lines (TODO counts, Krit's surname, Resend status, HANDOFF go-live list).
+
+### Verification
+
+- `npm run build`: 0 TypeScript errors, 0 lint errors.
+- **Contact delivery, end to end against a mock Resend: 24/24 pass on fresh servers.** Covers delivery to BellavereLtd@gmail.com, bearer key, reply-to, subject, all fields, HTML escaping, outage (direct contacts shown), missing key (loud failure), honeypot, validation, same-site-only, over-long input, email typos, and real browser submissions. A repeated run showed 2 browser failures; these were the form's own 5-per-10-minutes rate limit correctly blocking the repeated test submissions, and they don't occur on fresh servers.
+- `scripts/review.mjs`: **0 errors, 0 warnings**; 41 browser bundles contain no secrets or private emails.

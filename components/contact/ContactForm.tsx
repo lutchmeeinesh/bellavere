@@ -4,6 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { Check } from "lucide-react";
+import { company } from "@/data/company";
+import { CONTACT_LIMITS, EMAIL_PATTERN } from "@/lib/contactLimits";
 import { Button } from "@/components/ui/Button";
 import {
   Checkbox,
@@ -12,6 +14,11 @@ import {
   Select,
   Textarea,
 } from "@/components/ui/Input";
+
+/** Shown if the message cannot be sent, so no enquiry is silently lost. */
+const FALLBACK_ERROR = `We couldn’t send your message just now. Please email ${company.email} or call ${company.contacts
+  .map((person) => `${person.name.split(" ")[0]} on ${person.phone}`)
+  .join(" or ")} — we answer the same day.`;
 
 type FormValues = {
   name: string;
@@ -22,7 +29,7 @@ type FormValues = {
   message: string;
   consent: boolean;
   /** Honeypot — hidden from humans, left empty by real visitors. */
-  company_website: string;
+  hp_extra: string;
 };
 
 type FieldErrors = Partial<Record<keyof FormValues, string>>;
@@ -35,23 +42,32 @@ const EMPTY_VALUES: FormValues = {
   propertyCount: "",
   message: "",
   consent: false,
-  company_website: "",
+  hp_extra: "",
 };
-
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function validate(values: FormValues): FieldErrors {
   const errors: FieldErrors = {};
   if (!values.name.trim()) {
     errors.name = "Please tell us your name.";
+  } else if (values.name.trim().length > CONTACT_LIMITS.name) {
+    errors.name = `Please keep your name under ${CONTACT_LIMITS.name} characters.`;
   }
   if (!values.email.trim()) {
     errors.email = "Please enter your email address.";
-  } else if (!EMAIL_PATTERN.test(values.email.trim())) {
+  } else if (
+    values.email.trim().length > CONTACT_LIMITS.email ||
+    !EMAIL_PATTERN.test(values.email.trim())
+  ) {
     errors.email = "Please enter a valid email address.";
   }
-  if (!values.message.trim()) {
+  if (values.phone.trim().length > CONTACT_LIMITS.phone) {
+    errors.phone = `Please keep the phone number under ${CONTACT_LIMITS.phone} characters.`;
+  }
+  const messageLength = values.message.trim().length;
+  if (!messageLength) {
     errors.message = "Please tell us a little about your property.";
+  } else if (messageLength > CONTACT_LIMITS.message) {
+    errors.message = `Please keep your message under ${CONTACT_LIMITS.message.toLocaleString("en-GB")} characters (it is ${messageLength.toLocaleString("en-GB")}).`;
   }
   if (!values.consent) {
     errors.consent = "Please confirm we may contact you about your enquiry.";
@@ -89,17 +105,23 @@ export function ContactForm() {
       if (response.status === 429) {
         setStatus("idle");
         setSubmitError(
-          "You’ve sent several messages in a short time. Please wait a few minutes and try again, or email us directly."
+          "You’ve sent several messages in a short time. Please wait a few minutes and try again, or email us directly.",
         );
         return;
       }
-      if (!response.ok) throw new Error(`Request failed (${response.status})`);
+      if (!response.ok) {
+        // The server explains what happened and gives direct contacts.
+        const data = (await response.json().catch(() => null)) as {
+          error?: string;
+        } | null;
+        setStatus("idle");
+        setSubmitError(data?.error ?? FALLBACK_ERROR);
+        return;
+      }
       setStatus("success");
     } catch {
       setStatus("idle");
-      setSubmitError(
-        "Something went wrong sending your message. Please try again, or email us directly."
-      );
+      setSubmitError(FALLBACK_ERROR);
     }
   }
 
@@ -124,15 +146,20 @@ export function ContactForm() {
           <motion.span
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            transition={{ type: "spring", stiffness: 260, damping: 18, delay: 0.1 }}
+            transition={{
+              type: "spring",
+              stiffness: 260,
+              damping: 18,
+              delay: 0.1,
+            }}
             className="flex size-16 items-center justify-center rounded-full bg-gold-500 text-navy-900"
           >
             <Check className="size-8" aria-hidden strokeWidth={2.5} />
           </motion.span>
           <h3 className="mt-6">Message received</h3>
           <p className="mt-3 max-w-sm text-ink-500">
-            Thank you — a real person from our team will read your message
-            and reply the same day.
+            Thank you — a real person from our team will read your message and
+            reply the same day.
           </p>
           <Button variant="outline" size="sm" className="mt-8" onClick={reset}>
             Send another message
@@ -148,22 +175,34 @@ export function ContactForm() {
           className="space-y-5"
         >
           <div className="grid gap-5 sm:grid-cols-2">
-            <Field label="Name" htmlFor="contact-name" required error={errors.name}>
+            <Field
+              label="Name"
+              htmlFor="contact-name"
+              required
+              error={errors.name}
+            >
               <Input
                 id="contact-name"
                 name="name"
                 autoComplete="name"
+                maxLength={CONTACT_LIMITS.name}
                 value={values.name}
                 onChange={(e) => update("name", e.target.value)}
                 aria-invalid={errors.name ? true : undefined}
               />
             </Field>
-            <Field label="Email" htmlFor="contact-email" required error={errors.email}>
+            <Field
+              label="Email"
+              htmlFor="contact-email"
+              required
+              error={errors.email}
+            >
               <Input
                 id="contact-email"
                 name="email"
                 type="email"
                 autoComplete="email"
+                maxLength={CONTACT_LIMITS.email}
                 value={values.email}
                 onChange={(e) => update("email", e.target.value)}
                 aria-invalid={errors.email ? true : undefined}
@@ -171,15 +210,17 @@ export function ContactForm() {
             </Field>
           </div>
 
-          <Field label="Phone" htmlFor="contact-phone">
+          <Field label="Phone" htmlFor="contact-phone" error={errors.phone}>
             <Input
               id="contact-phone"
               name="phone"
               type="tel"
               autoComplete="tel"
+              maxLength={CONTACT_LIMITS.phone}
               placeholder="+230 …"
               value={values.phone}
               onChange={(e) => update("phone", e.target.value)}
+              aria-invalid={errors.phone ? true : undefined}
             />
           </Field>
 
@@ -197,7 +238,10 @@ export function ContactForm() {
                 <option value="several">Several properties</option>
               </Select>
             </Field>
-            <Field label="Number of properties" htmlFor="contact-property-count">
+            <Field
+              label="Number of properties"
+              htmlFor="contact-property-count"
+            >
               <Select
                 id="contact-property-count"
                 name="propertyCount"
@@ -212,7 +256,12 @@ export function ContactForm() {
             </Field>
           </div>
 
-          <Field label="Message" htmlFor="contact-message" required error={errors.message}>
+          <Field
+            label="Message"
+            htmlFor="contact-message"
+            required
+            error={errors.message}
+          >
             <Textarea
               id="contact-message"
               name="message"
@@ -228,15 +277,15 @@ export function ContactForm() {
             aria-hidden="true"
             className="absolute -left-[10000px] top-auto size-px overflow-hidden"
           >
-            <label htmlFor="contact-company-website">Company website</label>
+            <label htmlFor="contact-hp-extra">Leave this field empty</label>
             <input
-              id="contact-company-website"
-              name="company_website"
+              id="contact-hp-extra"
+              name="hp_extra"
               type="text"
               tabIndex={-1}
               autoComplete="off"
-              value={values.company_website}
-              onChange={(e) => update("company_website", e.target.value)}
+              value={values.hp_extra}
+              onChange={(e) => update("hp_extra", e.target.value)}
             />
           </div>
 
@@ -254,8 +303,7 @@ export function ContactForm() {
                 className="mt-0.5"
               />
               <span>
-                I agree to be contacted about my enquiry, as described in
-                the{" "}
+                I agree to be contacted about my enquiry, as described in the{" "}
                 <Link
                   href="/privacy"
                   className="text-navy-900 underline decoration-gold-500 underline-offset-2 hover:text-gold-700"
