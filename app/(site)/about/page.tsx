@@ -5,7 +5,6 @@ import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Reveal, RevealItem, RevealStagger } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { MauritiusMap } from "@/components/site/MauritiusMap";
 import { TeamGrid } from "@/components/about/TeamGrid";
 import { CtaBand } from "@/components/home/CtaBand";
 import { company } from "@/data/company";
@@ -14,7 +13,7 @@ import { siteImages } from "@/data/siteImages";
 export const metadata: Metadata = {
   title: "About",
   description:
-    "Meet Bellavere: property management and syndic services on the north and west coasts of Mauritius — full transparency, no hidden fees, and always a human to answer you.",
+    "Meet Bellavere: property management and syndic services across Mauritius — full transparency, no hidden fees, and always a human to answer you.",
 };
 
 // The three promises come straight from the client's mission statement.
@@ -38,7 +37,7 @@ const VALUES = [
 
 const WHY_ITEMS = [
   "One reliable point of contact for everything",
-  `One clearly stated fee — ${company.pricing.model}. No hidden fees.`,
+  `A fee agreed with you — ${company.pricing.short.toLowerCase()}. No hidden fees.`,
   "A person answers every call and message — never a bot",
   "Work on your property supervised on site, in person",
   "A live owner dashboard, day and night, from anywhere",
@@ -47,19 +46,15 @@ const WHY_ITEMS = [
   "Syndic and common-area management for whole residences",
 ];
 
-const COVERAGE_AREAS = [
-  "Grand Gaube",
-  "Cap Malheureux",
-  "Pereybere",
-  "Grand Baie",
-  "Pointe aux Canonniers",
-  "Mont Choisy",
-  "Trou aux Biches",
-  "Pointe aux Piments",
-  "Albion",
-  "Flic-en-Flac",
-  "Tamarin",
-  "Rivière Noire",
+// Regions marked on the client's own coverage map (22 Sep 2026). Towns are
+// deliberately not named: the map shows areas, not specific addresses.
+const COVERAGE_REGIONS = [
+  "North",
+  "West",
+  "Central plateau",
+  "East",
+  "South-east",
+  "South-west",
 ];
 
 export default function AboutPage() {
@@ -154,7 +149,7 @@ export default function AboutPage() {
         <Container>
           <SectionHeading
             eyebrow="The team"
-            title="The people you will actually speak to"
+            title="The main people you will speak to"
             sub="Two people, one standard. Small enough that you always deal with the people in charge."
             align="center"
             className="mb-14"
@@ -193,11 +188,11 @@ export default function AboutPage() {
             <div>
               <SectionHeading
                 eyebrow="Where we work"
-                title="The north & west coasts, and nowhere else"
-                sub="We stay close to every property we look after, so inspections happen often and problems get fixed fast — from Grand Gaube in the north to Rivière Noire in the west."
+                title="All around the island"
+                sub="We look after properties across the whole of Mauritius — north and south, coast and plateau — and visit each one in person, so inspections happen often and problems get fixed fast."
               />
               <RevealStagger as="ul" className="mt-8 flex flex-wrap gap-2.5">
-                {COVERAGE_AREAS.map((area) => (
+                {COVERAGE_REGIONS.map((area) => (
                   <RevealItem
                     as="li"
                     key={area}
@@ -209,7 +204,20 @@ export default function AboutPage() {
               </RevealStagger>
             </div>
             <Reveal delay={0.15} y={32} className="mx-auto w-full max-w-md">
-              <MauritiusMap />
+              <figure>
+                <Image
+                  src="/images/coverage-map.webp"
+                  alt="Map of Mauritius marking the areas across the island where Bellavere looks after properties"
+                  width={710}
+                  height={790}
+                  sizes="(min-width: 1024px) 448px, 100vw"
+                  className="h-auto w-full rounded-2xl border border-sand-300"
+                />
+                <figcaption className="mt-3 text-xs text-ink-500">
+                  Map data © OpenStreetMap contributors · rendered with
+                  terraink.app
+                </figcaption>
+              </figure>
             </Reveal>
           </div>
         </Container>

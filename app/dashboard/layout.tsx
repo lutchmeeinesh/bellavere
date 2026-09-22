@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { requireClient } from "@/lib/auth";
+import { getAdmin, requireClient } from "@/lib/auth";
+import { AdminViewBanner } from "@/components/admin/AdminViewBanner";
 import { activityForClient } from "@/lib/metrics";
 import { getCurrency } from "@/lib/currency";
 import { formatMoney } from "@/lib/format";
@@ -24,6 +25,8 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }) {
   const client = await requireClient();
+  // Set when a Bellavere admin is viewing this owner's portal.
+  const admin = await getAdmin();
   const currency = await getCurrency();
   const recentActivity = activityForClient(client.id, 3, (eur) =>
     formatMoney(eur, currency)
@@ -41,6 +44,9 @@ export default async function DashboardLayout({
         }}
       />
       <div className="lg:pl-64">
+        {admin ? (
+          <AdminViewBanner adminName={admin.shortName} clientName={client.name} />
+        ) : null}
         <Topbar recentActivity={recentActivity} />
         <main className="mx-auto w-full max-w-[1400px] p-5 pb-24 sm:p-8 sm:pb-24 lg:pb-8">
           {children}

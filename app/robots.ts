@@ -4,12 +4,20 @@ const BASE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
 ).replace(/\/$/, "");
 
+/**
+ * Until SITE_INDEXABLE=true (set it at launch, once the demo content is
+ * replaced), search engines are asked to stay out of the whole site. The
+ * owner portal, admin area, API and login are never indexed.
+ */
 export default function robots(): MetadataRoute.Robots {
+  if (process.env.SITE_INDEXABLE !== "true") {
+    return { rules: { userAgent: "*", disallow: "/" } };
+  }
   return {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/dashboard", "/api", "/login"],
+      disallow: ["/dashboard", "/admin", "/api", "/login"],
     },
     sitemap: `${BASE_URL}/sitemap.xml`,
   };

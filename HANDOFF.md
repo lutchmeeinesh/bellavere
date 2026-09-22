@@ -6,14 +6,15 @@ Paste this whole file into a new chat to bring it fully up to speed. It covers w
 
 ## 1. What this is
 
-A polished **demo website for Bellavere** (trading as **Bellavere Property Care**), a property management and **syndic** company on the north and west coasts of Mauritius. It has two halves:
+A polished **demo website for Bellavere** (trading as **Bellavere Property Care**), a property management and **syndic** company working **all around Mauritius** (north, west, east, south and the central plateau). It has two halves:
 
 - **Marketing site:** home, services (five, including syndic & residence management), properties portfolio + per-property detail pages, about, contact, privacy, terms, login, 404.
 - **Owner dashboard** (`/dashboard/*`, auth-protected): each owner logs in and sees **only** their own properties (occupancy, bookings, revenue, maintenance, statements, documents, settings).
+- **Admin area** (`/admin/*`): three Bellavere staff accounts see every owner, property, arrival, repair and document, and can open any owner's portal (§4c).
 
 Every price and figure displays in **EUR or MUR**, at the visitor's choice (§4e).
 
-It is still a **demo**: there's no backend or database, all data is mock data in `data/*.ts`, and auth is a mock cookie layer. It is feature-complete and visually finished, but **not safe to put in front of real owners yet** (see §11).
+It is still a **demo** for data: there's no database, and all owners and figures are mock data in `data/*.ts`. Auth, however, is now real in mechanism: HMAC-signed sessions, scrypt-hashed passwords, rate-limited sign-in (§4c). It is feature-complete and visually finished, but **not safe to put in front of real owners yet** (see §11).
 
 **Location:** `C:\Users\user\bellavere` (its own git repo).
 *Note: the original session had been started inside `C:\Users\user\QS ESTIMATOR\.git`, the internals of an unrelated repo, so the project was deliberately created in a clean folder. It has no relationship to QS ESTIMATOR.*
@@ -43,6 +44,11 @@ Node 20+ required (built and tested on Node 24).
 - **Company email:** BellavereLtd@gmail.com
 - **Mission:** "Our mission is to provide the best service while maintaining full transparency. No hidden fees — and there will always be a human to answer you."
 - **Currency:** MUR and EUR, user-selectable.
+- **Fees:** negotiated and set after the first meeting, **never more than 15%**. Each owner's agreed rate is `Client.feeRate` and drives their statements (demo: Sophie 14%, Ravi 15%, Hamilton 12%).
+- **Onboarding:** one to two weeks.
+- **Coverage:** all around Mauritius, per the client's own map (`public/images/coverage-map.webp`, OpenStreetMap-based: keep the attribution caption).
+- **No walk-in office:** no address on the contact page or in the footer.
+- **Admins:** Krit (kritgoburdhan@gmail.com), Ankit (zoodookhorun@gmail.com), Inesh (lutchmeeinesh@gmail.com).
 - **Services:** also informed by the client's own syndic prospect list: syndic, common-area management, preventive maintenance, contractor coordination, inspections, pool/landscaping supervision, owner reporting, renovation follow-up. That list's third-party contact details are **not** used anywhere on the site.
 
 ---
@@ -67,6 +73,7 @@ Node 20+ required (built and tested on Node 24).
 2. **Phase 1 — five parallel agents,** each given the same written foundation brief: (A) Home+About, (B) Services+Properties, (C) Contact+Login+404, (D) Dashboard shell+Overview+Properties, (E) Bookings+Maintenance+Statements+Documents+Settings.
 3. **Phase 2/3 — automated review:** a Playwright script (`scripts/review.mjs`) and Lighthouse. It found and fixed the streaming-404 isolation bug (§8).
 4. **Round 2 (22 Sep 2026):** real company facts, the Bellavere spelling, the syndic service, the MUR/EUR switch, SEO (sitemap, robots, OG image, JSON-LD), privacy and terms pages, form spam protection, a newsletter endpoint, a photo/alt-text audit, and AA contrast fixes. See REVIEW.md "Round 2" and ASSUMPTIONS.md "Update — 22 September 2026".
+5. **Round 3 (22 Sep 2026):** three admin accounts and the `/admin` area, signed sessions + hashed passwords + login rate limit, negotiable fees (≤15%, per-owner rates), island-wide coverage with the client's map, "Visit us" removed, onboarding 1–2 weeks, pre-launch `SITE_INDEXABLE` / `DEMO_MODE` switches. See REVIEW.md "Round 3".
 
 ---
 
@@ -93,11 +100,17 @@ Type: headings **Cormorant Garamond**, body **Inter**. `h1`–`h4` are styled gl
 
 ### b. The metrics engine — one source of truth for every number
 
-`lib/metrics.ts` derives **everything** from the same generated bookings, so KPIs, charts and statements never disagree. Monthly revenue is bookings pro-rated by the nights stayed in each month; fee = 18% of gross; expenses = resolved ticket costs + recurring upkeep; net = gross − fee − expenses. `activityForClient(id, limit, formatAmount)` takes a money formatter so its sentences follow the visitor's currency. **Never hard-code a number in a component.**
+`lib/metrics.ts` derives **everything** from the same generated bookings, so KPIs, charts and statements never disagree. Monthly revenue is bookings pro-rated by the nights stayed in each month; fee = the owner's agreed rate (`Client.feeRate`, capped at `company.pricing.maxFeeRate` = 15%); expenses = resolved ticket costs + recurring upkeep; net = gross − fee − expenses. `activityForClient(id, limit, formatAmount)` takes a money formatter so its sentences follow the visitor's currency. **Never hard-code a number in a component.**
 
-### c. Mock auth + data isolation
+### c. Auth, admins + data isolation
 
-`lib/auth.ts`: `getSessionClient()`, `requireClient()`. `POST /api/auth/login` sets an httpOnly `bv_session` cookie. `middleware.ts` guards `/dashboard/*` and enforces property ownership (§8). **Rule:** every dashboard server page starts with `const client = await requireClient()` and filters everything by `client.id`.
+- **Signed sessions** (`lib/session.ts`, Web Crypto so it runs in middleware too): the cookie `bv_session` holds `{sub, role: "owner"|"admin", exp}` plus an HMAC-SHA256 signature keyed by `SESSION_SECRET`. Forged or tampered cookies fail verification. In production, a missing secret makes sign-in fail closed.
+- **Passwords** (`lib/password.ts`): scrypt, format `scrypt:<salt>:<hash>` (colons on purpose, see §8). Demo owners' hashes are in `data/clients.ts`; **admin hashes only in env vars** named in `data/admins.ts`.
+- **Admins** (`data/admins.ts`): `/admin` overview + `/admin/clients/[id]`. "Open portal" POSTs to `/api/admin/view-as`, which sets `bv_view_as`; the owner dashboard then renders that owner with an **Admin view** banner. `requireAdmin()` guards admin pages.
+- `lib/auth.ts`: `getSession()`, `getAdmin()`, `getSessionClient()` (owner, or the admin's viewed owner), `requireClient()`, `requireAdmin()`, `verifyCredentials()`.
+- `middleware.ts`: `/admin` admins only; `/dashboard` owners or admins with a viewed owner; property ownership 404 against the viewed owner (§8).
+- **Rule:** every dashboard server page starts with `const client = await requireClient()` and filters everything by `client.id`.
+- Switches: `DEMO_MODE=false` turns off the demo owners; `SITE_INDEXABLE=true` allows search indexing (default: noindex everywhere).
 
 ### d. Motion primitives
 
@@ -121,18 +134,20 @@ Type: headings **Cormorant Garamond**, body **Inter**. `h1`–`h4` are styled gl
 app/
   layout.tsx                 root: fonts, metadata, MotionProvider, CurrencyProvider (reads bv_currency)
   globals.css                ALL design tokens + keyframes  <- edit tokens here only
-  sitemap.ts robots.ts opengraph-image.tsx   SEO
+  sitemap.ts robots.ts opengraph-image.tsx   SEO (robots: noindex until SITE_INDEXABLE=true)
   not-found.tsx  icon.svg
   (site)/                    marketing: Header + Footer + JsonLd + page transition
     page.tsx  about/  services/  contact/  privacy/  terms/
     properties/page.tsx      portfolio grid + animated filters
     properties/[slug]/       detail pages
-  (auth)/login/page.tsx      standalone login
+  (auth)/login/page.tsx      standalone login (owners -> /dashboard, admins -> /admin)
+  admin/                     staff area: page.tsx (overview), clients/[id]/, layout, template
   dashboard/                 protected owner portal (layout, template, loading, not-found)
     page.tsx  properties/  properties/[id]/  bookings/  maintenance/
     statements/  documents/  settings/
   api/
-    auth/login  auth/logout
+    auth/login  auth/logout    signed session, failed-attempt rate limit
+    admin/view-as/route.ts   admin opens / leaves an owner's portal
     contact/route.ts         validate + honeypot + rate limit + consent log (Resend TODO)
     newsletter/route.ts      same pattern (Resend Audiences / Mailchimp TODO)
 
@@ -140,14 +155,18 @@ components/
   ui/        Container Button Badge Card SectionHeading Reveal CountUp
              Input(+Field/Select/Textarea/Checkbox) Toggle Modal Tabs Skeleton
   currency/  CurrencyProvider(useMoney) Money(MoneyCountUp, ConversionNote) CurrencyToggle
-  site/      Header Footer Logo SocialIcons MauritiusMap JsonLd NewsletterForm
+  site/      Header Footer Logo SocialIcons JsonLd NewsletterForm
+  admin/     AdminHeader AdminTable ViewAsButton AdminViewBanner
   motion/    MotionProvider PageTransition
   home/ about/ services/ properties/ contact/ auth/
   dashboard/ PageHeader ActivityIcon shell/ overview/ properties/ bookings/
              maintenance/ statements/ documents/ settings/(incl. DisplayCurrencySettings)
 
-data/        company clients properties bookings maintenance documents testimonials siteImages
-lib/         types auth currency format metrics dates rng rateLimit utils img constants
+data/        company clients admins properties bookings maintenance documents testimonials siteImages
+lib/         types auth session password currency format metrics dates rng rateLimit utils img constants
+public/images/coverage-map.webp   the client's coverage map (keep the OSM attribution)
+.env.example               every environment variable, documented
+scripts/hash-password.mjs  generate an admin password hash
 middleware.ts              route protection + property-ownership 404
 scripts/review.mjs         Playwright review: routes, isolation, currency switch, screenshots
 screenshots/               37 PNGs
@@ -172,7 +191,7 @@ Bookings are **generated** by a seeded PRNG (`data/bookings.ts`) relative to `TO
 ## 7. Verified quality bar (22 Sep 2026)
 
 - `npm run build`: **0 TypeScript errors, 0 lint errors.**
-- `node scripts/review.mjs`: **0 errors, 0 warnings.** It covers every route × 3 accounts, isolation 404s, logout, and the currency switch (click MUR → rupees; the choice persists across pages and into the dashboard).
+- `node scripts/review.mjs`: **0 errors, 0 warnings across 23 checks.** Routes × 3 owners, isolation 404s, logout, the currency switch, and security: forged and tampered cookies rejected, owners kept out of `/admin`, wrong admin password refused, plus the full admin flow (all owners listed, open an owner's portal with banner, isolation inside it, back to admin). Admin flow needs `ADMIN_TEST_EMAIL` / `ADMIN_TEST_PASSWORD`.
 - **Lighthouse desktop:** every public page scores **99–100** in performance, accessibility, best practices and SEO. The dashboard scores 96–100 on accessibility. Login and dashboard SEO is 63–66 **by design**, because robots.txt blocks them.
 - Statements in MUR reconcile exactly: Rs 847,704 − 152,568 − 31,980 = Rs 663,156.
 - **Every photo has been visually checked against its alt text** (52 alts rewritten in round 2).
@@ -194,6 +213,7 @@ Lighthouse: `chrome-launcher` can't spawn Chrome in this environment. Launch Pla
 1. **Streaming kills 404 status codes.** The dashboard has `loading.tsx`, so it streams, and once streaming starts Next.js 15 can't change the HTTP status. An in-page `notFound()` only swaps the UI (you get a 200). Property ownership is therefore enforced in **`middleware.ts`**, which rewrites foreign or unknown ids to a genuine 404. **Any new streamed detail route that must 404 needs the same middleware pattern.**
 2. **Streaming also moves `<meta>` into `<body>`.** Because pages are dynamic, Next.js 15 streams metadata after `</head>` for browsers and even Googlebot. `htmlLimitedBots: /.*/` in `next.config.ts` keeps it in `<head>`. **Don't remove it**, or link previews and SEO degrade.
 3. **`Card` hard-codes `bg-white`.** Classes are joined with `cn()` (no tailwind-merge), so passing `bg-navy-900` does NOT override it; the white wins. For dark cards, use a plain element (see the syndic card in `components/home/ServicesOverview.tsx`).
+5. **Never use `$` inside values in `.env` files.** Next.js's loader expands `$name`, which silently corrupted the original `$`-separated password hashes (120 → 80 characters, logins failed). Hashes now use `:`.
 4. **Rupee formatting uses a non-breaking space** ("Rs\u00a024,960"). Tests and greps must match `\u00a0`, not a normal space.
 
 ---
@@ -222,21 +242,22 @@ Lighthouse: `chrome-launcher` can't spawn Chrome in this environment. Launch Pla
 
 # 11. WHAT'S LEFT TO GO LIVE
 
-✅ = done in round 2. 🔴 = hard blocker before real owner data.
+✅ = done. 🔴 = hard blocker before real owner data.
 
-## 🔴 A. Replace the mock auth (biggest blocker)
+## 🟡 A. Auth — mostly done
 
-The cookie stores the **client id in plain text**, so anyone can set `bv_session=c-hamilton` in their browser and see that portfolio. Passwords are plain text too.
-**Do:** Supabase Auth (or Auth.js / Clerk). Swap only the internals of `lib/auth.ts`, `app/api/auth/*` and the cookie check in `middleware.ts`; the dashboard pages don't change. Add password reset and session expiry. Roughly one day.
+- ✅ Signed, expiring sessions; scrypt-hashed passwords; failed-login rate limit; three real admin accounts with env-held hashes; `DEMO_MODE` switch.
+- ⬜ Owners still live in `data/clients.ts`. Real owners need a database-backed account system with **password reset and email verification** (Supabase Auth recommended; keep the `requireClient()` / `requireAdmin()` contract so pages don't change).
+- ⬜ Rate limiter is in-memory → Upstash on Vercel. Consider 2FA for admins.
 
 ## 🔴 B. Real database + staff admin
 
-Recreate `data/*.ts` + `lib/metrics.ts` as Supabase tables and queries, keeping the maths identical, with **row-level security on `client_id`**. Decide the booking source: manual entry, or a channel-manager sync (Beds24 / Smoobu / Hostaway; usually the largest single job). Build a **staff admin side**, since today owners can only read. Syndic clients (residences) will likely need a co-owner / common-area data model that the current owner-centric model doesn't cover.
+Recreate `data/*.ts` + `lib/metrics.ts` as Supabase tables and queries, keeping the maths identical, with **row-level security on `client_id`**. Decide the booking source: manual entry, or a channel-manager sync (Beds24 / Smoobu / Hostaway; usually the largest single job). ✅ A **read-only staff admin area** exists (`/admin`). ⬜ Admins still can't *edit* anything (add bookings, update tickets, upload documents, publish statements) — that needs the database. Syndic clients (residences) will likely need a co-owner / common-area data model that the current owner-centric model doesn't cover.
 
-## 🟡 C. Content — 32 `TODO: confirm with client` markers
+## 🟡 C. Content — 30 `TODO: confirm with client` markers
 
-- ✅ Name, team, email, mission, currency and syndic service.
-- ⬜ In `data/company.ts`: tagline, **phone, address, office hours, social links**, **legal name + BRN**, **pricing %** (18% drives the statement maths), surname spelling and bio wording.
+- ✅ Name, team, email, mission, currency, syndic service, fees (negotiable, ≤15%), onboarding (1–2 weeks), island-wide coverage + map, no walk-in office.
+- ⬜ In `data/company.ts`: tagline, **phone, address, office hours, social links**, **legal name + BRN**, whether the 15% cap is of gross rental income (syndic contracts may differ), surname spelling and bio wording.
 - ⬜ The **EUR→MUR rate** in `lib/format.ts`, or store real dual prices per record.
 - ⬜ Service claims in `app/(site)/services/page.tsx`: response times, concierge "+9%".
 - ⬜ FAQ answers (`components/contact/FaqAccordion.tsx`): payout day, long lets, onboarding time.
@@ -258,7 +279,7 @@ Recreate `data/*.ts` + `lib/metrics.ts` as Supabase tables and queries, keeping 
 ## 🟢 E. Infrastructure & SEO
 
 - ✅ `sitemap.ts`, `robots.ts`, OG image, LocalBusiness JSON-LD, metadata kept in `<head>`.
-- ⬜ Domain → Vercel; set `NEXT_PUBLIC_SITE_URL`; replace the Unsplash remote pattern; analytics (**requires adding a cookie-consent banner**), Sentry, uptime; Google Search Console + Business Profile.
+- ✅ Domain purchased. ⬜ Private GitHub repo → Vercel → env vars (`.env.example`) → add domain + DNS records; replace the Unsplash remote pattern; analytics (**requires adding a cookie-consent banner**), Sentry, uptime; Google Search Console + Business Profile.
 
 ## 🟢 F. Legal & compliance
 

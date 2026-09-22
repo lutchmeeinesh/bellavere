@@ -59,7 +59,7 @@ export function ServicesOverview() {
         <SectionHeading
           eyebrow="What we do"
           title="Everything your property needs, under one roof"
-          sub="One team, no hidden fees, and a real person at the end of the line — so owning property on the coast stays a pleasure."
+          sub="One team, no hidden fees, and a real person at the end of the line — so owning property in Mauritius stays a pleasure."
         />
         <RevealStagger className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {SERVICES.map((service) => (

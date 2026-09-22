@@ -34,9 +34,9 @@ export default function ServicesPage() {
             <h1>Everything your property needs</h1>
             <p className="mt-6 text-lg leading-relaxed text-ink-500">
               Five services, one team, no hidden fees. Bellavere looks after
-              villas, apartments and whole residences end to end for{" "}
-              {company.pricing.model} — no onboarding fee, no fixed monthly
-              charges, and every cost itemised on your statement.
+              villas, apartments and whole residences across Mauritius, end to
+              end, for {company.pricing.model}. Every cost is itemised on your
+              monthly statement.
             </p>
             <ul className="mt-8 flex flex-wrap gap-2">
               {ANCHORS.map((anchor) => (
@@ -89,7 +89,7 @@ export default function ServicesPage() {
         imageSide="right"
         tinted
         paragraphs={[
-          "Salt air, cyclone season and back-to-back guests are hard on a coastal home. Our care team runs scheduled inspections, keeps pools and gardens immaculate, and coordinates repairs before small issues become expensive ones.",
+          "Salt air, cyclone season and back-to-back guests are hard on an island home. Our care team runs scheduled inspections, keeps pools and gardens immaculate, and coordinates repairs before small issues become expensive ones.",
           "Every job is photographed, logged against your property and itemised on your statement, with contractors supervised on site — no hidden fees.",
         ]}
         included={[

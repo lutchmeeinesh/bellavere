@@ -81,3 +81,15 @@ The client supplied the company name, team, email, mission and dual-currency req
 ### Imagery
 - Every photo was **visually checked** against its alt text. The first pass had only checked that the URLs loaded. 52 alt texts were rewritten to describe what each photo actually shows, and two off-brand photos (a forest dome tent and a scuba diver) were replaced.
 - The demo listings still say "Managed by Bellavere since 2018–2024". They are fictional listings under a "Demo listings" disclaimer, but the years imply history the company may not have. Remove them when real listings arrive.
+
+---
+
+## Update 2 — 22 September 2026 (admins, fees, coverage)
+
+- **Coverage is island-wide.** The client's map marks properties in the north, west, centre, east, south-east and south-west, so all "north & west coasts (and nowhere else)" wording was replaced, the map image (cropped to the island, OpenStreetMap attribution kept as a caption) replaced the stylised SVG, and area chips became regions rather than guessed town names.
+- **Fees:** negotiable, set after the first meeting, never above 15%. The 15% is assumed to be *of gross rental income* (TODO) — syndic contracts are often priced per unit instead. Demo owners were given different agreed rates (14% / 15% / 12%) so the dashboard shows that fees are individual; statements use each owner's rate, capped at 15%.
+- **"Visit us" removed** from the contact page, and the (still placeholder) street address removed from the footer and structured data too — showing an address where the client doesn't want visitors would be misleading. The legal pages still carry a registered-address placeholder, since legal notices usually require one.
+- **Admin accounts** for Krit, Ankit and Inesh. Inesh's name and login email come from this repository's git identity (`Lutchmee Inesh`, `lutchmeeinesh@gmail.com`). Temporary passwords were generated randomly and **written only to git-ignored local files**, never into code or chat.
+- **Admins open owner portals rather than a separate copy of every screen** ("view as"), so every owner-facing view is available to staff with no duplicated UI and the same isolation checks. A banner makes the mode unmistakable.
+- **Session security was upgraded before adding admins:** a forgeable cookie was tolerable for demo owners but not for accounts that see everyone's data. Sessions are now HMAC-signed with expiry; passwords are scrypt hashes; failed logins are rate-limited.
+- **Pre-launch safety switches:** `SITE_INDEXABLE` (default off → `noindex` + `robots.txt` disallow) so deploying the demo to the new domain doesn't get fake testimonials/listings indexed; `DEMO_MODE` (default on) to switch off the demo owners at launch.

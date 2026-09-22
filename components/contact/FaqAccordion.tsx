@@ -41,9 +41,8 @@ const FAQ_ITEMS: FaqItem[] = [
   {
     id: "onboarding",
     question: "How fast is onboarding?",
-    // TODO: confirm with client — onboarding timeline
     answer:
-      "Typically two to three weeks from our first visit to your first booking: inspection, professional photography, licensing checks and listing setup.",
+      "One to two weeks from our first visit. In that time we inspect the property, arrange professional photography, check the licensing and set up your listing.",
   },
 ];
 

@@ -10,7 +10,7 @@ import { CtaBand } from "@/components/home/CtaBand";
 
 export const metadata: Metadata = {
   description:
-    "Bellavere manages luxury villas and apartments on the north and west coasts of Mauritius — rentals, maintenance, client care and concierge, with a live dashboard for every owner.",
+    "Bellavere manages luxury villas and apartments across Mauritius — rentals, maintenance, client care and concierge, with a live dashboard for every owner.",
 };
 
 export default function HomePage() {

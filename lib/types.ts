@@ -11,14 +11,16 @@ export interface Client {
   shortName: string;
   company?: string;
   email: string;
-  /** Plain text because this is a mock auth layer for a demo. */
-  password: string;
+  /** scrypt hash (see lib/password.ts); never the plain password. */
+  passwordHash: string;
   initials: string;
   phone: string;
   /** Masked payout account shown in settings. */
   payoutAccount: string;
   /** Currency the owner is paid in. */
   payoutCurrency: "EUR" | "MUR";
+  /** Management fee agreed with this owner (never above company.pricing.maxFeeRate). */
+  feeRate: number;
 }
 
 export interface PropertyImage {

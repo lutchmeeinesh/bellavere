@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
-import { Clock, Mail, MapPin, Phone } from "lucide-react";
+import { Clock, Mail, Phone } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Reveal, RevealItem, RevealStagger } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { MauritiusMap } from "@/components/site/MauritiusMap";
 import {
   FacebookIcon,
   InstagramIcon,
@@ -17,7 +16,7 @@ import { company } from "@/data/company";
 export const metadata: Metadata = {
   title: "Contact",
   description:
-    "Talk to Bellavere about managing your villa or apartment in Mauritius — rentals, maintenance, client care and concierge under one roof.",
+    "Talk to Bellavere about managing your villa or apartment anywhere in Mauritius — rentals, maintenance, client care and concierge under one roof.",
 };
 
 const SOCIAL_LINKS = [
@@ -72,22 +71,6 @@ export default function ContactPage() {
             <RevealStagger className="space-y-8">
               <RevealItem className="flex gap-4">
                 <DetailIcon>
-                  <MapPin className="size-5" aria-hidden />
-                </DetailIcon>
-                <div>
-                  <p className="text-sm font-medium text-navy-900">Visit us</p>
-                  <p className="mt-1 text-sm leading-relaxed text-ink-500">
-                    {company.address.line1}
-                    <br />
-                    {company.address.line2}
-                    <br />
-                    {company.address.country}
-                  </p>
-                </div>
-              </RevealItem>
-
-              <RevealItem className="flex gap-4">
-                <DetailIcon>
                   <Phone className="size-5" aria-hidden />
                 </DetailIcon>
                 <div>
@@ -139,16 +122,6 @@ export default function ContactPage() {
                     <Icon className="size-4" />
                   </a>
                 ))}
-              </RevealItem>
-
-              <RevealItem as="div">
-                <figure className="mt-4">
-                  <MauritiusMap showLabels={false} className="max-w-xs" />
-                  <figcaption className="mt-3 text-xs text-ink-500">
-                    Our office: {company.address.line1}, {company.address.line2},{" "}
-                    {company.address.country}
-                  </figcaption>
-                </figure>
               </RevealItem>
             </RevealStagger>
 

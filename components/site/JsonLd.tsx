@@ -4,21 +4,6 @@ const SITE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
 ).replace(/\/$/, "");
 
-const AREAS_SERVED = [
-  "Grand Gaube",
-  "Cap Malheureux",
-  "Pereybere",
-  "Grand Baie",
-  "Mont Choisy",
-  "Trou aux Biches",
-  "Pointe aux Canonniers",
-  "Pointe aux Piments",
-  "Albion",
-  "Flic-en-Flac",
-  "Tamarin",
-  "Rivière Noire (Black River)",
-];
-
 const SERVICES = [
   {
     name: "Rental management",
@@ -62,14 +47,10 @@ export function JsonLd() {
     description: company.marketLong,
     address: {
       "@type": "PostalAddress",
-      streetAddress: company.address.line1,
-      addressLocality: company.address.line2,
       addressCountry: "MU",
     },
-    areaServed: AREAS_SERVED.map((name) => ({
-      "@type": "Place",
-      name: `${name}, Mauritius`,
-    })),
+    // Island-wide coverage, confirmed by the client's own map (22 Sep 2026).
+    areaServed: { "@type": "Country", name: "Mauritius" },
     sameAs: Object.values(company.social),
     knowsAbout: SERVICES.map((service) => service.name),
     makesOffer: SERVICES.map((service) => ({

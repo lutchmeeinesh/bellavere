@@ -20,7 +20,7 @@ export function FeaturedProperties() {
         <SectionHeading
           eyebrow="The portfolio"
           title="Homes we're proud to manage"
-          sub="A glimpse of the villas and apartments in our care, from Grand Baie to the west coast."
+          sub="A glimpse of the villas and apartments we look after around the island."
         />
         <RevealStagger className="mt-14 grid gap-6 md:grid-cols-3">
           {featured.map((property) => (

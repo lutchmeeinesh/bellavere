@@ -11,6 +11,7 @@ import { getPropertiesForClient, getPropertyById } from "@/data/properties";
 import { getTicketsForClient } from "@/data/maintenance";
 import { getDocumentsForClient } from "@/data/documents";
 import { company } from "@/data/company";
+import { getClientById } from "@/data/clients";
 import {
   TODAY,
   addMonths,
@@ -239,6 +240,11 @@ export function upcomingBookings(clientId: string, days = 7): Booking[] {
  * costs plus recurring upkeep per property.
  */
 export function statementsForClient(clientId: string): Statement[] {
+  // Each owner's negotiated rate, capped at the company maximum.
+  const feeRate = Math.min(
+    getClientById(clientId)?.feeRate ?? company.pricing.maxFeeRate,
+    company.pricing.maxFeeRate
+  );
   const props = getPropertiesForClient(clientId);
   const tickets = getTicketsForClient(clientId);
   const revenue = new Map(
@@ -248,7 +254,7 @@ export function statementsForClient(clientId: string): Statement[] {
   return lastMonths(12, false)
     .map((m) => {
       const gross = revenue.get(m.key)?.revenue ?? 0;
-      const fee = Math.round(gross * company.pricing.feeRate);
+      const fee = Math.round(gross * feeRate);
       const ticketCosts = tickets
         .filter(
           (t) => t.resolvedAt && monthKey(new Date(t.resolvedAt)) === m.key

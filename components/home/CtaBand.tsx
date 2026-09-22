@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
  * reuse on inner pages (About uses it).
  */
 export function CtaBand({
-  title = "Let your coastal home work beautifully",
+  title = "Let your island home work beautifully",
   sub = "Tell us about your property and we'll show you, openly and without obligation, what it could achieve.",
   withImage = false,
   small = false,

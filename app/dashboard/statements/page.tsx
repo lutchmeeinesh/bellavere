@@ -45,12 +45,18 @@ export default async function StatementsPage() {
         ))}
       </RevealStagger>
 
-      <StatementsTable statements={statements} clientName={client.name} />
+      <StatementsTable
+        statements={statements}
+        clientName={client.name}
+        feeRate={client.feeRate}
+      />
 
       <Reveal>
         <p className="mt-5 max-w-3xl text-xs leading-relaxed text-ink-500">
-          The Bellavere fee is {company.pricing.model} — no hidden fees, no
-          onboarding fee, no fixed monthly charges. Expenses are the month&apos;s resolved
+          Your management fee is {Math.round(client.feeRate * 100)}% of gross
+          rental income — agreed with you after our first meeting, and never
+          more than {Math.round(company.pricing.maxFeeRate * 100)}%. No hidden
+          fees, no onboarding fee, no fixed monthly charges. Expenses are the month&apos;s resolved
           maintenance work plus recurring upkeep (pool, garden and
           housekeeping) for each property. Net payouts reach your account by
           the 5th of the following month.

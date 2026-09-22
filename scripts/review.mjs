@@ -5,6 +5,9 @@
  *  - collects console errors and failed requests
  *  - verifies auth redirects and cross-client data isolation (404s)
  *  - checks alt attributes, broken images and leftover lorem ipsum
+ *  - checks the EUR/MUR switch, signed sessions (forged/tampered cookies are
+ *    rejected) and the admin area. For the admin flow, set
+ *    ADMIN_TEST_EMAIL and ADMIN_TEST_PASSWORD.
  *
  * Usage: node scripts/review.mjs [baseUrl]  (default http://localhost:3010)
  * The app must already be running (npm run build && npx next start -p 3010).
@@ -144,6 +147,115 @@ const browser = await chromium.launch();
   else console.log("OK: dashboard statements follow the MUR choice");
   await page.screenshot({ path: path.join(OUT, "dashboard-statements-mur-desktop.png"), fullPage: true });
   await ctx.close();
+}
+
+// ---------- security & admin ----------
+// Sessions are HMAC-signed: forged or tampered cookies must be rejected.
+// Admin checks run when ADMIN_TEST_EMAIL / ADMIN_TEST_PASSWORD are set.
+{
+  const sessionOf = async (ctx) =>
+    (await ctx.cookies()).find((c) => c.name === "bv_session")?.value;
+
+  // 1. The old plain-text cookie format must no longer grant access.
+  {
+    const ctx = await browser.newContext();
+    await ctx.addCookies([{ name: "bv_session", value: "c-hamilton", url: BASE }]);
+    const page = await ctx.newPage();
+    await page.goto(`${BASE}/dashboard`, { waitUntil: "domcontentloaded" });
+    if (!page.url().includes("/login")) note("ERROR", "security", "forged plain-text session cookie was accepted");
+    else console.log("OK: forged plain-text cookie rejected");
+    await ctx.close();
+  }
+
+  // 2. A genuine token with its payload edited (Ravi -> Hamilton) must fail.
+  {
+    const ctx = await browser.newContext();
+    await ctx.request.post(`${BASE}/api/auth/login`, { data: { email: ACCOUNTS.ravi.email, password: "demo1234" } });
+    const token = await sessionOf(ctx);
+    if (!token) note("ERROR", "security", "could not obtain a signed session for the tamper test");
+    else {
+      const [body, sig] = token.split(".");
+      const payload = JSON.parse(Buffer.from(body, "base64url").toString("utf8"));
+      payload.sub = "c-hamilton";
+      const forged = `${Buffer.from(JSON.stringify(payload)).toString("base64url")}.${sig}`;
+      await ctx.clearCookies();
+      await ctx.addCookies([{ name: "bv_session", value: forged, url: BASE }]);
+      const page = await ctx.newPage();
+      await page.goto(`${BASE}/dashboard/properties`, { waitUntil: "domcontentloaded" });
+      const text = await page.evaluate(() => document.body.innerText);
+      if (!page.url().includes("/login") || text.includes("Cap Ouest Penthouse")) note("ERROR", "security", "tampered session token was accepted");
+      else console.log("OK: tampered signed token rejected");
+    }
+    await ctx.close();
+  }
+
+  // 3. Owners cannot reach the admin area.
+  {
+    const ctx = await browser.newContext();
+    await ctx.request.post(`${BASE}/api/auth/login`, { data: { email: ACCOUNTS.sophie.email, password: "demo1234" } });
+    const page = await ctx.newPage();
+    await page.goto(`${BASE}/admin`, { waitUntil: "domcontentloaded" });
+    if (page.url().includes("/admin")) note("ERROR", "security", "an owner reached /admin");
+    else console.log("OK: owner is redirected away from /admin");
+    const viewAs = await ctx.request.post(`${BASE}/api/admin/view-as`, { form: { clientId: "c-hamilton" }, maxRedirects: 0 });
+    if (viewAs.status() !== 403) note("ERROR", "security", `owner could call view-as (status ${viewAs.status()})`);
+    else console.log("OK: owner cannot use admin view-as (403)");
+    await ctx.close();
+  }
+
+  // 4. Wrong admin password is refused.
+  {
+    const ctx = await browser.newContext();
+    const res = await ctx.request.post(`${BASE}/api/auth/login`, { data: { email: "kritgoburdhan@gmail.com", password: "definitely-wrong-password" } });
+    if (res.status() !== 401) note("ERROR", "security", `wrong admin password returned ${res.status()}`);
+    else console.log("OK: wrong admin password refused (401)");
+    await ctx.close();
+  }
+
+  // 5. Full admin flow.
+  const adminEmail = process.env.ADMIN_TEST_EMAIL;
+  const adminPassword = process.env.ADMIN_TEST_PASSWORD;
+  if (!adminEmail || !adminPassword) {
+    console.log("SKIP: admin flow (set ADMIN_TEST_EMAIL and ADMIN_TEST_PASSWORD to run it)");
+  } else {
+    const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+    const login = await ctx.request.post(`${BASE}/api/auth/login`, { data: { email: adminEmail, password: adminPassword } });
+    const json = await login.json().catch(() => ({}));
+    if (login.status() !== 200 || json.redirect !== "/admin") note("ERROR", "admin", `admin login failed (${login.status()} ${JSON.stringify(json)})`);
+    else {
+      console.log("OK: admin signs in and is sent to /admin");
+      const page = await ctx.newPage();
+      await inspectPage(page, "/admin", "admin /admin");
+      const overview = await page.evaluate(() => document.body.innerText);
+      for (const name of ["Sophie Laurent", "Ravi Naidoo", "Hamilton Estates Ltd"]) {
+        if (!overview.includes(name)) note("ERROR", "admin", `admin overview is missing owner ${name}`);
+      }
+      console.log("OK: admin overview lists every owner");
+      await shoot(page, "/admin", "admin");
+      await inspectPage(page, "/admin/clients/c-ravi", "admin /admin/clients/c-ravi");
+      const detail = await page.evaluate(() => document.body.innerText);
+      if (!detail.includes("Villa Tamarin Bay")) note("ERROR", "admin", "owner detail page is missing the owner's property");
+      await shoot(page, "/admin/clients/c-ravi", "admin-clients-c-ravi");
+
+      // Open Hamilton's portal: their data, the admin banner, and isolation kept.
+      await ctx.request.post(`${BASE}/api/admin/view-as`, { form: { clientId: "c-hamilton" }, maxRedirects: 0 });
+      await page.goto(`${BASE}/dashboard/properties`, { waitUntil: "networkidle" });
+      const portal = await page.evaluate(() => document.body.innerText);
+      if (!portal.includes("Cap Ouest Penthouse") || !portal.includes("Admin view")) note("ERROR", "admin", "view-as did not open Hamilton's portal with the admin banner");
+      else if (portal.includes("Villa Azure")) note("ERROR", "admin", "view-as leaked another owner's property");
+      else console.log("OK: admin can open an owner's portal (banner shown, only that owner's data)");
+      const foreign = await page.goto(`${BASE}/dashboard/properties/p-01`, { waitUntil: "domcontentloaded" });
+      if (foreign.status() !== 404) note("ERROR", "admin", `while viewing Hamilton, Sophie's property returned ${foreign.status()}`);
+      else console.log("OK: isolation holds inside admin view (foreign property 404)");
+
+      // Back to admin: the dashboard no longer opens without choosing an owner.
+      await ctx.request.post(`${BASE}/api/admin/view-as`, { form: { clientId: "" }, maxRedirects: 0 });
+      await page.goto(`${BASE}/dashboard`, { waitUntil: "domcontentloaded" });
+      if (!page.url().endsWith("/admin")) note("ERROR", "admin", `after leaving view-as, /dashboard went to ${page.url()}`);
+      else console.log("OK: leaving view-as returns the admin to /admin");
+    }
+    await ctx.close();
+  }
 }
 
 // ---------- per-account passes ----------

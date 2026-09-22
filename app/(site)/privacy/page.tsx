@@ -6,7 +6,7 @@ import { company } from "@/data/company";
 
 /*
  * Why there is no cookie-consent banner:
- * the site sets only two cookies — `bv_session` (strictly necessary for the
+ * the site sets only three cookies — `bv_session` (strictly necessary for the
  * owner login) and `bv_currency` (a preference the visitor sets themselves by
  * choosing MUR or EUR). Strictly necessary and user-requested preference
  * cookies are exempt from prior consent under GDPR / ePrivacy guidance and
@@ -203,7 +203,7 @@ export default function PrivacyPage() {
             </p>
 
             <h2>8. Cookies</h2>
-            <p>This website sets exactly two cookies:</p>
+            <p>This website sets at most three cookies:</p>
             <ul>
               <li>
                 <code>bv_session</code> — <strong>strictly necessary</strong>.
@@ -215,10 +215,16 @@ export default function PrivacyPage() {
                 Remembers whether you chose to view prices in MUR or EUR. It is
                 set only when you make that choice and lasts 1 year.
               </li>
+              <li>
+                <code>bv_view_as</code> — <strong>strictly necessary</strong>,
+                Bellavere staff only. Remembers which owner&rsquo;s portal an
+                administrator is viewing. It is httpOnly and ends with the
+                browser session.
+              </li>
             </ul>
             <p>
               We do <strong>not</strong> use analytics, advertising or tracking
-              cookies, and no third-party cookies are set. Because both cookies
+              cookies, and no third-party cookies are set. Because every cookie
               are either strictly necessary or set at your request, we do not
               show a cookie-consent banner. You can delete cookies at any time
               in your browser settings; deleting <code>bv_session</code> signs

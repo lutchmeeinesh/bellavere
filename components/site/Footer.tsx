@@ -46,8 +46,9 @@ export function Footer() {
           <div className="max-w-sm">
             <Logo dark />
             <p className="mt-5 text-sm leading-relaxed text-white/60">
-              {company.tagline} Property management and syndic services across
-              the north and west coasts of Mauritius.
+              {company.tagline} Property management and syndic services all
+              around Mauritius — north, south, east, west and the central
+              plateau.
             </p>
             <div className="mt-6 flex gap-3">
               {/* TODO: confirm with client — social links */}
@@ -99,7 +100,7 @@ export function Footer() {
         <div className="mt-14 flex flex-col gap-6 border-t border-white/10 pt-8 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <p className="text-sm font-medium text-white">
-              A quiet monthly note on coastal property
+              A quiet monthly note on property in Mauritius
             </p>
             {/* Posts to /api/newsletter — connect a mailing-list provider there. */}
             <NewsletterForm />
@@ -122,10 +123,7 @@ export function Footer() {
                 Terms of use
               </Link>
             </p>
-            <p className="mt-1">
-              {company.address.line1}, {company.address.line2},{" "}
-              {company.address.country}
-            </p>
+            <p className="mt-1">{company.address.country}</p>
             <p className="mt-1">Demo website — all listings and figures are illustrative.</p>
           </div>
         </div>

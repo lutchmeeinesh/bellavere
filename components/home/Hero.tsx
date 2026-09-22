@@ -65,8 +65,8 @@ export function Hero() {
           animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.55, ease: EASE }}
         >
-          We look after villas, apartments and residences across the north and
-          west coasts of Mauritius — no hidden fees, always a real person to
+          We look after villas, apartments and residences all around
+          Mauritius — no hidden fees, always a real person to
           answer you, and a live dashboard that shows exactly how your property
           is performing.
         </motion.p>

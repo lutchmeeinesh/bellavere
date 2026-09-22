@@ -19,6 +19,11 @@ type RateLimitOptions = {
   limit: number;
   /** Window length in milliseconds. */
   windowMs: number;
+  /**
+   * false = only check whether the key is currently blocked, without
+   * recording a hit (e.g. to count failed logins only). Defaults to true.
+   */
+  consume?: boolean;
 };
 
 type RateLimitResult = {
@@ -34,7 +39,7 @@ const MAX_KEYS = 5000;
 
 export function rateLimit(
   key: string,
-  { limit, windowMs }: RateLimitOptions
+  { limit, windowMs, consume = true }: RateLimitOptions
 ): RateLimitResult {
   const now = Date.now();
   const windowStart = now - windowMs;
@@ -45,6 +50,8 @@ export function rateLimit(
     const retryAfter = Math.max(1, Math.ceil((recent[0] + windowMs - now) / 1000));
     return { ok: false, retryAfter };
   }
+
+  if (!consume) return { ok: true, retryAfter: 0 };
 
   recent.push(now);
   hits.set(key, recent);

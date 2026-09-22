@@ -23,11 +23,15 @@ export const metadata: Metadata = {
     process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
   ),
   title: {
-    default: "Bellavere — Villa & Apartment Management in Mauritius",
+    default: "Bellavere — Property Management & Syndic Services in Mauritius",
     template: "%s · Bellavere",
   },
   description:
-    "Bellavere manages villas, apartments and residences on the north and west coasts of Mauritius: rentals, maintenance, syndic services, client care, concierge and a live owner dashboard.",
+    "Bellavere looks after villas, apartments and residences across Mauritius: rentals, maintenance, syndic services, client care, concierge and a live owner dashboard.",
+  // Keep the site out of search results until launch (see app/robots.ts).
+  ...(process.env.SITE_INDEXABLE === "true"
+    ? {}
+    : { robots: { index: false, follow: false } }),
 };
 
 export const viewport: Viewport = {

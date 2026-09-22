@@ -14,7 +14,7 @@ export default async function SettingsPage() {
   const client = await requireClient();
 
   // Pass only the fields the settings screens need — never the whole client
-  // record (it contains the demo password).
+  // record (it contains the password hash).
   const profile = {
     name: client.name,
     email: client.email,
@@ -41,6 +41,7 @@ export default async function SettingsPage() {
           <PayoutSettings
             payoutAccount={client.payoutAccount}
             payoutCurrency={client.payoutCurrency}
+            feeRate={client.feeRate}
           />
         </RevealItem>
         <RevealItem>

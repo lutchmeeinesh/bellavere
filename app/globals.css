@@ -77,6 +77,8 @@
     font-family: var(--font-serif);
     font-weight: 600;
     color: var(--navy-900);
+    /* Even line lengths — no single orphaned word on a heading's last line */
+    text-wrap: balance;
   }
 
   h1 {

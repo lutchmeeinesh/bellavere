@@ -5,7 +5,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Download } from "lucide-react";
 import type { Statement } from "@/lib/types";
 import { conversionRateLabel } from "@/lib/format";
-import { company } from "@/data/company";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -22,7 +21,6 @@ const PRINT_GOLD = "#c9a45c";
 const PRINT_BORDER = "#d9cdb8";
 const PRINT_MUTED = "#6b6459";
 
-const FEE_PERCENT = Math.round(company.pricing.feeRate * 100);
 
 // TODO: replace with a real PDF service (server-rendered statement PDFs)
 // before production — this demo opens a printable window instead.
@@ -30,11 +28,12 @@ function statementHtml(
   statement: Statement,
   clientName: string,
   format: (eur: number) => string,
-  currencyNote: string | null
+  currencyNote: string | null,
+  feePercent: number
 ): string {
   const rows: [string, string][] = [
     ["Gross rental income", format(statement.gross)],
-    [`Bellavere management fee (${FEE_PERCENT}%)`, `− ${format(statement.fee)}`],
+    [`Bellavere management fee (${feePercent}%)`, `− ${format(statement.fee)}`],
     ["Expenses", `− ${format(statement.expenses)}`],
   ];
   return `
@@ -81,10 +80,14 @@ function statementHtml(
 export function StatementsTable({
   statements,
   clientName,
+  feeRate,
 }: {
   statements: Statement[];
   clientName: string;
+  /** This owner's agreed management fee (e.g. 0.14). */
+  feeRate: number;
 }) {
+  const feePercent = Math.round(feeRate * 100);
   const money = useMoney();
   const [popupBlocked, setPopupBlocked] = useState(false);
 
@@ -103,7 +106,8 @@ export function StatementsTable({
         money.format,
         money.currency === "MUR"
           ? `Amounts shown in Mauritian rupees, converted from euros at ${conversionRateLabel()}.`
-          : null
+          : null,
+        feePercent
       )
     );
     win.document.close();
@@ -142,7 +146,7 @@ export function StatementsTable({
                 Gross rental
               </th>
               <th scope="col" className="px-5 py-3.5 text-right font-medium">
-                Bellavere fee (18%)
+                Bellavere fee ({feePercent}%)
               </th>
               <th scope="col" className="px-5 py-3.5 text-right font-medium">
                 Expenses
@@ -213,7 +217,7 @@ export function StatementsTable({
                   <dd className="text-ink-900">{money.format(s.gross)}</dd>
                 </div>
                 <div className="flex justify-between">
-                  <dt className="text-ink-500">Bellavere fee (18%)</dt>
+                  <dt className="text-ink-500">Bellavere fee ({feePercent}%)</dt>
                   <dd className="text-ink-500">−{money.format(s.fee)}</dd>
                 </div>
                 <div className="flex justify-between">

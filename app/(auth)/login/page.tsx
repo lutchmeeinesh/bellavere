@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Logo } from "@/components/site/Logo";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { siteImages } from "@/data/siteImages";
+import { isDemoMode } from "@/lib/session";
 
 export const metadata: Metadata = {
   title: "Owner login",
@@ -16,9 +17,12 @@ export default async function LoginPage({
   searchParams: Promise<{ from?: string }>;
 }) {
   const { from } = await searchParams;
-  // Only honour internal dashboard destinations; ignore anything else.
+  // Only honour internal portal destinations; ignore anything else.
   const redirectTo =
-    typeof from === "string" && from.startsWith("/dashboard") ? from : undefined;
+    typeof from === "string" &&
+    (from.startsWith("/dashboard") || from.startsWith("/admin"))
+      ? from
+      : undefined;
 
   return (
     <div className="relative flex min-h-svh items-center justify-center overflow-hidden bg-navy-900 px-5 py-28 sm:px-8">
@@ -37,7 +41,7 @@ export default async function LoginPage({
       </div>
 
       <div className="relative z-10 w-full max-w-md">
-        <LoginForm from={redirectTo} />
+        <LoginForm from={redirectTo} demoMode={isDemoMode()} />
       </div>
     </div>
   );

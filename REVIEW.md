@@ -77,3 +77,21 @@ The first pass flagged a console error on the custom 404 page; it was Chromium l
 \* Intentional: `robots.txt` blocks the login page and the owner portal from search engines, which Lighthouse scores as "blocked from indexing".
 
 - 37 screenshots in `/screenshots`, including the new legal pages and a statements page in MUR.
+
+---
+
+## Round 3 — 22 September 2026 (admins, signed sessions, fees, coverage)
+
+### Findings & fixes
+
+1. **Forgeable session cookie (fixed).** Setting `bv_session=c-hamilton` by hand used to open Hamilton's portal. Sessions are now HMAC-signed; the review now proves a hand-set cookie *and* a genuine token with an edited payload are both rejected.
+2. **`.env` loader corrupted the password hashes (fixed).** Admin logins initially failed: Next.js expands `$name` in `.env` values, turning the 120-character `scrypt$salt$hash` into 80 characters. Verified with `@next/env`, then switched the format to `scrypt:salt:hash`; all four secrets now load intact and all three admins sign in.
+3. **Rate limit would have locked out legitimate users (fixed before shipping).** The first version counted successful sign-ins; it now counts failures only.
+4. Cosmetic: headings now use `text-wrap: balance` (the new team heading had left "to" alone on a line).
+
+### Verification
+
+- `npm run build`: 0 TypeScript errors, 0 lint errors.
+- `scripts/review.mjs`: **0 errors, 0 warnings, 23 checks** — adds forged cookie, tampered token, owner blocked from `/admin` and from view-as (403), wrong admin password (401), admin sign-in → `/admin`, overview lists all owners, open an owner's portal (banner, only that owner's data), isolation inside admin view (foreign property 404), leave view-as → `/admin`.
+- All three admin accounts sign in (200 → `/admin`), checked without printing any password.
+- Note for Lighthouse: with `SITE_INDEXABLE=false` (the default until launch) SEO scores are intentionally low because every page is `noindex`.

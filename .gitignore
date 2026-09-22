@@ -43,3 +43,8 @@ next-env.d.ts
 server.log
 lighthouse.json
 review-findings.json
+
+# local admin credentials (hand out, then delete)
+ADMIN-CREDENTIALS.local.md
+# keep the documented template
+!.env.example

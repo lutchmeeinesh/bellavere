@@ -8,7 +8,7 @@ import { ConversionNote } from "@/components/currency/Money";
 export const metadata: Metadata = {
   title: "Properties",
   description:
-    "The Bellavere portfolio: villas and apartments across the north and west coasts of Mauritius, each photographed, priced and cared for by our team.",
+    "The Bellavere portfolio: villas and apartments across Mauritius, each photographed, priced and cared for by our team.",
 };
 
 export default function PropertiesPage() {
@@ -20,7 +20,7 @@ export default function PropertiesPage() {
             <p className="eyebrow mb-4">Our portfolio</p>
             <h1>Homes we manage as if they were our own</h1>
             <p className="mt-6 text-lg leading-relaxed text-ink-500">
-              Villas and apartments from Grand Baie to Tamarin — photographed,
+              A selection of the villas and apartments in our care — photographed,
               priced night by night and kept immaculate by the Bellavere team.
             </p>
             <p className="mt-3 text-sm text-ink-500 italic">

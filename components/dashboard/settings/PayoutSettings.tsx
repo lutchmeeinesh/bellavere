@@ -6,8 +6,11 @@ import type { Currency } from "@/lib/format";
 export function PayoutSettings({
   payoutAccount,
   payoutCurrency,
+  feeRate,
 }: {
   payoutAccount: string;
+  /** Agreed management fee, e.g. 0.14. */
+  feeRate: number;
   /** Currency the owner is actually paid in (independent of display). */
   payoutCurrency: Currency;
 }) {
@@ -24,6 +27,10 @@ export function PayoutSettings({
         <Badge tone="gold">{payoutCurrency}</Badge>
       </div>
       <p className="mt-3 text-sm text-ink-500">
+        Your agreed management fee is {Math.round(feeRate * 100)}% of gross
+        rental income.
+      </p>
+      <p className="mt-1 text-sm text-ink-500">
         Payouts are made monthly by the 5th.
         {/* TODO: confirm with client */}
       </p>

@@ -17,9 +17,10 @@ export const company = {
   legalName: "Bellavere Ltd",
   // TODO: confirm with client — tagline
   tagline: "Your property, perfectly managed.",
-  market: "North & west coast, Mauritius",
+  /** Coverage confirmed by the client's own map (22 Sep 2026): island-wide. */
+  market: "Across Mauritius",
   marketLong:
-    "Villas, apartments and residences from Grand Gaube to Rivière Noire, on the north and west coasts of Mauritius.",
+    "Villas, apartments and residences across Mauritius — north, west, east, south and the central plateau.",
   // TODO: confirm with client — phone
   phone: "+230 5 728 4410",
   email: "BellavereLtd@gmail.com",
@@ -40,13 +41,21 @@ export const company = {
   /** The client's mission, in their own words. */
   mission:
     "Our mission is to provide the best service while maintaining full transparency. No hidden fees — and there will always be a human to answer you.",
-  // TODO: confirm with client — pricing model (the fee rate also drives the
-  // owner-statement maths in lib/metrics.ts)
+  /**
+   * Confirmed by the client: the fee is negotiated and set after the first
+   * meeting, and never exceeds 15%. Each owner's agreed rate lives on their
+   * record (Client.feeRate) and drives their statements.
+   */
+  // TODO: confirm with client — the 15% cap is assumed to be of gross
+  // rental income (syndic contracts may be priced differently)
   pricing: {
-    model: "18% of gross rental income",
+    maxFeeRate: 0.15,
+    /** Short form for badges and lists. */
+    short: "Negotiable — never more than 15%",
+    /** Reads naturally after "for" or "is". */
+    model: "a fee agreed with you after our first meeting, never more than 15% of gross rental income",
     detail:
-      "One clearly stated management fee of 18% of gross rental income. No hidden fees — every cost is itemised on your monthly statement.",
-    feeRate: 0.18,
+      "Your management fee is negotiated with you and set after our first meeting — it never exceeds 15% of gross rental income. No hidden fees: every cost is itemised on your monthly statement.",
   },
   /**
    * The team. Surnames are inferred from the team's email addresses.

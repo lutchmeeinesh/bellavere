@@ -180,8 +180,8 @@ export default async function PropertyDetailPage({
                 </p>
                 <p className="mt-3 text-sm leading-relaxed text-ink-500">
                   Pricing, guest care, housekeeping, maintenance and monthly
-                  owner statements are all handled by our team — for one
-                  all-in fee of {company.pricing.model}.
+                  owner statements are all handled by our team, for{" "}
+                  {company.pricing.model}.
                 </p>
               </div>
             </Reveal>
@@ -195,10 +195,9 @@ export default async function PropertyDetailPage({
             <p className="eyebrow mb-4">Own something similar?</p>
             <h2>List a property like this</h2>
             <p className="mt-5 text-lg leading-relaxed text-ink-500">
-              Bellavere looks after villas, apartments and residences across
-              the north and west coasts of Mauritius. Tell us about your home
-              and we&rsquo;ll show you what it could earn — with no hidden
-              fees.
+              Bellavere looks after villas, apartments and residences all
+              around Mauritius. Tell us about your home and we&rsquo;ll show
+              you what it could earn — with no hidden fees.
             </p>
             <div className="mt-9 flex flex-wrap justify-center gap-4">
               <Button href="/contact" size="lg">
