@@ -72,8 +72,10 @@ export async function middleware(request: NextRequest) {
   // status can no longer change: an in-page notFound() only swaps the UI and
   // still answers 200. The 404 status is therefore set here, before
   // rendering, on a rewrite to a page that shows the portal's own 404 inside
-  // its layout. Unknown ids and other owners' ids get the very same response,
-  // so it never tells an owner whether another owner's property exists.
+  // its layout (under `next start`; on Vercel a 404 status makes the platform
+  // serve the site-wide 404 page instead). Unknown ids and other owners' ids
+  // get the very same response, so it never tells an owner whether another
+  // owner's property exists.
   const notFoundIn = (path: string) =>
     NextResponse.rewrite(new URL(path + request.nextUrl.search, request.url), {
       status: 404,
