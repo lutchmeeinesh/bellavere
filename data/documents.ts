@@ -1,5 +1,5 @@
 import type { OwnerDocument } from "@/lib/types";
-import { daysFromToday, toISODate } from "@/lib/dates";
+import { daysFromToday, perDay, toISODate } from "@/lib/dates";
 
 const d = (offset: number) => toISODate(daysFromToday(offset));
 
@@ -7,7 +7,8 @@ const d = (offset: number) => toISODate(daysFromToday(offset));
  * Owner documents. Anything expiring within 45 days gets an "expiring soon"
  * badge on the dashboard.
  */
-export const documents: OwnerDocument[] = [
+// Dates are relative to today, so the list is rebuilt once per day.
+const allDocuments = perDay((): OwnerDocument[] => [
   // — Sophie Laurent —
   {
     id: "doc-001",
@@ -120,8 +121,8 @@ export const documents: OwnerDocument[] = [
     expiresAt: null,
     fileSizeKb: 152,
   },
-];
+]);
 
 export function getDocumentsForClient(clientId: string): OwnerDocument[] {
-  return documents.filter((doc) => doc.clientId === clientId);
+  return allDocuments().filter((doc) => doc.clientId === clientId);
 }

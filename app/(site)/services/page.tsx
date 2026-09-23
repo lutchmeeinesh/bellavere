@@ -17,7 +17,7 @@ import { company } from "@/data/company";
 import { siteImages } from "@/data/siteImages";
 
 export const metadata: Metadata = {
-  title: "Services",
+  title: "Property management & syndic services",
   description:
     "Rental management, maintenance, client care, concierge and syndic services for villas, apartments and residences in Mauritius — one team, no hidden fees.",
 };
@@ -61,6 +61,7 @@ export default function ServicesPage() {
       </header>
 
       <ServiceSection
+        priority
         id="rental"
         eyebrow="01 — Rental management"
         title="Your home, earning while you sleep"

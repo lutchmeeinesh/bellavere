@@ -14,13 +14,76 @@ import { formatPercent } from "@/lib/format";
 
 /** This month's occupancy per property, as calm sea-blue bars. */
 
+const PERCENT_TICKS = [0, 25, 50, 75, 100];
+
 export interface OccupancyDatum {
   name: string;
   occupancy: number;
 }
 
-function truncate(name: string, max = 12): string {
-  return name.length > max ? `${name.slice(0, max - 1)}…` : name;
+/** Average width of one 12px Inter character, for fitting labels to bars. */
+const CHAR_WIDTH = 6.5;
+
+/** Splits a name into at most `maxLines` lines of `perLine` characters. */
+function wrapLabel(name: string, perLine: number, maxLines = 2): string[] {
+  const lines: string[] = [];
+  let line = "";
+  for (const word of name.split(" ")) {
+    const next = line ? `${line} ${word}` : word;
+    if (next.length <= perLine) {
+      line = next;
+      continue;
+    }
+    if (line) lines.push(line);
+    line = word;
+  }
+  if (line) lines.push(line);
+  const shown = lines.slice(0, maxLines).map((l) =>
+    l.length > perLine ? `${l.slice(0, perLine - 1)}…` : l
+  );
+  if (lines.length > maxLines) {
+    const last = shown[maxLines - 1];
+    shown[maxLines - 1] = `${last.slice(0, Math.max(1, perLine - 1))}…`;
+  }
+  return shown;
+}
+
+/**
+ * Property names under the bars, wrapped onto two lines to fit each bar's
+ * slot, so five properties on a narrow card don't run into each other. The
+ * tooltip shows the full name.
+ */
+function PropertyTick({
+  x,
+  y,
+  payload,
+  width,
+  visibleTicksCount,
+}: {
+  x?: number;
+  y?: number;
+  payload?: { value?: string };
+  width?: number;
+  visibleTicksCount?: number;
+}) {
+  const slot = (width ?? 0) / Math.max(1, visibleTicksCount ?? 1);
+  const perLine = Math.max(4, Math.floor((slot - 6) / CHAR_WIDTH));
+  const lines = wrapLabel(String(payload?.value ?? ""), perLine);
+  return (
+    <text
+      x={x}
+      y={y}
+      textAnchor="middle"
+      fill={CHART_COLORS.axis}
+      style={CHART_FONT}
+    >
+      {lines.map((line, i) => (
+        <tspan key={i} x={x} dy={14}>
+          {line}
+        </tspan>
+      ))}
+    </text>
+  );
 }
 
 function OccupancyTooltip({
@@ -45,10 +108,10 @@ function OccupancyTooltip({
 export function OccupancyChart({ data }: { data: OccupancyDatum[] }) {
   return (
     <div>
-      <h3 className="text-lg">Occupancy by property</h3>
+      <h2 className="text-lg">Occupancy by property</h2>
       <p className="mt-0.5 text-xs text-ink-500">This month</p>
 
-      <div className="mt-4 h-72">
+      <div className="mt-4 h-72 lining-nums tabular-nums">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={data}
@@ -59,14 +122,14 @@ export function OccupancyChart({ data }: { data: OccupancyDatum[] }) {
               dataKey="name"
               tickLine={false}
               axisLine={false}
-              dy={8}
               interval={0}
-              tick={{ fill: CHART_COLORS.axis, ...CHART_FONT }}
-              tickFormatter={(value: string) => truncate(String(value))}
+              height={44}
+              tick={<PropertyTick />}
             />
             <YAxis
-              width={38}
+              width={44}
               domain={[0, 100]}
+              ticks={PERCENT_TICKS}
               tickLine={false}
               axisLine={false}
               tick={{ fill: CHART_COLORS.axis, ...CHART_FONT }}

@@ -63,7 +63,7 @@ The client supplied the company name, team, email, mission and dual-currency req
 ### Currency (MUR and EUR)
 - **Stored in EUR, displayed in EUR or MUR** at the visitor's choice (header, dashboard top bar, Settings). Default EUR.
 - **Conversion at a fixed €1 = Rs 52** (TODO). Deliberately a whole number so converted statements still reconcile to the rupee. The rate is disclosed next to rupee amounts, since transparency is the brand promise.
-- **The choice persists in a `bv_currency` cookie read by the root layout**, so pages render in the right currency on the first paint. Trade-off: every page is now server-rendered per request instead of pre-rendered statically. The measured cost is negligible (Lighthouse performance 99–100 on public pages).
+- **The choice persists in a `bv_currency` cookie.** *(Superseded on 23 Sep 2026: the root layout no longer reads it, so public pages are static and cached; the browser applies the choice while the page loads, and the portals still read it on the server. See Update 6.)*
 - The dashboard's decorative date-range selector was **replaced by the currency switch**; it never did anything.
 - Each demo owner gained a **payout currency** (Sophie EUR, Ravi MUR, Hamilton EUR), separate from the display currency.
 
@@ -129,4 +129,14 @@ The client asked to strip everything fake, keep two demo accounts, and rename th
 - **No silent loss of enquiries:** without an API key in production, or if Resend fails, the visitor is told and given the direct email and phone numbers — the real safeguard. The enquiry is also written to the runtime log, but Vercel keeps those for only about 1 hour on Hobby (1 day on Pro), so it is a short-term net, not storage.
 - **Production secrets:** a separate `SESSION_SECRET` was generated for Vercel (`.env.vercel.local`, git-ignored); the admin password hashes are the same as locally, so the temporary passwords in `ADMIN-CREDENTIALS.local.md` work on the live site too.
 - **Hosting plan:** deploying on Vercel Hobby for now at the client's choice; the docs note that Hobby is for non-commercial use and Pro is needed once the site is used commercially.
+
+---
+
+## Update 6 — 23 September 2026 (post-deployment fixes)
+
+- **Static public pages over first-paint currency.** Reading the currency cookie in the root layout made every page render per request in a distant region. Public pages are now prerendered; a visitor who chose rupees sees the home page's dashboard preview switch from euros as the page loads (it is below the fold). The owner and admin portals are unaffected.
+- **Function region cpt1 (Cape Town)**, the closest Vercel region to Mauritius (~100 ms from Beau Bassin versus ~320 ms for the default Washington region). If most owners turn out to be in Europe, `cdg1` (Paris) is the alternative; Hobby allows one region.
+- **Content Security Policy with `'unsafe-inline'` scripts.** A nonce-based policy would force every page to render per request; the static policy still blocks third-party scripts, framing, plugins and foreign form targets.
+- **"Today" is the Mauritius calendar date** for all demo data, whoever is looking and wherever the server runs.
+- **The social profiles are kept although they don't resolve yet**, because the client asked for them; they should be created or corrected before launch.
 

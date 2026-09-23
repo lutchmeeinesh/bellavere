@@ -7,7 +7,10 @@ const BASE_URL = (
 /**
  * Until SITE_INDEXABLE=true (set it at launch, once the demo content is
  * replaced), search engines are asked to stay out of the whole site. The
- * owner portal, admin area, API and login are never indexed.
+ * owner portal, admin area and API are never crawled. /login stays
+ * crawlable on purpose: it carries a robots noindex tag, and a crawler
+ * blocked here could never read it (a blocked URL can still be indexed from
+ * links alone).
  */
 export default function robots(): MetadataRoute.Robots {
   if (process.env.SITE_INDEXABLE !== "true") {
@@ -17,7 +20,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/dashboard", "/admin", "/api", "/login"],
+      disallow: ["/dashboard", "/admin", "/api"],
     },
     sitemap: `${BASE_URL}/sitemap.xml`,
   };

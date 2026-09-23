@@ -1,6 +1,13 @@
 import { createHash } from "node:crypto";
 import { NextResponse } from "next/server";
 import { company } from "@/data/company";
+import {
+  methodNotAllowed,
+  readJsonObject,
+  requireJson,
+  requireSameOrigin,
+  str,
+} from "@/lib/http";
 import { getClientIp, rateLimit } from "@/lib/rateLimit";
 import { CONTACT_LIMITS, EMAIL_PATTERN } from "@/lib/contactLimits";
 
@@ -24,24 +31,12 @@ import { CONTACT_LIMITS, EMAIL_PATTERN } from "@/lib/contactLimits";
  *                       "Bellavere website <website@wwwbellavere.com>".
  *   RESEND_API_URL      override for tests only.
  *
- * Rate limiting (lib/rateLimit.ts — in-memory, swap for Upstash at scale)
- * and a honeypot field are in place. If delivery fails, the visitor is
+ * Same-site JSON only (lib/http.ts), rate limiting (lib/rateLimit.ts —
+ * in-memory, swap for Upstash at scale) and a honeypot field are in place. If delivery fails, the visitor is
  * shown the direct email and phone numbers (the real safeguard) and the
  * enquiry is written to the runtime log — a short-term net only: Vercel keeps
  * runtime logs for about 1 hour on Hobby and 1 day on Pro.
  */
-
-type ContactEnquiry = {
-  name?: string;
-  email?: string;
-  phone?: string;
-  propertyType?: string;
-  propertyCount?: string;
-  message?: string;
-  consent?: boolean;
-  /** Honeypot — hidden from humans; any value means a bot filled it in. */
-  hp_extra?: string;
-};
 
 type Enquiry = {
   receivedAt: string;
@@ -70,7 +65,7 @@ function hashIp(ip: string): string {
 
 /** Single line, no control characters (safe for subjects and headers). */
 function oneLine(value: string): string {
-  // eslint-disable-next-line no-control-regex -- deliberately strips control characters
+  // Deliberately strips control characters (the lint rule is off in this config).
   return value.replace(/[\x00-\x1f\x7f]+/g, " ").trim();
 }
 
@@ -161,69 +156,38 @@ async function deliver(enquiry: Enquiry, consentAt: string): Promise<boolean> {
 }
 
 export async function POST(request: Request) {
-  const ip = getClientIp(request);
-  const limited = rateLimit(`contact:${ip}`, RATE_LIMIT);
-  if (!limited.ok) {
-    return NextResponse.json(
-      {
-        ok: false,
-        error: `You’ve sent several messages in a short time. Please wait a few minutes and try again. ${DIRECT_CONTACT}`,
-      },
-      { status: 429, headers: { "Retry-After": String(limited.retryAfter) } },
-    );
-  }
+  // Only same-site JSON requests (see lib/http.ts): stops other sites from
+  // posting through their visitors' browsers and using up the daily email
+  // quota.
+  const refused = requireJson(request) ?? requireSameOrigin(request);
+  if (refused) return refused;
 
-  // Only same-site JSON requests. A cross-site page cannot send JSON without a
-  // CORS preflight (which fails), so this stops other sites from posting
-  // through their visitors' browsers and using up the daily email quota.
-  const contentType = (request.headers.get("content-type") ?? "").toLowerCase();
-  if (!contentType.startsWith("application/json")) {
-    return NextResponse.json(
-      { ok: false, error: "Unsupported request." },
-      { status: 415 },
-    );
-  }
-  const origin = request.headers.get("origin");
-  if (origin) {
-    let sameHost = false;
-    try {
-      sameHost = new URL(origin).host === request.headers.get("host");
-    } catch {
-      sameHost = false;
-    }
-    if (!sameHost) {
-      return NextResponse.json(
-        { ok: false, error: "Forbidden." },
-        { status: 403 },
-      );
-    }
-  }
-
-  let body: ContactEnquiry;
-  try {
-    body = (await request.json()) as ContactEnquiry;
-  } catch {
+  const body = await readJsonObject(request);
+  if (!body) {
     return NextResponse.json(
       { ok: false, error: "Invalid request body." },
       { status: 400 },
     );
   }
 
-  // Honeypot filled: pretend success so bots aren't tipped off, but leave a
-  // one-line trace in case a real visitor's browser ever fills it.
-  if (typeof body.hp_extra === "string" && body.hp_extra.trim()) {
+  // Honeypot (hp_extra, hidden from humans) filled: pretend success so bots
+  // aren't tipped off, but leave a one-line trace in case a real visitor's
+  // browser ever fills it.
+  if (str(body.hp_extra).trim()) {
     console.warn("[contact] Honeypot hit", {
-      email: typeof body.email === "string" ? body.email.slice(0, 254) : null,
+      email: str(body.email).slice(0, 254) || null,
     });
     return NextResponse.json({ ok: true });
   }
 
-  const name = oneLine(body.name ?? "");
-  const email = oneLine(body.email ?? "");
-  const phone = oneLine(body.phone ?? "");
-  const propertyType = oneLine(body.propertyType ?? "");
-  const propertyCount = oneLine(body.propertyCount ?? "");
-  const message = (body.message ?? "").trim();
+  // Every field is read through str(): a number, object or array where text
+  // is expected counts as missing, so odd payloads get a 400, never a 500.
+  const name = oneLine(str(body.name));
+  const email = oneLine(str(body.email));
+  const phone = oneLine(str(body.phone));
+  const propertyType = oneLine(str(body.propertyType));
+  const propertyCount = oneLine(str(body.propertyCount));
+  const message = str(body.message).trim();
 
   const tooLong =
     name.length > CONTACT_LIMITS.name ||
@@ -252,6 +216,20 @@ export async function POST(request: Request) {
     return NextResponse.json(
       { ok: false, error: "Please complete the required fields." },
       { status: 400 },
+    );
+  }
+
+  // Counted only now, for enquiries that would really be emailed: refused,
+  // invalid and honeypot requests never use up a visitor's allowance.
+  const ip = getClientIp(request);
+  const limited = rateLimit(`contact:${ip}`, RATE_LIMIT);
+  if (!limited.ok) {
+    return NextResponse.json(
+      {
+        ok: false,
+        error: `You’ve sent several messages in a short time. Please wait a few minutes and try again. ${DIRECT_CONTACT}`,
+      },
+      { status: 429, headers: { "Retry-After": String(limited.retryAfter) } },
     );
   }
 
@@ -292,3 +270,9 @@ export async function POST(request: Request) {
 
   return NextResponse.json({ ok: true });
 }
+
+// Anything but POST: a JSON 405 with "Allow: POST".
+export const GET = methodNotAllowed();
+export const PUT = methodNotAllowed();
+export const PATCH = methodNotAllowed();
+export const DELETE = methodNotAllowed();

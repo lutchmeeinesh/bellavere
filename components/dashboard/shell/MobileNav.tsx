@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
@@ -10,12 +10,14 @@ import {
   isNavActive,
   type DashboardNavItem,
 } from "@/components/dashboard/shell/nav";
+import { useFocusTrap } from "@/components/ui/Modal";
 import { cn } from "@/lib/utils";
 
 /**
  * Fixed bottom navigation for < lg screens: the four main sections plus a
  * "More" button that opens a bottom sheet with the remaining pages and the
- * logout form.
+ * logout form. The sheet is modal: focus moves into it and stays there, and
+ * closing it (Escape, backdrop, navigating) hands focus back to "More".
  */
 
 const PRIMARY = DASHBOARD_NAV.slice(0, 4); // Overview, Properties, Bookings, Maintenance
@@ -24,20 +26,25 @@ const SECONDARY = DASHBOARD_NAV.slice(4); // Statements, Documents, Settings
 export function MobileNav() {
   const pathname = usePathname();
   const [sheetOpen, setSheetOpen] = useState(false);
+  const sheetRef = useRef<HTMLDivElement>(null);
 
   // Close the sheet after navigating.
   useEffect(() => {
     setSheetOpen(false);
   }, [pathname]);
 
+  // The sheet only exists below lg: close it if the window grows past that,
+  // so its focus trap can't hold on to a hidden panel.
   useEffect(() => {
-    if (!sheetOpen) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setSheetOpen(false);
+    const desktop = window.matchMedia("(min-width: 64rem)");
+    const onChange = (event: MediaQueryListEvent) => {
+      if (event.matches) setSheetOpen(false);
     };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [sheetOpen]);
+    desktop.addEventListener("change", onChange);
+    return () => desktop.removeEventListener("change", onChange);
+  }, []);
+
+  useFocusTrap(sheetOpen, sheetRef, () => setSheetOpen(false));
 
   const moreActive = SECONDARY.some((item) => isNavActive(pathname, item));
 
@@ -87,10 +94,19 @@ export function MobileNav() {
               transition={{ duration: 0.2 }}
             />
             <motion.div
+              ref={sheetRef}
               role="dialog"
               aria-modal="true"
               aria-label="More pages"
-              className="absolute inset-x-0 bottom-0 rounded-t-2xl border-t border-sand-300 bg-white p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))]"
+              tabIndex={-1}
+              // A link to the page already open doesn't change the pathname,
+              // so close on any link click (the logout button is not a link).
+              onClick={(event) => {
+                if ((event.target as HTMLElement).closest("a")) {
+                  setSheetOpen(false);
+                }
+              }}
+              className="absolute inset-x-0 bottom-0 rounded-t-2xl border-t border-sand-300 bg-white p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] focus:outline-none"
               initial={{ y: "100%" }}
               animate={{ y: 0 }}
               exit={{ y: "100%" }}

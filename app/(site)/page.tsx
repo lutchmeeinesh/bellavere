@@ -7,6 +7,9 @@ import { DashboardTeaser } from "@/components/home/DashboardTeaser";
 import { Testimonials } from "@/components/home/Testimonials";
 import { CtaBand } from "@/components/home/CtaBand";
 
+// The dashboard preview shows this month's figures: refresh them hourly.
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   description:
     "Bellavere manages luxury villas and apartments across Mauritius — rentals, maintenance, client care and concierge, with a live dashboard for every owner.",

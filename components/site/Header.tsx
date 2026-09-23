@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
@@ -20,12 +20,15 @@ const NAV_LINKS = [
 /**
  * Fixed site header. Transparent over the home hero; frosted sand with a
  * bottom border after 40px of scroll (and always on inner pages). The active
- * link underline slides between items via a shared layoutId.
+ * link underline slides between items via a shared layoutId. The mobile menu
+ * closes on navigation, on any link click and on Escape (focus then goes
+ * back to the menu button).
  */
 export function Header() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -37,6 +40,17 @@ export function Header() {
   useEffect(() => {
     setMenuOpen(false);
   }, [pathname]);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      setMenuOpen(false);
+      menuButtonRef.current?.focus();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [menuOpen]);
 
   // Only the home page has a dark full-bleed hero behind the header.
   const overHero = pathname === "/" && !scrolled && !menuOpen;
@@ -111,13 +125,14 @@ export function Header() {
             layoutId="currency-pill-header-mobile"
           />
           <button
+            ref={menuButtonRef}
             type="button"
             className={cn(
               "rounded-full p-2 transition-colors",
               overHero ? "text-white" : "text-navy-900",
             )}
             aria-expanded={menuOpen}
-            aria-controls="mobile-menu"
+            aria-controls={menuOpen ? "mobile-menu" : undefined}
             aria-label={menuOpen ? "Close menu" : "Open menu"}
             onClick={() => setMenuOpen((v) => !v)}
           >
@@ -135,6 +150,11 @@ export function Header() {
           <motion.nav
             id="mobile-menu"
             aria-label="Mobile navigation"
+            // A link to the page already open leaves the pathname unchanged,
+            // so close on the click itself as well.
+            onClick={(e) => {
+              if ((e.target as HTMLElement).closest("a")) setMenuOpen(false);
+            }}
             className="border-t border-sand-300 bg-sand-50/95 backdrop-blur-md lg:hidden"
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}

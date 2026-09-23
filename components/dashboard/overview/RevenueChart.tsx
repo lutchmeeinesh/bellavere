@@ -33,6 +33,42 @@ const RANGES = [
   { id: "12m", label: "12M", months: 12 },
 ] as const;
 
+const NICE_MULTIPLES = [1, 2, 2.5, 5, 10];
+
+/** "€0" / "€7.5k" / "Rs 400k" / "Rs 1.25M": exact, unlike a rounded label. */
+function axisLabel(shown: number, symbol: string): string {
+  const [divisor, unit] =
+    shown >= 1_000_000 ? [1_000_000, "M"] : shown >= 1000 ? [1000, "k"] : [1, ""];
+  return `${symbol}${Number((shown / divisor).toFixed(2))}${unit}`;
+}
+
+/**
+ * Y-axis props for EUR amounts shown in the visitor's currency: evenly
+ * spaced ticks on a "nice" step (1, 2, 2.5 or 5 x 10^n), worked out in the
+ * displayed unit so the axis reads €5k / €10k / €15k or Rs 200k / Rs 400k
+ * rather than converted odd values. Ticks and domain stay in EUR, the unit
+ * the data is plotted in. Spread the result onto <YAxis>.
+ */
+export function useMoneyAxis(valuesEur: number[], intervals = 4) {
+  const money = useMoney();
+  const rate = money.convert(1);
+  const maxShown = Math.max(0, ...valuesEur) * rate;
+  // An all-zero series still gets a sensible scale (0 to 1k).
+  const top = maxShown > 0 ? maxShown : 1000;
+  const raw = top / intervals;
+  const magnitude = 10 ** Math.floor(Math.log10(raw));
+  const multiple = NICE_MULTIPLES.find((m) => m * magnitude >= raw) ?? 10;
+  const step = Math.max(1, multiple * magnitude); // never below one unit
+  const count = Math.max(1, Math.ceil(top / step - 1e-9));
+  const ticks = Array.from({ length: count + 1 }, (_, i) => (i * step) / rate);
+
+  return {
+    domain: [0, ticks[count]] as [number, number],
+    ticks,
+    tickFormatter: (eur: number) => axisLabel(money.convert(eur), money.symbol),
+  };
+}
+
 function RevenueTooltip({
   active,
   payload,
@@ -58,11 +94,12 @@ export function RevenueChart({ data }: { data: RevenueDatum[] }) {
   const [rangeId, setRangeId] = useState<(typeof RANGES)[number]["id"]>("12m");
   const months = RANGES.find((r) => r.id === rangeId)?.months ?? 12;
   const visible = data.slice(-months);
+  const yAxis = useMoneyAxis(visible.map((d) => d.revenue));
 
   return (
     <div>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h3 className="text-lg">Revenue, last 12 months</h3>
+        <h2 className="text-lg">Revenue, last 12 months</h2>
         <div
           role="group"
           aria-label="Chart range"
@@ -87,7 +124,7 @@ export function RevenueChart({ data }: { data: RevenueDatum[] }) {
         </div>
       </div>
 
-      <div className="mt-4 h-72">
+      <div className="mt-4 h-72 lining-nums tabular-nums">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
             data={visible}
@@ -116,11 +153,11 @@ export function RevenueChart({ data }: { data: RevenueDatum[] }) {
               tick={{ fill: CHART_COLORS.axis, ...CHART_FONT }}
             />
             <YAxis
+              {...yAxis}
               width={money.currency === "MUR" ? 64 : 46}
               tickLine={false}
               axisLine={false}
               tick={{ fill: CHART_COLORS.axis, ...CHART_FONT }}
-              tickFormatter={(value: number) => money.formatCompact(value)}
             />
             <Tooltip
               content={<RevenueTooltip />}

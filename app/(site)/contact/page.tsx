@@ -4,13 +4,14 @@ import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Reveal, RevealItem, RevealStagger } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { publishedSocialLinks } from "@/components/site/SocialIcons";
+import { SocialLink, publishedSocialLinks } from "@/components/site/SocialIcons";
 import { ContactForm } from "@/components/contact/ContactForm";
 import { FaqAccordion } from "@/components/contact/FaqAccordion";
 import { company } from "@/data/company";
 
 export const metadata: Metadata = {
-  title: "Contact",
+  // The root template adds " · Bellavere": 58 characters in all.
+  title: "Contact us – property management in Mauritius",
   description:
     "Talk to Bellavere about managing your villa or apartment anywhere in Mauritius — rentals, maintenance, client care and concierge under one roof.",
 };
@@ -18,6 +19,11 @@ export const metadata: Metadata = {
 // Only details the client has confirmed are shown. Phone, hours and social
 // links appear automatically once they are filled in data/company.ts.
 const SOCIAL_LINKS = publishedSocialLinks(company.name, company.social);
+
+// Phone and email links: a 20px line plus 2px padding above and below gives
+// every tap target the 24px minimum height, without changing the layout much.
+const DETAIL_LINK =
+  "block w-fit py-0.5 text-sm/5 text-ink-500 transition-colors duration-150 hover:text-gold-700";
 
 function DetailIcon({ children }: { children: React.ReactNode }) {
   return (
@@ -80,14 +86,14 @@ export default function ContactPage() {
                           </p>
                           <a
                             href={`tel:${person.phone.replace(/\s/g, "")}`}
-                            className="block text-sm text-ink-500 transition-colors duration-150 hover:text-gold-700"
+                            className={DETAIL_LINK}
                           >
                             {person.phone}
                           </a>
                           {person.email ? (
                             <a
                               href={`mailto:${person.email}`}
-                              className="block text-sm text-ink-500 transition-colors duration-150 hover:text-gold-700"
+                              className={DETAIL_LINK}
                             >
                               {person.email}
                             </a>
@@ -109,7 +115,7 @@ export default function ContactPage() {
                   </p>
                   <a
                     href={`mailto:${company.email}`}
-                    className="mt-1 inline-block text-sm text-ink-500 transition-colors duration-150 hover:text-gold-700"
+                    className={`mt-0.5 ${DETAIL_LINK}`}
                   >
                     {company.email}
                   </a>
@@ -123,16 +129,14 @@ export default function ContactPage() {
               {SOCIAL_LINKS.length > 0 ? (
                 <RevealItem className="flex items-center gap-3 pl-15">
                   {SOCIAL_LINKS.map(({ label, href, Icon }) => (
-                    <a
+                    <SocialLink
                       key={label}
                       href={href}
-                      target="_blank"
-                      rel="noreferrer"
-                      aria-label={label}
+                      label={label}
                       className="flex size-10 items-center justify-center rounded-full border border-sand-300 text-navy-900 transition-colors duration-150 hover:border-gold-500 hover:text-gold-700"
                     >
                       <Icon className="size-4" />
-                    </a>
+                    </SocialLink>
                   ))}
                 </RevealItem>
               ) : null}

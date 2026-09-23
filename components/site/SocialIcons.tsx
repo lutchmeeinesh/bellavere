@@ -95,3 +95,32 @@ export function publishedSocialLinks(
     link.href ? [{ ...link, href: link.href }] : [],
   );
 }
+
+/**
+ * An icon link to a social profile. It opens in a new tab, and its
+ * accessible name says so, since the icon itself is hidden from screen
+ * readers.
+ */
+export function SocialLink({
+  href,
+  label,
+  className,
+  children,
+}: {
+  href: string;
+  label: string;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={`${label} (opens in a new tab)`}
+      className={className}
+    >
+      {children}
+    </a>
+  );
+}

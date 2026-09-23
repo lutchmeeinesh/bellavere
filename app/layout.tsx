@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Inter } from "next/font/google";
 import { MotionProvider } from "@/components/motion/MotionProvider";
 import { CurrencyProvider } from "@/components/currency/CurrencyProvider";
-import { getCurrency } from "@/lib/currency";
 import "./globals.css";
 
 const cormorant = Cormorant_Garamond({
@@ -28,6 +27,16 @@ export const metadata: Metadata = {
   },
   description:
     "Bellavere looks after villas, apartments and residences across Mauritius: rentals, maintenance, syndic services, client care, concierge and a live owner dashboard.",
+  // "./" resolves against metadataBase and each page's own path, so every
+  // page gets its own absolute canonical URL and og:url.
+  alternates: { canonical: "./" },
+  openGraph: {
+    type: "website",
+    siteName: "Bellavere",
+    locale: "en_GB",
+    url: "./",
+  },
+  twitter: { card: "summary_large_image" },
   // Keep the site out of search results until launch (see app/robots.ts).
   ...(process.env.SITE_INDEXABLE === "true"
     ? {}
@@ -38,22 +47,21 @@ export const viewport: Viewport = {
   themeColor: "#faf7f2",
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Reading the currency cookie here renders every page in the visitor's
-  // chosen currency from the first paint (it also makes routes dynamic).
-  const currency = await getCurrency();
-
+  // Nothing here reads cookies or headers, so the public pages are
+  // prerendered and served from Vercel's edge cache. The owner and admin
+  // portals read what they need per request in their own layouts.
   return (
-    <html lang="en">
-      <body className={`${cormorant.variable} ${inter.variable} antialiased`}>
+    // The font variables sit on <html> because the theme tokens that use
+    // them (--font-serif, --font-sans) are defined on :root.
+    <html lang="en" className={`${cormorant.variable} ${inter.variable}`}>
+      <body className="antialiased">
         <MotionProvider>
-          <CurrencyProvider initialCurrency={currency}>
-            {children}
-          </CurrencyProvider>
+          <CurrencyProvider>{children}</CurrencyProvider>
         </MotionProvider>
       </body>
     </html>

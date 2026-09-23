@@ -9,20 +9,11 @@ export const metadata: Metadata = {
   title: "Owner login",
   description:
     "Sign in to the Bellavere owner portal to follow bookings, revenue and the care of your property.",
+  robots: { index: false, follow: true },
 };
 
-export default async function LoginPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ from?: string }>;
-}) {
-  const { from } = await searchParams;
-  // Only honour internal portal destinations; ignore anything else.
-  const redirectTo =
-    typeof from === "string" &&
-    (from.startsWith("/dashboard") || from.startsWith("/admin"))
-      ? from
-      : undefined;
+export default function LoginPage() {
+  const demoMode = isDemoMode();
 
   return (
     <div className="relative flex min-h-svh items-center justify-center overflow-hidden bg-navy-900 px-5 py-28 sm:px-8">
@@ -31,6 +22,7 @@ export default async function LoginPage({
         alt={siteImages.loginBackdrop.alt}
         fill
         priority
+        fetchPriority="high"
         sizes="100vw"
         className="scale-105 object-cover blur-[2px]"
       />
@@ -41,7 +33,8 @@ export default async function LoginPage({
       </div>
 
       <div className="relative z-10 w-full max-w-md">
-        <LoginForm from={redirectTo} demoMode={isDemoMode()} />
+        {/* Prerendered: the form reads ?from= in the browser at sign-in. */}
+        <LoginForm demoMode={demoMode} />
       </div>
     </div>
   );

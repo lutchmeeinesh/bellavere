@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { publishedSocialLinks } from "@/components/site/SocialIcons";
+import { SocialLink, publishedSocialLinks } from "@/components/site/SocialIcons";
 import { Logo } from "@/components/site/Logo";
 import { Container } from "@/components/ui/Container";
 import { company } from "@/data/company";
@@ -71,14 +71,14 @@ export function Footer() {
             {socialLinks.length > 0 ? (
               <div className="mt-6 flex gap-3">
                 {socialLinks.map(({ label, href, Icon }) => (
-                  <a
+                  <SocialLink
                     key={label}
                     href={href}
-                    aria-label={label}
+                    label={label}
                     className="rounded-full border border-white/15 p-2.5 text-white/70 transition-colors duration-200 hover:border-gold-500 hover:text-gold-500"
                   >
                     <Icon className="size-4" />
-                  </a>
+                  </SocialLink>
                 ))}
               </div>
             ) : null}

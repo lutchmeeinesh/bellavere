@@ -34,6 +34,15 @@ type FormValues = {
 
 type FieldErrors = Partial<Record<keyof FormValues, string>>;
 
+/** Fields that can be invalid, in the order they appear on the form. */
+const FIELD_IDS: [keyof FormValues, string][] = [
+  ["name", "contact-name"],
+  ["email", "contact-email"],
+  ["phone", "contact-phone"],
+  ["message", "contact-message"],
+  ["consent", "contact-consent"],
+];
+
 const EMPTY_VALUES: FormValues = {
   name: "",
   email: "",
@@ -92,7 +101,12 @@ export function ContactForm() {
     event.preventDefault();
     const nextErrors = validate(values);
     setErrors(nextErrors);
-    if (Object.values(nextErrors).some(Boolean)) return;
+    if (Object.values(nextErrors).some(Boolean)) {
+      // Take the visitor straight to the first field that needs attention.
+      const firstInvalid = FIELD_IDS.find(([key]) => nextErrors[key]);
+      if (firstInvalid) document.getElementById(firstInvalid[1])?.focus();
+      return;
+    }
 
     setStatus("sending");
     setSubmitError(null);
@@ -170,6 +184,9 @@ export function ContactForm() {
           key="form"
           exit={{ opacity: 0, y: -8 }}
           transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          // A submit before the JavaScript loads must not put the visitor's
+          // details in the URL (and the server logs).
+          method="post"
           onSubmit={handleSubmit}
           noValidate
           className="space-y-5"

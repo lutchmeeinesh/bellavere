@@ -8,7 +8,7 @@ import {
   upcomingBookings,
 } from "@/lib/metrics";
 import { getPropertyById } from "@/data/properties";
-import { TODAY } from "@/lib/dates";
+import { today } from "@/lib/dates";
 import { formatDate, formatMoney } from "@/lib/format";
 import { getCurrency } from "@/lib/currency";
 import { Card } from "@/components/ui/Card";
@@ -62,7 +62,7 @@ export default async function DashboardOverviewPage() {
           <h1 className="text-3xl lg:text-4xl">
             Welcome back, {client.shortName}
           </h1>
-          <p className="mt-1.5 text-sm text-ink-500">{formatDate(TODAY)}</p>
+          <p className="mt-1.5 text-sm text-ink-500">{formatDate(today())}</p>
         </div>
       </Reveal>
 

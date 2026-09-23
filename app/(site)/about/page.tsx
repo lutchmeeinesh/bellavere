@@ -11,7 +11,7 @@ import { company } from "@/data/company";
 import { siteImages } from "@/data/siteImages";
 
 export const metadata: Metadata = {
-  title: "About",
+  title: "About us — property care team in Mauritius",
   description:
     "Meet Bellavere: property management and syndic services across Mauritius — full transparency, no hidden fees, and always a human to answer you.",
 };
@@ -77,17 +77,18 @@ export default function AboutPage() {
       <section className="py-24 lg:py-32">
         <Container>
           <div className="grid items-center gap-14 lg:grid-cols-2 lg:gap-20">
-            <Reveal y={32}>
-              <div className="relative aspect-[4/5] overflow-hidden rounded-2xl">
-                <Image
-                  src={siteImages.about.story.src}
-                  alt={siteImages.about.story.alt}
-                  fill
-                  sizes="(min-width: 1024px) 50vw, 100vw"
-                  className="object-cover"
-                />
-              </div>
-            </Reveal>
+            {/* The largest element on first load: no reveal, loaded first */}
+            <div className="relative aspect-[4/5] overflow-hidden rounded-2xl">
+              <Image
+                src={siteImages.about.story.src}
+                alt={siteImages.about.story.alt}
+                fill
+                priority
+                fetchPriority="high"
+                sizes="(min-width: 1280px) 560px, (min-width: 1024px) 45vw, 100vw"
+                className="object-cover"
+              />
+            </div>
             <div>
               <SectionHeading
                 eyebrow="Our story"

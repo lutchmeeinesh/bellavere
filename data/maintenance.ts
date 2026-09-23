@@ -1,5 +1,5 @@
 import type { MaintenanceTicket } from "@/lib/types";
-import { daysFromToday, toISODate } from "@/lib/dates";
+import { daysFromToday, perDay, toISODate } from "@/lib/dates";
 
 /** ISO date n days from today (negative = in the past). */
 const d = (offset: number) => toISODate(daysFromToday(offset));
@@ -8,7 +8,8 @@ const d = (offset: number) => toISODate(daysFromToday(offset));
  * Maintenance tickets for the two demo owner accounts. Resolved tickets carry a
  * cost, which flows into that month's owner statement via lib/metrics.ts.
  */
-export const maintenanceTickets: MaintenanceTicket[] = [
+// Dates are relative to today, so the list is rebuilt once per day.
+const allTickets = perDay((): MaintenanceTicket[] => [
   // — Sophie Laurent —
   {
     id: "mt-001",
@@ -161,8 +162,8 @@ export const maintenanceTickets: MaintenanceTicket[] = [
     status: "reported",
     reportedAt: d(0),
   },
-];
+]);
 
 export function getTicketsForClient(clientId: string): MaintenanceTicket[] {
-  return maintenanceTickets.filter((t) => t.clientId === clientId);
+  return allTickets().filter((t) => t.clientId === clientId);
 }

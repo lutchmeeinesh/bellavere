@@ -16,12 +16,17 @@ function PasswordInput({
   onChange,
   invalid,
   autoComplete,
+  "aria-describedby": describedBy,
+  "aria-required": ariaRequired,
 }: {
   id: string;
   value: string;
   onChange: (value: string) => void;
   invalid?: boolean;
   autoComplete: string;
+  /** Set by <Field>, which links its error line to the control. */
+  "aria-describedby"?: string;
+  "aria-required"?: boolean;
 }) {
   const [visible, setVisible] = useState(false);
   return (
@@ -32,6 +37,8 @@ function PasswordInput({
         value={value}
         autoComplete={autoComplete}
         aria-invalid={invalid ? true : undefined}
+        aria-describedby={describedBy}
+        aria-required={ariaRequired}
         onChange={(e) => onChange(e.target.value)}
         className="pr-12"
       />

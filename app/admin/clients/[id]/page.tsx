@@ -12,7 +12,7 @@ import {
   propertySummariesForClient,
   statementsForClient,
 } from "@/lib/metrics";
-import { TODAY } from "@/lib/dates";
+import { daysUntil, today } from "@/lib/dates";
 import { formatDate } from "@/lib/format";
 import { Badge, type BadgeTone } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
@@ -31,7 +31,7 @@ export async function generateMetadata({
   params: Promise<Params>;
 }): Promise<Metadata> {
   const { id } = await params;
-  return { title: `${getClientById(id)?.name ?? "Owner"} · Admin` };
+  return { title: getClientById(id)?.name ?? "Owner" };
 }
 
 const STATUS: Record<PropertyStatus, { label: string; tone: BadgeTone }> = {
@@ -45,8 +45,6 @@ const TICKET_STATUS: Record<TicketStatus, string> = {
   in_progress: "In progress",
   resolved: "Resolved",
 };
-
-const DAY = 86_400_000;
 
 /** Everything Bellavere holds about one owner. Admins only. */
 export default async function AdminClientPage({
@@ -91,7 +89,7 @@ export default async function AdminClientPage({
             <h1 className="text-3xl lg:text-4xl">{client.name}</h1>
             <p className="mt-1.5 text-sm text-ink-500">
               {summaries.length} {summaries.length === 1 ? "property" : "properties"} ·{" "}
-              as of {formatDate(TODAY)}
+              as of {formatDate(today())}
             </p>
           </div>
           <ViewAsButton
@@ -219,9 +217,7 @@ export default async function AdminClientPage({
             <h2 className="text-2xl">Documents</h2>
             <ul className="mt-4 divide-y divide-sand-300/70">
               {documents.map((d) => {
-                const days = d.expiresAt
-                  ? Math.round((new Date(d.expiresAt).getTime() - TODAY.getTime()) / DAY)
-                  : null;
+                const days = d.expiresAt ? daysUntil(d.expiresAt) : null;
                 return (
                   <li key={d.id} className="flex items-center justify-between gap-4 py-3">
                     <div className="min-w-0">

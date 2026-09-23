@@ -1,8 +1,11 @@
+import type { Metadata } from "next";
 import { requireClient } from "@/lib/auth";
 import { propertySummariesForClient } from "@/lib/metrics";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { RevealItem, RevealStagger } from "@/components/ui/Reveal";
 import { PropertyCard } from "@/components/dashboard/properties/PropertyCard";
+
+export const metadata: Metadata = { title: "Properties" };
 
 /** The owner's managed properties, with live status and headline stats. */
 export default async function DashboardPropertiesPage() {

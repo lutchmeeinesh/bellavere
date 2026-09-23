@@ -13,13 +13,14 @@ import { getDocumentsForClient } from "@/data/documents";
 import { company } from "@/data/company";
 import { getClientById } from "@/data/clients";
 import {
-  TODAY,
   addMonths,
   daysInMonth,
   monthKey,
   nightsInMonth,
   startOfMonth,
   toISODate,
+  daysUntil,
+  today,
 } from "@/lib/dates";
 import { hashSeed } from "@/lib/rng";
 import { formatMoney } from "@/lib/format";
@@ -57,8 +58,9 @@ export interface MonthPoint {
 }
 
 export function lastMonths(count: number, includeCurrent = true): MonthPoint[] {
+  const now = today();
   const result: MonthPoint[] = [];
-  const current = startOfMonth(TODAY);
+  const current = startOfMonth(now);
   const offset = includeCurrent ? 0 : 1;
   for (let i = count - 1 + offset; i >= offset; i--) {
     const d = addMonths(current, -i);
@@ -145,6 +147,7 @@ export function occupancyForClientMonth(
 
 /** Live letting state used on dashboard property cards. */
 export function propertyStatusToday(propertyId: string): PropertyStatus {
+  const now = today();
   const property = getPropertyById(propertyId);
   if (property?.clientId) {
     const blocking = getTicketsForClient(property.clientId).some(
@@ -155,7 +158,7 @@ export function propertyStatusToday(propertyId: string): PropertyStatus {
     );
     if (blocking) return "maintenance";
   }
-  const todayIso = toISODate(TODAY);
+  const todayIso = toISODate(now);
   const occupied = getBookingsForProperty(propertyId).some(
     (b) =>
       b.status !== "cancelled" && b.checkIn <= todayIso && b.checkOut > todayIso
@@ -188,17 +191,9 @@ export function kpisForClient(clientId: string): ClientKpis {
     prev.month
   );
 
-  const todayIso = toISODate(TODAY);
-  const weekAhead = new Date(TODAY);
-  weekAhead.setDate(weekAhead.getDate() + 7);
-  const weekAheadIso = toISODate(weekAhead);
-
-  const upcomingCheckIns = getBookingsForClient(clientId).filter(
-    (b) =>
-      b.status === "confirmed" &&
-      b.checkIn >= todayIso &&
-      b.checkIn <= weekAheadIso
-  ).length;
+  // Same definition as the "Next 7 days" list, so the two always agree
+  // (today's arrivals count, even once the guest has checked in).
+  const upcomingCheckIns = upcomingBookings(clientId, 7).length;
 
   const openTickets = getTicketsForClient(clientId).filter(
     (t) => t.status !== "resolved"
@@ -220,10 +215,11 @@ export function kpisForClient(clientId: string): ClientKpis {
   };
 }
 
-/** Check-ins and check-outs in the next `days` days, soonest first. */
+/** Arrivals (check-ins) from today to `days` days ahead, soonest first. */
 export function upcomingBookings(clientId: string, days = 7): Booking[] {
-  const todayIso = toISODate(TODAY);
-  const end = new Date(TODAY);
+  const now = today();
+  const todayIso = toISODate(now);
+  const end = new Date(now);
   end.setDate(end.getDate() + days);
   const endIso = toISODate(end);
   return getBookingsForClient(clientId)
@@ -288,12 +284,13 @@ export interface PropertyDashboardSummary {
 export function propertySummariesForClient(
   clientId: string
 ): PropertyDashboardSummary[] {
+  const now = today();
   const [current] = lastMonths(1);
-  const todayIso = toISODate(TODAY);
+  const todayIso = toISODate(now);
   return getPropertiesForClient(clientId).map((property) => {
-    const monthsIntoYear = TODAY.getMonth() + 1;
+    const monthsIntoYear = now.getMonth() + 1;
     const revenueYtd = monthlyRevenueForProperty(property.id, monthsIntoYear)
-      .filter((p) => p.year === TODAY.getFullYear())
+      .filter((p) => p.year === now.getFullYear())
       .reduce((sum, p) => sum + p.revenue, 0);
     const nextBooking =
       getBookingsForProperty(property.id)
@@ -323,9 +320,10 @@ export function activityForClient(
   limit = 10,
   formatAmount: (eur: number) => string = (eur) => formatMoney(eur, "EUR")
 ): ActivityItem[] {
+  const now = today();
   const items: ActivityItem[] = [];
-  const todayIso = toISODate(TODAY);
-  const twoWeeksAgo = new Date(TODAY);
+  const todayIso = toISODate(now);
+  const twoWeeksAgo = new Date(now);
   twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
   const twoWeeksAgoIso = toISODate(twoWeeksAgo);
   const propertyName = (id: string) => getPropertyById(id)?.name ?? "property";
@@ -354,7 +352,7 @@ export function activityForClient(
     }
   }
 
-  const monthAgo = new Date(TODAY);
+  const monthAgo = new Date(now);
   monthAgo.setDate(monthAgo.getDate() - 30);
   const monthAgoIso = toISODate(monthAgo);
   for (const t of getTicketsForClient(clientId)) {
@@ -381,8 +379,8 @@ export function activityForClient(
 
   const [latest] = statementsForClient(clientId);
   if (latest) {
-    const payoutDate = new Date(TODAY.getFullYear(), TODAY.getMonth(), 5);
-    if (payoutDate <= TODAY) {
+    const payoutDate = new Date(now.getFullYear(), now.getMonth(), 5);
+    if (payoutDate <= now) {
       items.push({
         id: `act-pay-${latest.id}`,
         clientId,
@@ -395,9 +393,7 @@ export function activityForClient(
 
   for (const doc of getDocumentsForClient(clientId)) {
     if (!doc.expiresAt) continue;
-    const days = Math.round(
-      (new Date(doc.expiresAt).getTime() - TODAY.getTime()) / 86400000
-    );
+    const days = daysUntil(doc.expiresAt);
     if (days > 0 && days <= 45) {
       items.push({
         id: `act-doc-${doc.id}`,
@@ -412,7 +408,7 @@ export function activityForClient(
   // Deterministic quarterly inspection entries so the feed never feels empty.
   for (const p of getPropertiesForClient(clientId)) {
     const daysAgo = 3 + (hashSeed(p.id) % 18);
-    const date = new Date(TODAY);
+    const date = new Date(now);
     date.setDate(date.getDate() - daysAgo);
     items.push({
       id: `act-insp-${p.id}`,
@@ -432,9 +428,7 @@ export function activityForClient(
 export function documentsExpiringSoon(clientId: string, withinDays = 45) {
   return getDocumentsForClient(clientId).filter((doc) => {
     if (!doc.expiresAt) return false;
-    const days = Math.round(
-      (new Date(doc.expiresAt).getTime() - TODAY.getTime()) / 86400000
-    );
+    const days = daysUntil(doc.expiresAt);
     return days > 0 && days <= withinDays;
   });
 }

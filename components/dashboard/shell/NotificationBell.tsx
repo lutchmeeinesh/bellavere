@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { Bell } from "lucide-react";
@@ -9,13 +9,17 @@ import type { ActivityItem } from "@/lib/types";
 import { formatDateShort } from "@/lib/format";
 
 /**
- * Topbar bell with an unread dot. Opens an animated dropdown listing the
- * most recent activity items; closes on outside click, Escape, or when a
- * link inside is followed.
+ * Topbar bell with an unread dot. A disclosure: the button toggles a
+ * labelled panel listing the most recent activity items. It closes on
+ * outside click, on tabbing out, when a link inside is followed, or on
+ * Escape (which also puts focus back on the bell).
  */
 export function NotificationBell({ items }: { items: ActivityItem[] }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const panelId = useId();
+  const headingId = useId();
 
   useEffect(() => {
     if (!open) return;
@@ -25,7 +29,9 @@ export function NotificationBell({ items }: { items: ActivityItem[] }) {
       }
     };
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key !== "Escape") return;
+      setOpen(false);
+      buttonRef.current?.focus();
     };
     document.addEventListener("pointerdown", onPointerDown);
     document.addEventListener("keydown", onKey);
@@ -36,12 +42,23 @@ export function NotificationBell({ items }: { items: ActivityItem[] }) {
   }, [open]);
 
   return (
-    <div ref={rootRef} className="relative">
+    <div
+      ref={rootRef}
+      className="relative"
+      onBlur={(e) => {
+        // Focus moving to something outside (Tab past the last link).
+        const next = e.relatedTarget;
+        if (open && next instanceof Node && !e.currentTarget.contains(next)) {
+          setOpen(false);
+        }
+      }}
+    >
       <button
+        ref={buttonRef}
         type="button"
         aria-label="Notifications"
         aria-expanded={open}
-        aria-haspopup="true"
+        aria-controls={open ? panelId : undefined}
         onClick={() => setOpen((v) => !v)}
         className="relative rounded-full p-2 text-navy-900 transition-colors duration-150 hover:bg-sand-100"
       >
@@ -57,15 +74,19 @@ export function NotificationBell({ items }: { items: ActivityItem[] }) {
       <AnimatePresence>
         {open ? (
           <motion.div
-            role="menu"
-            aria-label="Recent activity"
+            id={panelId}
+            role="region"
+            aria-labelledby={headingId}
             className="absolute right-0 top-full z-50 mt-2 w-80 rounded-2xl border border-sand-300 bg-white p-2 shadow-(--shadow-lift)"
             initial={{ opacity: 0, y: -6, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -6, scale: 0.98 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
           >
-            <p className="px-3 pb-1 pt-2 text-xs font-semibold uppercase tracking-(--tracking-label) text-ink-500">
+            <p
+              id={headingId}
+              className="px-3 pb-1 pt-2 text-xs font-semibold uppercase tracking-(--tracking-label) text-ink-500"
+            >
               Recent activity
             </p>
             <ul>

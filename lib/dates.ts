@@ -1,14 +1,61 @@
 /**
  * Date helpers for the mock-data layer. All mock data is generated relative to
  * "today" so the demo always shows current-looking bookings and statements.
- * TODAY is truncated to midnight so generation is deterministic within a day
- * (avoids SSR/client hydration mismatches).
+ *
+ * "Today" is the calendar day in Mauritius, whatever timezone the code runs
+ * in (Vercel servers run on UTC, visitors' browsers anywhere), so the server
+ * and the browser agree on the date and the dashboard does not show
+ * yesterday between midnight and 4 am Mauritius time. It is recomputed on
+ * every call, so a long-running server never goes stale.
  */
 
-export const TODAY: Date = (() => {
-  const now = new Date();
-  return new Date(now.getFullYear(), now.getMonth(), now.getDate());
-})();
+/** Mauritius is UTC+4 all year (no daylight saving time). */
+const MAURITIUS_UTC_OFFSET_MS = 4 * 60 * 60 * 1000;
+
+/** Today's date in Mauritius, as a local-midnight Date. */
+export function today(): Date {
+  const mauritius = new Date(Date.now() + MAURITIUS_UTC_OFFSET_MS);
+  return new Date(
+    mauritius.getUTCFullYear(),
+    mauritius.getUTCMonth(),
+    mauritius.getUTCDate()
+  );
+}
+
+/** Today's date in Mauritius as yyyy-mm-dd. */
+export function todayIso(): string {
+  return toISODate(today());
+}
+
+/**
+ * Memoises mock data generated relative to today, per Mauritius calendar
+ * day: it is built once a day and rebuilt after midnight.
+ */
+export function perDay<T>(build: () => T): () => T {
+  let day = "";
+  let value: T;
+  return () => {
+    const key = todayIso();
+    if (key !== day) {
+      value = build();
+      day = key;
+    }
+    return value;
+  };
+}
+
+/** Parses "yyyy-mm-dd" as a local calendar date (not UTC midnight). */
+export function parseISODate(iso: string): Date {
+  const [year, month, day] = iso.slice(0, 10).split("-").map(Number);
+  return new Date(year, month - 1, day);
+}
+
+/** Whole days from today until an ISO date (negative once it has passed). */
+export function daysUntil(iso: string): number {
+  return Math.round(
+    (parseISODate(iso).getTime() - today().getTime()) / 86400000
+  );
+}
 
 export function addDays(date: Date, days: number): Date {
   const d = new Date(date);
@@ -17,15 +64,11 @@ export function addDays(date: Date, days: number): Date {
 }
 
 export function daysFromToday(days: number): Date {
-  return addDays(TODAY, days);
+  return addDays(today(), days);
 }
 
 export function startOfMonth(date: Date): Date {
   return new Date(date.getFullYear(), date.getMonth(), 1);
-}
-
-export function endOfMonth(date: Date): Date {
-  return new Date(date.getFullYear(), date.getMonth() + 1, 0);
 }
 
 export function daysInMonth(year: number, month: number): number {

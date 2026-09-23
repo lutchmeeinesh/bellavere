@@ -10,7 +10,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import type { DocumentCategory, OwnerDocument } from "@/lib/types";
-import { TODAY } from "@/lib/dates";
+import { daysUntil } from "@/lib/dates";
 import { formatDate } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/Badge";
@@ -43,10 +43,6 @@ const CATEGORY_LABELS: Record<DocumentCategory, string> = {
   compliance: "Compliance",
   other: "Other",
 };
-
-function daysUntil(iso: string): number {
-  return Math.round((new Date(iso).getTime() - TODAY.getTime()) / 86400000);
-}
 
 function formatSize(kb: number): string {
   return kb >= 1000 ? `${(kb / 1024).toFixed(1)} MB` : `${kb} KB`;

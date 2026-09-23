@@ -11,7 +11,7 @@ import {
   occupancyForPropertyMonth,
   propertyStatusToday,
 } from "@/lib/metrics";
-import { TODAY, toISODate } from "@/lib/dates";
+import { daysUntil, todayIso } from "@/lib/dates";
 import { Badge, type BadgeTone } from "@/components/ui/Badge";
 import { Reveal } from "@/components/ui/Reveal";
 import {
@@ -28,10 +28,11 @@ const STATUS_META: Record<PropertyStatus, { label: string; tone: BadgeTone }> = 
 };
 
 /**
- * The ownership check runs in generateMetadata as well as the page body:
- * metadata resolves before the response starts streaming (loading.tsx makes
- * this route stream), so a foreign or unknown id gets a genuine HTTP 404
- * status — not just the not-found UI.
+ * The ownership check runs in generateMetadata as well as the page body, as
+ * defence in depth. The HTTP 404 status itself comes from middleware.ts,
+ * which rewrites unknown or foreign property ids to the portal's not-found
+ * page before this route renders (this route streams, so a notFound() here
+ * could no longer change the status).
  */
 export async function generateMetadata({
   params,
@@ -42,7 +43,7 @@ export async function generateMetadata({
   const client = await getSessionClient();
   const property = getPropertyById(id);
   if (!client || !property || property.clientId !== client.id) notFound();
-  return { title: `${property.name} · Dashboard` };
+  return { title: property.name };
 }
 
 /**
@@ -76,11 +77,7 @@ export default async function DashboardPropertyDetailPage({
   const documents: PropertyDocument[] = getDocumentsForClient(client.id)
     .filter((doc) => doc.propertyId === id || doc.propertyId === null)
     .map((doc) => {
-      const days = doc.expiresAt
-        ? Math.round(
-            (new Date(doc.expiresAt).getTime() - TODAY.getTime()) / 86400000
-          )
-        : null;
+      const days = doc.expiresAt ? daysUntil(doc.expiresAt) : null;
       return { ...doc, expiringSoon: days !== null && days > 0 && days <= 45 };
     });
   const status = STATUS_META[propertyStatusToday(id)];
@@ -113,7 +110,7 @@ export default async function DashboardPropertyDetailPage({
           months={months}
           tickets={tickets}
           documents={documents}
-          todayIso={toISODate(TODAY)}
+          todayIso={todayIso()}
         />
       </Reveal>
     </div>

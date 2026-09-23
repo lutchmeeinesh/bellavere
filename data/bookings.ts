@@ -1,13 +1,13 @@
 import type { Booking, BookingChannel, BookingStatus } from "@/lib/types";
 import { properties } from "@/data/properties";
-import { TODAY, addDays, nightsBetween, toISODate } from "@/lib/dates";
+import { addDays, nightsBetween, perDay, toISODate, today } from "@/lib/dates";
 import { hashSeed, mulberry32 } from "@/lib/rng";
 
 /**
  * Deterministic booking history per property: ~13 months back, ~2.5 months
  * forward, no overlapping stays per property (cancelled bookings release
  * their dates, which then simply read as vacancy). Regenerated relative to
- * TODAY so the demo always shows live-looking data.
+ * today (once per Mauritius day) so the demo always shows live-looking data.
  */
 
 const GUEST_NAMES = [
@@ -57,22 +57,23 @@ function gapDays(month: number, r: number): number {
   return 1 + Math.floor(r * (lowSeason ? 8 : 4));
 }
 
-function statusFor(checkIn: Date, checkOut: Date): BookingStatus {
-  if (checkOut <= TODAY) return "completed";
-  if (checkIn <= TODAY) return "checked_in";
+function statusFor(checkIn: Date, checkOut: Date, now: Date): BookingStatus {
+  if (checkOut <= now) return "completed";
+  if (checkIn <= now) return "checked_in";
   return "confirmed";
 }
 
 function generateBookings(): Booking[] {
   const all: Booking[] = [];
+  const now = today();
 
   for (const property of properties) {
     if (!property.clientId) continue;
 
     const rand = mulberry32(hashSeed(property.id));
     const isVilla = property.type === "villa";
-    let cursor = addDays(TODAY, -400);
-    const horizon = addDays(TODAY, 75);
+    let cursor = addDays(now, -400);
+    const horizon = addDays(now, 75);
     let i = 0;
 
     while (cursor < horizon) {
@@ -101,7 +102,7 @@ function generateBookings(): Booking[] {
         nights: nightsBetween(checkIn, checkOut),
         amount,
         channel: CHANNELS[Math.floor(rand() * CHANNELS.length)],
-        status: cancelled ? "cancelled" : statusFor(checkIn, checkOut),
+        status: cancelled ? "cancelled" : statusFor(checkIn, checkOut, now),
       });
 
       // Cancelled stays release their dates; the gap simply reads as vacancy.
@@ -113,12 +114,12 @@ function generateBookings(): Booking[] {
   return all;
 }
 
-export const bookings: Booking[] = generateBookings();
+const allBookings = perDay(generateBookings);
 
 export function getBookingsForClient(clientId: string): Booking[] {
-  return bookings.filter((b) => b.clientId === clientId);
+  return allBookings().filter((b) => b.clientId === clientId);
 }
 
 export function getBookingsForProperty(propertyId: string): Booking[] {
-  return bookings.filter((b) => b.propertyId === propertyId);
+  return allBookings().filter((b) => b.propertyId === propertyId);
 }

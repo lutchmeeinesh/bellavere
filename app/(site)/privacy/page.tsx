@@ -7,12 +7,14 @@ import { company } from "@/data/company";
 /*
  * Why there is no cookie-consent banner:
  * the site sets only three cookies — `bv_session` (strictly necessary for the
- * owner login) and `bv_currency` (a preference the visitor sets themselves by
- * choosing MUR or EUR). Strictly necessary and user-requested preference
- * cookies are exempt from prior consent under GDPR / ePrivacy guidance and
- * the Mauritius Data Protection Act 2017. As soon as analytics (e.g. GA4) or
- * marketing/advertising cookies are added, a consent banner that blocks them
- * until the visitor opts in becomes necessary — and this page must be updated.
+ * owner login), `bv_view_as` (strictly necessary, staff only: which owner an
+ * administrator is viewing) and `bv_currency` (a preference the visitor sets
+ * themselves by choosing MUR or EUR). Strictly necessary and user-requested
+ * preference cookies are exempt from prior consent under GDPR / ePrivacy
+ * guidance and the Mauritius Data Protection Act 2017. As soon as analytics
+ * (e.g. GA4) or marketing/advertising cookies are added, a consent banner
+ * that blocks them until the visitor opts in becomes necessary — and this
+ * page must be updated.
  */
 
 export const metadata: Metadata = {

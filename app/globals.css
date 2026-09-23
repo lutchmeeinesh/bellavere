@@ -166,13 +166,70 @@
   animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
 }
 
+/*
+ * Entrance animations in plain CSS: they start with the first paint, before
+ * (and without) JavaScript, so content is never held back by hydration.
+ * "backwards" only applies the start frame during an animation-delay; once
+ * finished, the element falls back to its normal styles.
+ */
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+/* Route change: template.tsx remounts, so this replays on every navigation */
+.animate-page-enter {
+  animation: page-enter 0.45s ease-out;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(var(--rise-from, 16px));
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* Hero entrance; stagger with an inline animation-delay */
+.animate-rise {
+  animation: rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+/* Hero scroll cue */
+@keyframes bob {
+  50% {
+    transform: translateY(8px);
+  }
+}
+
+.animate-bob {
+  animation:
+    fade-in 0.6s ease-out 1.2s backwards,
+    bob 2.4s ease-in-out 1.2s infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
 
   .animate-kenburns,
-  .animate-shake {
+  .animate-shake,
+  .animate-page-enter,
+  .animate-rise,
+  .animate-fade-in,
+  .animate-bob {
     animation: none;
   }
 

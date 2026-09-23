@@ -30,6 +30,8 @@ export function CtaBand({
             alt={siteImages.finalCta.alt}
             fill
             sizes="100vw"
+            // Drawn at 25% opacity under a navy overlay: low quality is invisible
+            quality={40}
             className="object-cover opacity-25"
           />
           <div className="absolute inset-0 bg-navy-900/70" aria-hidden />

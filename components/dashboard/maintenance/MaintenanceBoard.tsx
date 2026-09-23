@@ -8,7 +8,7 @@ import type {
   TicketPriority,
   TicketStatus,
 } from "@/lib/types";
-import { TODAY, toISODate } from "@/lib/dates";
+import { todayIso } from "@/lib/dates";
 import { formatDate } from "@/lib/format";
 import { Badge, type BadgeTone } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -158,7 +158,7 @@ export function MaintenanceBoard({
       category: form.category,
       priority: form.priority as TicketPriority,
       status: "reported",
-      reportedAt: toISODate(TODAY),
+      reportedAt: todayIso(),
     };
     setReported((current) => [ticket, ...current]);
     setModalOpen(false);

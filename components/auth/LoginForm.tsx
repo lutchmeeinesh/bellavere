@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/Button";
@@ -24,25 +24,56 @@ const DEMO_ACCOUNTS = [
 const DEMO_PASSWORD = "demo1234";
 
 /**
+ * Deep links honoured after sign-in: a portal path made of plain segments
+ * only, so "?from=" can never point anywhere unexpected ("/dashboard@evil.com",
+ * "//evil.com", backslashes, query strings and the like are ignored).
+ */
+const PORTAL_PATH = /^\/(dashboard|admin)(\/[A-Za-z0-9._~-]+)*\/?$/;
+
+function portalPath(value: string | null | undefined): string | undefined {
+  if (!value || !PORTAL_PATH.test(value)) return undefined;
+  // "." and ".." segments would climb out of the portal area.
+  if (value.split("/").some((segment) => segment === "." || segment === "..")) {
+    return undefined;
+  }
+  return value;
+}
+
+type FieldErrors = { email?: string; password?: string };
+
+/**
  * Sign-in card for owners and Bellavere admins: credentials, remember-me, and
  * one-click demo accounts while demo mode is on.
+ *
+ * The login page is prerendered, so this card is in the server HTML and
+ * hydrates in place. It reads the deep link (?from=) only at sign-in, from
+ * the address bar: reading it during render (useSearchParams) would make
+ * React throw the server HTML away and rebuild the card on load, losing
+ * anything already typed or autofilled.
  */
 export function LoginForm({
-  from,
   demoMode,
 }: {
-  from?: string;
   /** Show the demo-account shortcuts (DEMO_MODE is not "false"). */
   demoMode: boolean;
 }) {
   const router = useRouter();
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [shakeCount, setShakeCount] = useState(0);
+
+  // Keep whatever was typed or autofilled before the JavaScript loaded.
+  useEffect(() => {
+    if (emailRef.current?.value) setEmail(emailRef.current.value);
+    if (passwordRef.current?.value) setPassword(passwordRef.current.value);
+  }, []);
 
   async function signIn(credentials: {
     email: string;
@@ -51,6 +82,7 @@ export function LoginForm({
   }) {
     setSubmitting(true);
     setError(null);
+    setFieldErrors({});
     try {
       const response = await fetch("/api/auth/login", {
         method: "POST",
@@ -65,7 +97,11 @@ export function LoginForm({
         // The server says where this account belongs (/admin or /dashboard);
         // a deep link is honoured only if it lives in that same area.
         const home = data?.redirect ?? "/dashboard";
-        const target = from && from.startsWith(home) ? from : home;
+        const from = portalPath(
+          new URLSearchParams(window.location.search).get("from"),
+        );
+        const target =
+          from && (from === home || from.startsWith(`${home}/`)) ? from : home;
         // Keep the button in its loading state while we navigate away.
         router.push(target);
         router.refresh();
@@ -87,6 +123,18 @@ export function LoginForm({
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const nextErrors: FieldErrors = {};
+    if (!email.trim()) nextErrors.email = "Enter your email";
+    if (!password) nextErrors.password = "Enter your password";
+    if (nextErrors.email || nextErrors.password) {
+      setFieldErrors(nextErrors);
+      setError(null);
+      // Take the visitor straight to the first field that needs attention.
+      document
+        .getElementById(nextErrors.email ? "login-email" : "login-password")
+        ?.focus();
+      return;
+    }
     void signIn({ email, password, remember });
   }
 
@@ -107,29 +155,60 @@ export function LoginForm({
         Sign in to see how your property is performing.
       </p>
 
-      <form onSubmit={handleSubmit} className="mt-8 space-y-5" noValidate>
-        <Field label="Email" htmlFor="login-email">
+      {/* method="post": if someone submits before the page's JavaScript has
+          loaded, the browser must never put the password in the URL. */}
+      <form
+        method="post"
+        onSubmit={handleSubmit}
+        className="mt-8 space-y-5"
+        noValidate
+      >
+        <Field label="Email" htmlFor="login-email" error={fieldErrors.email}>
           <Input
+            ref={emailRef}
             id="login-email"
             name="email"
             type="email"
             autoComplete="email"
             required
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              // Clear the error as soon as the visitor starts correcting it.
+              setFieldErrors((prev) =>
+                prev.email ? { ...prev, email: undefined } : prev,
+              );
+            }}
+            aria-invalid={fieldErrors.email ? true : undefined}
           />
         </Field>
 
-        <Field label="Password" htmlFor="login-password">
+        <Field
+          label="Password"
+          htmlFor="login-password"
+          error={fieldErrors.password}
+        >
           <div className="relative">
             <Input
+              ref={passwordRef}
               id="login-password"
               name="password"
               type={showPassword ? "text" : "password"}
               autoComplete="current-password"
               required
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setFieldErrors((prev) =>
+                  prev.password ? { ...prev, password: undefined } : prev,
+                );
+              }}
+              aria-invalid={fieldErrors.password ? true : undefined}
+              // <Field> wires its error to a direct child only; this input
+              // sits in a wrapper with the show/hide button.
+              aria-describedby={
+                fieldErrors.password ? "login-password-error" : undefined
+              }
               className="pr-12"
             />
             <button
@@ -187,15 +266,17 @@ export function LoginForm({
                   key={account.email}
                   className="flex items-center justify-between gap-3"
                 >
+                  {/* Wraps rather than truncates, so the note and address
+                      stay readable on narrow phones. */}
                   <div className="min-w-0">
-                    <p className="truncate text-xs font-medium text-ink-900">
+                    <p className="text-xs font-medium text-ink-900">
                       {account.name}
                       <span className="font-normal text-ink-500">
                         {" "}
                         · {account.note}
                       </span>
                     </p>
-                    <p className="truncate text-xs text-ink-500">
+                    <p className="text-xs text-ink-500 wrap-anywhere">
                       {account.email}
                     </p>
                   </div>

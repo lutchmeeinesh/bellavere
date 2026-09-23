@@ -82,19 +82,39 @@ export function formatMoneyCompact(eur: number, currency: Currency): string {
   return `${symbol}${Math.round(value)}`;
 }
 
+/**
+ * Intl writes "Rs" followed by a no-break space; every hand-built rupee
+ * string uses the same character so amounts look and wrap alike.
+ */
+const NO_BREAK_SPACE = String.fromCharCode(0xa0);
+
 /** Prefix used by count-up figures: "€" / "Rs ". */
 export function currencySymbol(currency: Currency): string {
-  return currency === "MUR" ? "Rs " : "€";
+  return currency === "MUR" ? `Rs${NO_BREAK_SPACE}` : "€";
 }
 
 /** Human-readable rate, e.g. "€1 = Rs 52". */
 export function conversionRateLabel(): string {
-  return `€1 = Rs ${EUR_TO_MUR}`;
+  return `€1 = ${currencySymbol("MUR")}${EUR_TO_MUR}`;
+}
+
+/**
+ * Dates in the data layer are "yyyy-mm-dd" strings. `new Date()` would read
+ * them as UTC midnight, which shows the previous day west of UTC and makes
+ * browser-rendered dates disagree with the server's; read them as local
+ * calendar dates instead.
+ */
+function toDate(date: Date | string): Date {
+  if (typeof date !== "string") return date;
+  const dateOnly = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date);
+  return dateOnly
+    ? new Date(Number(dateOnly[1]), Number(dateOnly[2]) - 1, Number(dateOnly[3]))
+    : new Date(date);
 }
 
 /** "29 Aug 2026" */
 export function formatDate(date: Date | string): string {
-  const d = typeof date === "string" ? new Date(date) : date;
+  const d = toDate(date);
   return d.toLocaleDateString("en-GB", {
     day: "numeric",
     month: "short",
@@ -104,13 +124,13 @@ export function formatDate(date: Date | string): string {
 
 /** "29 Aug" */
 export function formatDateShort(date: Date | string): string {
-  const d = typeof date === "string" ? new Date(date) : date;
+  const d = toDate(date);
   return d.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
 }
 
 /** "Fri 29 Aug" */
 export function formatDateWeekday(date: Date | string): string {
-  const d = typeof date === "string" ? new Date(date) : date;
+  const d = toDate(date);
   return d.toLocaleDateString("en-GB", {
     weekday: "short",
     day: "numeric",
@@ -120,14 +140,8 @@ export function formatDateWeekday(date: Date | string): string {
 
 /** "August 2026" */
 export function formatMonth(date: Date | string): string {
-  const d = typeof date === "string" ? new Date(date) : date;
+  const d = toDate(date);
   return d.toLocaleDateString("en-GB", { month: "long", year: "numeric" });
-}
-
-/** "Aug" */
-export function formatMonthShort(date: Date | string): string {
-  const d = typeof date === "string" ? new Date(date) : date;
-  return d.toLocaleDateString("en-GB", { month: "short" });
 }
 
 export function formatPercent(value: number, decimals = 0): string {

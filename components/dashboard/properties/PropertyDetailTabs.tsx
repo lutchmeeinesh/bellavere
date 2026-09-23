@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Banknote, Bath, BedDouble, Check, Users } from "lucide-react";
 import { Badge, type BadgeTone } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
-import { Tabs } from "@/components/ui/Tabs";
+import { Tabs, tabPanelProps } from "@/components/ui/Tabs";
 import {
   BookingCalendar,
   type CalendarBooking,
@@ -99,10 +99,13 @@ export function PropertyDetailTabs({
         activeId={tab}
         onChange={setTab}
         layoutId="property-detail-tabs"
+        idBase="property-detail"
+        label="Property sections"
       />
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={tab}
+          {...tabPanelProps("property-detail", tab)}
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -8 }}

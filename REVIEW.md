@@ -169,3 +169,51 @@ A read-only workflow ran three reviewers with different lenses (exactness of the
 - `npm run build`: 0 TypeScript errors, 0 lint errors.
 - **Contact delivery, end to end against a mock Resend: 24/24 pass on fresh servers.** Covers delivery to BellavereLtd@gmail.com, bearer key, reply-to, subject, all fields, HTML escaping, outage (direct contacts shown), missing key (loud failure), honeypot, validation, same-site-only, over-long input, email typos, and real browser submissions. A repeated run showed 2 browser failures; these were the form's own 5-per-10-minutes rate limit correctly blocking the repeated test submissions, and they don't occur on fresh servers.
 - `scripts/review.mjs`: **0 errors, 0 warnings**; 41 browser bundles contain no secrets or private emails.
+
+---
+
+## Round 7 — 23 September 2026 (post-deployment audit of the live site)
+
+Four independent read-only audits ran against https://bellavere.vercel.app (functional QA, security, backend code, performance + SEO). They confirmed that sessions can't be forged, cookies are HttpOnly/Secure/Lax, there is no open redirect, no secrets are in the 31 live JS chunks, source maps are not served, the contact hardening works, isolation holds live, accessibility scores 96–100 and desktop performance 92–100. The defects they found, and the fixes (four agents on disjoint files plus the lead):
+
+### High
+
+| Finding | Fix |
+|---|---|
+| **Brand fonts never applied**: every heading and paragraph rendered in the system font. The `next/font` variables were on `<body>`, but the theme tokens that use them (`--font-serif`, `--font-sans`) are defined on `:root`, so they resolved to nothing. | Font variable classes moved to `<html>` (`app/layout.tsx`). `review.mjs` now asserts Cormorant on `h1` and Inter on `body` for every public page. |
+| **Every page rendered per request in iad1 (Washington), never cached**, because the root layout read the currency cookie. | The root layout reads nothing per request. All public pages and `/login` are prerendered (ISR: home hourly for the dashboard preview, others daily; `dynamic = "error"` in `app/(site)/layout.tsx` fails the build if one ever turns dynamic again). The currency provider now reads the cookie in the browser (`useSyncExternalStore`), while the dashboard and admin layouts still read it on the server so the portals paint in the right currency. Providers stay in sync through an event and a `BroadcastChannel` (other tabs). Functions moved to **cpt1 (Cape Town)**, the nearest region to Mauritius (`vercel.json`). |
+| **Content invisible until JavaScript loaded** (blank page without JS; 1–1.9 s LCP delay): `PageTransition` and every `Reveal` rendered `opacity:0` in the server HTML. | `PageTransition` and the hero are now CSS animations (they start with the first paint). `Reveal` renders visible; after hydration it hides only blocks still below the fold and reveals them on scroll. `review.mjs` checks every public page with JavaScript disabled. |
+| **No security headers**; `X-Powered-By: Next.js` on every page. | `next.config.ts`: a static Content-Security-Policy (no nonce, which would force dynamic rendering; `'unsafe-eval'` only in development, `upgrade-insecure-requests` only on Vercel), `X-Frame-Options: DENY`, `nosniff`, `Referrer-Policy`, `Permissions-Policy`, `Cross-Origin-Opener-Policy`; `poweredByHeader: false`. |
+
+### Medium
+
+- **Login CSRF / forced logout:** a cross-site `text/plain` form could sign a visitor into the demo account, and any site could log users out. Login now requires same-origin JSON; logout and view-as refuse cross-site posts (`lib/http.ts`).
+- **500s on valid JSON of the wrong shape** (`[]`, `{"name":5}`) in `/api/contact` and `/api/auth/login`: every field is now read as a string and non-objects get 400. Empty sign-ins get 400 without counting towards the lockout. The contact rate limit now only counts enquiries that would actually be sent.
+- **"Today" was frozen when the server started, in UTC**: warm servers went stale and Mauritius saw yesterday's date between midnight and 4 am. `today()` is now the Mauritius calendar date, recomputed on each call; the mock data is rebuilt once per Mauritius day (`perDay` in `lib/dates.ts`). Dates stored as `yyyy-mm-dd` are read as local dates, so browsers west of UTC no longer show the previous day.
+- **No error pages**: `app/error.tsx`, `app/global-error.tsx`, `app/dashboard/error.tsx` and `app/admin/error.tsx` now exist, all with the direct contacts.
+- **No environment check**: `instrumentation.ts` + `lib/env.ts` log `[env]` errors and warnings at start-up (names only, never values).
+- **Links to a section of another page landed at the top** (the site-wide `loading.tsx` skeleton replaced the page while it scrolled) and caused a 0.166 layout shift: the skeleton was removed.
+- **"Report an issue" modal unreachable on small phones**: it now scrolls; the modal also traps focus and gives it back on close. Tabs follow the WAI-ARIA pattern, the notification bell is a disclosure (not a fake menu), Escape closes the mobile menus.
+- **SEO:** canonical URLs, `og:url/type/site_name/locale`, `twitter:card`; sharper page titles; LCP images load first (`priority` + `fetchPriority="high"` on /, /about, /services, /login); JSON-LD is an `Organization` with a logo (no street address yet); real sitemap dates; after launch `/login` is crawlable so its `noindex` is seen.
+
+### Low
+
+Portal titles ("Bookings · Owner dashboard · Bellavere"), portal 404s rendered inside the portal (`app/dashboard/[...missing]`, `app/admin/not-found.tsx`), heading order on the dashboard, round chart axis ticks in both currencies, occupancy-chart property names wrapped to fit their bar (five names used to run into each other; the "100%" label was clipped), lining figures in the serif KPIs, select chevrons, form errors linked to their fields, `?from=` deep links limited to plain portal paths, JSON 404 for unknown `/api/*` paths and 405 with `Allow`, one rupee spacing everywhere, dead code removed (`Toggle`, `endOfMonth`, `formatMonthShort`), `lighthouse` dropped from devDependencies (use `npx lighthouse`), Next.js 15.5.24 → 15.5.26. Forms now use `method="post"`, so a submit before the JavaScript loads can never put a password or personal details in the URL.
+
+### Not changed (deliberately)
+
+- **Instagram and Facebook links** stay, as the client asked — but neither https://www.instagram.com/bellavere.ltd/ nor https://www.facebook.com/bellavere.ltd appears to exist publicly yet (both return the same generic page as a made-up handle). Create or publish them, or confirm the exact handles.
+- **Charts load with the dashboard** (recharts, ~100 KB). Lazy-loading them would make the chart cards pop in; revisit if dashboard mobile performance matters.
+- **Admin 404s** are rendered in the browser (Next sends an empty 404 shell because the admin page throws before streaming), so they need JavaScript. The status is a real 404.
+
+### Verification
+
+- `npm run build` (Next.js 15.5.26): 0 type errors, 0 lint errors or warnings. Every public page and `/login` is listed as static (○); the portals and API routes as dynamic (ƒ).
+- `node scripts/review.mjs` on the production build, with the admin flow: **0 errors, 0 warnings, 33 checks**. New in this round: brand fonts on every public page, every public page readable with JavaScript off (no `opacity:0` in the server HTML), footer links to `/services#syndic` and `/contact#faq` land on their section, the six security headers present and `X-Powered-By` gone, public pages not rendered per request, 13 hostile/malformed API requests answered 400/403/404/405/415 (never 500), and isolation 404s that must be real 404 statuses (the old check also accepted a 404-looking page).
+- `test-contact-delivery.mjs` (a mock Resend): 24/24, unchanged behaviour after the API refactor.
+- Portal 404s (curl, signed in as Sophie): `/dashboard/properties/p-05` (Hamilton's), `p-99`, `/dashboard/nope` and `/dashboard/properties/p-01/x` all return **404** with "Nothing here" inside the portal shell and no trace of the other owner's property; `p-01` returns 200.
+- Targeted browser tests: values typed into the sign-in form before the JavaScript loads are kept; `?from=` deep links are followed and junk ones ignored; an empty sign-in is caught without a request; a currency switch in one tab moves a dashboard open in another tab entirely to rupees (server-formatted activity text included); the mobile "More" sheet closes on a same-page link.
+- The `[env]` start-up check recognises the three admin password hashes as well-formed.
+- **Independent adversarial review of the diff** (4 finders, one skeptic per finding): 9 findings, 8 confirmed, all low severity, all fixed and re-tested — the sign-in form was rebuilt on load (typed or autofilled values could be lost), a currency switch in another tab left server-formatted amounts in the old currency, the mobile "More" sheet stayed open on a same-page link and could trap focus past the desktop breakpoint, the "Upcoming check-ins" KPI left out today's arrivals that the "Next 7 days" list shows, and a stale paragraph in HANDOFF.md. One was rejected (UTC date parsing in `lib/metrics.ts`, which only runs on the server).
+- Test harness note: on a repeat visit the Next.js router can hold background prefetch responses open for ~30 s (clicks still navigate in ~100 ms), so `review.mjs` waits for `load` plus a short settle instead of `networkidle`.
+

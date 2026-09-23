@@ -11,6 +11,7 @@ import {
 } from "recharts";
 import { CHART_COLORS, CHART_FONT } from "@/lib/constants";
 import { useMoney } from "@/components/currency/CurrencyProvider";
+import { useMoneyAxis } from "@/components/dashboard/overview/RevenueChart";
 
 /**
  * Compact revenue area chart for the property Financials tab. Renders the
@@ -46,8 +47,9 @@ function MiniAreaTooltip({
 
 export function MiniAreaChart({ data }: { data: MiniAreaDatum[] }) {
   const money = useMoney();
+  const yAxis = useMoneyAxis(data.map((d) => d.revenue));
   return (
-    <div className="h-52">
+    <div className="h-52 lining-nums tabular-nums">
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={data} margin={{ top: 8, right: 4, bottom: 0, left: 0 }}>
           <defs>
@@ -73,11 +75,11 @@ export function MiniAreaChart({ data }: { data: MiniAreaDatum[] }) {
             tick={{ fill: CHART_COLORS.axis, ...CHART_FONT }}
           />
           <YAxis
+            {...yAxis}
             width={money.currency === "MUR" ? 64 : 46}
             tickLine={false}
             axisLine={false}
             tick={{ fill: CHART_COLORS.axis, ...CHART_FONT }}
-            tickFormatter={(value: number) => money.formatCompact(value)}
           />
           <Tooltip
             content={<MiniAreaTooltip />}

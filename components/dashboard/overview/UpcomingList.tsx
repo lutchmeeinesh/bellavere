@@ -18,7 +18,7 @@ export interface UpcomingArrival {
 export function UpcomingList({ items }: { items: UpcomingArrival[] }) {
   return (
     <div>
-      <h3 className="text-lg">Next 7 days</h3>
+      <h2 className="text-lg">Next 7 days</h2>
       <p className="mt-0.5 text-xs text-ink-500">Upcoming arrivals</p>
 
       {items.length === 0 ? (

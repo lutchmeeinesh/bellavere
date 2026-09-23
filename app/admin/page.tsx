@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import {
   Banknote,
@@ -18,7 +17,7 @@ import {
   propertySummariesForClient,
   upcomingBookings,
 } from "@/lib/metrics";
-import { TODAY } from "@/lib/dates";
+import { today } from "@/lib/dates";
 import { formatDate, formatDateWeekday } from "@/lib/format";
 import { Badge, type BadgeTone } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
@@ -29,7 +28,6 @@ import { AdminTable, Td } from "@/components/admin/AdminTable";
 import { ViewAsButton } from "@/components/admin/ViewAsButton";
 import type { PropertyStatus, TicketPriority } from "@/lib/types";
 
-export const metadata: Metadata = { title: "Admin" };
 
 const STATUS: Record<PropertyStatus, { label: string; tone: BadgeTone }> = {
   occupied: { label: "Occupied", tone: "success" },
@@ -95,7 +93,7 @@ export default async function AdminOverviewPage() {
         <p className="eyebrow mb-2">Admin</p>
         <h1 className="text-3xl lg:text-4xl">Hello, {admin.shortName}</h1>
         <p className="mt-1.5 text-sm text-ink-500">
-          {formatDate(TODAY)} · Every owner and property across the portfolio
+          {formatDate(today())} · Every owner and property across the portfolio
         </p>
       </Reveal>
 

@@ -31,11 +31,15 @@ const SERVICES = [
   },
 ];
 
-/** Organization / LocalBusiness structured data, rendered once in the site layout. */
+/** Organization structured data, rendered once in the site layout. */
 export function JsonLd() {
   const data = {
     "@context": "https://schema.org",
-    "@type": ["LocalBusiness", "Organization"],
+    // TODO: once company.registeredAddress is confirmed, switch back to
+    // ["LocalBusiness", "ProfessionalService"] with a full PostalAddress
+    // (streetAddress, addressLocality, addressCountry). Search engines expect
+    // a street address on a LocalBusiness, so until then it is an Organization.
+    "@type": "Organization",
     "@id": `${SITE_URL}/#organization`,
     name: company.name,
     alternateName: company.tradingName,
@@ -47,6 +51,14 @@ export function JsonLd() {
       value: company.companyNumber,
     },
     url: SITE_URL,
+    // public/logo.png: app/icon.svg rendered at 512 × 512 on navy.
+    logo: {
+      "@type": "ImageObject",
+      url: `${SITE_URL}/logo.png`,
+      width: 512,
+      height: 512,
+    },
+    image: `${SITE_URL}/opengraph-image`,
     email: company.email,
     ...(company.phone ? { telephone: company.phone } : {}),
     slogan: company.tagline,

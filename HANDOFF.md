@@ -120,14 +120,14 @@ Type: headings **Cormorant Garamond**, body **Inter**. `h1`–`h4` are styled gl
 
 ### d. Motion primitives
 
-`template.tsx` → `PageTransition` (fade + rise 12px, 0.45s). `<Reveal>` / `<RevealStagger>` / `<RevealItem>` handle scroll reveals, and `<CountUp>` counts up stats. `prefers-reduced-motion` is honoured globally, through `MotionConfig`, and per component.
+`template.tsx` → `PageTransition` (fade + rise 12px, 0.45s, a **CSS** animation). The hero's entrance is CSS too. `<Reveal>` / `<RevealStagger>` / `<RevealItem>` handle scroll reveals: they **render visible** and, after hydration, hide only blocks still below the fold until they scroll in — never render content at `opacity: 0` on the server (it stays blank until JavaScript loads; `review.mjs` checks this with JavaScript off). `<CountUp>` counts up stats. `prefers-reduced-motion` is honoured globally, through `MotionConfig` and the CSS, and per component.
 
 ### e. Currency — stored in EUR, shown in EUR or MUR
 
 - **Every amount in `data/` is EUR.** Display goes through `lib/format.ts`: `formatMoney(eur, currency)`, `formatMoneyPrecise`, `formatMoneyCompact` ("Rs 624k"), and `EUR_TO_MUR = 52` (confirmed by the client; deliberately a **whole number** so converted statements still add up to the rupee).
-- The choice lives in the **`bv_currency` cookie**. `app/layout.tsx` reads it with `getCurrency()` (`lib/currency.ts`) and passes it to `<CurrencyProvider>`, so the **first paint is already in the right currency**. Side effect: every route renders per request (not static). It is measured and negligible.
+- The choice lives in the **`bv_currency` cookie**, the single source of truth. **Public pages are static**, so the root `<CurrencyProvider>` reads the cookie in the browser (`useSyncExternalStore`): the server HTML is in EUR and switches to MUR while hydrating (only the home preview, below the fold, shows money). The **dashboard and admin layouts** read it on the server with `getCurrency()` and pass `initialCurrency` to their own provider, so the portals' first paint is already right. All providers stay in sync (a window event, plus `BroadcastChannel` for other tabs). **Never read cookies/headers in the root or `(site)` layout** — it makes every public page dynamic again (the `(site)` layout has `dynamic = "error"`, so the build fails instead).
 - **Client components** use `useMoney()` → `{ currency, format, formatPrecise, formatCompact, convert, symbol, setCurrency }`. **Server components** render `<Money eur={x} />` (a client leaf), or call `formatMoney(x, await getCurrency())` when they need a string.
-- `setCurrency` updates the context, writes the cookie and calls `router.refresh()`, so client components update instantly and server components re-render.
+- `setCurrency` writes the cookie and notifies every provider; in the portals it also calls `router.refresh()` so server components re-render.
 - The UI switch is `<CurrencyToggle>` (header on desktop and mobile, dashboard top bar, Settings → Display currency). `<ConversionNote>` shows "converted at €1 = Rs 52" whenever rupees are displayed.
 - A **payout currency** per owner (`Client.payoutCurrency`) is separate from the display currency.
 - **Never write a currency symbol by hand.**
@@ -187,14 +187,14 @@ The types are in `lib/types.ts`, and dates are ISO `yyyy-mm-dd` strings.
 - **Booking / MaintenanceTicket / OwnerDocument**: statuses, costs and expiry dates as before.
 - **Statement**: derived, never stored.
 
-Bookings are **generated** by a seeded PRNG (`data/bookings.ts`) relative to `TODAY` (frozen at midnight), so the data rolls forward daily with no hydration mismatches.
+Bookings are **generated** by a seeded PRNG (`data/bookings.ts`) relative to `today()` (`lib/dates.ts`): the calendar day **in Mauritius**, whatever timezone the server or browser runs in, recomputed on every call. Date-relative mock data (bookings, documents, maintenance) is memoised per Mauritius day with `perDay()`, so it rolls forward at Mauritius midnight even on a long-running server, and server and browser agree (no hydration mismatches).
 
 ---
 
-## 7. Verified quality bar (22 Sep 2026)
+## 7. Verified quality bar (23 Sep 2026)
 
 - `npm run build`: **0 TypeScript errors, 0 lint errors.**
-- `node scripts/review.mjs`: **0 errors, 0 warnings across 23 checks.** Routes × 3 owners, isolation 404s, logout, the currency switch, and security: forged and tampered cookies rejected, owners kept out of `/admin`, wrong admin password refused, plus the full admin flow (all owners listed, open an owner's portal with banner, isolation inside it, back to admin). Admin flow needs `ADMIN_TEST_EMAIL` / `ADMIN_TEST_PASSWORD`.
+- `node scripts/review.mjs`: **0 errors, 0 warnings across 33 checks.** Every route logged out and as both demo owners; brand fonts; every public page readable **without JavaScript**; cross-page section links; security headers; public pages static; hostile and malformed API requests (wrong shapes, cross-site posts, wrong methods, unknown endpoints); isolation (a real 404 status, no foreign names); logout; the currency switch; forged and tampered cookies rejected; owners kept out of `/admin`; wrong admin password refused; and the full admin flow (all owners listed, open an owner's portal with banner, isolation inside it, back to admin). Admin flow needs `ADMIN_TEST_EMAIL` / `ADMIN_TEST_PASSWORD`. Against a deployed URL it also scans the live JavaScript for secrets and checks the edge cache.
 - **Lighthouse desktop:** every public page scores **99–100** in performance, accessibility, best practices and SEO. The dashboard scores 96–100 on accessibility. Login and dashboard SEO is 63–66 **by design**, because robots.txt blocks them.
 - Statements in MUR reconcile exactly: Rs 847,704 − 152,568 − 31,980 = Rs 663,156.
 - **Every photo has been visually checked against its alt text** (52 alts rewritten in round 2).
@@ -207,18 +207,21 @@ npx next start -p 3010
 node scripts/review.mjs http://localhost:3010
 ```
 
-Lighthouse: `chrome-launcher` can't spawn Chrome in this environment. Launch Playwright's Chromium with `--headless=new --remote-debugging-port=9222`, then run `npx lighthouse <url> --port=9222 --preset=desktop`. For dashboard pages, add `--extra-headers='{"Cookie":"bv_session=c-sophie"}'`.
+Lighthouse is no longer a dependency (it slowed every Vercel build): run `npx lighthouse@12 <url> --preset=desktop`. If `chrome-launcher` can't spawn Chrome, launch Playwright's Chromium with `--headless=new --remote-debugging-port=9222` and add `--port=9222`. Dashboard pages need a real signed session: sign in with Playwright (or `curl -c`) and pass its `bv_session` value with `--extra-headers='{"Cookie":"bv_session=<value>"}'`.
 
 ---
 
 ## 8. ⚠️ Non-obvious gotchas (fixed; do not regress)
 
-1. **Streaming kills 404 status codes.** The dashboard has `loading.tsx`, so it streams, and once streaming starts Next.js 15 can't change the HTTP status. An in-page `notFound()` only swaps the UI (you get a 200). Property ownership is therefore enforced in **`middleware.ts`**, which rewrites foreign or unknown ids to a genuine 404. **Any new streamed detail route that must 404 needs the same middleware pattern.**
-2. **Streaming also moves `<meta>` into `<body>`.** Because pages are dynamic, Next.js 15 streams metadata after `</head>` for browsers and even Googlebot. `htmlLimitedBots: /.*/` in `next.config.ts` keeps it in `<head>`. **Don't remove it**, or link previews and SEO degrade.
+1. **Streaming kills 404 status codes.** The dashboard has `loading.tsx`, so it streams, and once streaming starts Next.js 15 can't change the HTTP status — not even from `generateMetadata`. An in-page `notFound()` only swaps the UI (you get a 200). **`middleware.ts` therefore decides every portal 404**: unknown paths and other owners' property ids are rewritten, **with status 404**, to `/dashboard/__missing` (rendered inside the portal by `app/dashboard/[...missing]`), and unknown admin paths to `/admin/clients/__missing`. **Every new dashboard page must be added to `DASHBOARD_PAGES` in `middleware.ts`, and every new admin route to its admin check**, or it will answer with the portal 404.
+2. **Streaming also moves `<meta>` into `<body>`.** The portals render per request, and Next.js 15 streams their metadata after `</head>`. `htmlLimitedBots: /.*/` in `next.config.ts` keeps it in `<head>`. **Don't remove it.**
 3. **`Card` hard-codes `bg-white`.** Classes are joined with `cn()` (no tailwind-merge), so passing `bg-navy-900` does NOT override it; the white wins. For dark cards, use a plain element (see the syndic card in `components/home/ServicesOverview.tsx`).
 6. **`data/company.ts` ships to the browser.** Client components (Hero, FaqAccordion) import it, so every value in it is public, even if never rendered — Krit's personal email leaked into the JS bundles this way until round 5. Keep private data in server-only modules (`data/admins.ts`, `.env`). `scripts/review.mjs` now scans the built bundles for secrets.
 5. **Never use `$` inside values in `.env` files.** Next.js's loader expands `$name`, which silently corrupted the original `$`-separated password hashes (120 → 80 characters, logins failed). Hashes now use `:`.
-4. **Rupee formatting uses a non-breaking space** ("Rs\u00a024,960"). Tests and greps must match `\u00a0`, not a normal space.
+4. **Rupee formatting uses a non-breaking space** ("Rs\u00a024,960"), everywhere including hand-built strings (`currencySymbol()`). Tests and greps must match `\u00a0` (or `\s`), not a normal space.
+7. **The font variables belong on `<html>`.** The theme tokens `--font-serif` / `--font-sans` live on `:root` and reference the `next/font` variables; on `<body>` they resolve to nothing and the whole site silently falls back to the system font (it shipped like that until round 7).
+8. **"Today" is the Mauritius date, recomputed on each call** (`today()` in `lib/dates.ts`). Never cache a date at module level (a warm server would go stale); mock data generated relative to today goes through `perDay()`. Parse `yyyy-mm-dd` with `parseISODate`, never `new Date(iso)` (that is UTC midnight: the previous day west of UTC).
+9. **Forms need `method="post"`.** Pages are static, so a visitor can submit before the JavaScript loads; without it the browser would put the fields (including a password) in the URL.
 
 ---
 
@@ -285,8 +288,11 @@ Recreate `data/*.ts` + `lib/metrics.ts` as Supabase tables and queries, keeping 
 
 ## 🟢 E. Infrastructure & SEO
 
-- ✅ `sitemap.ts`, `robots.ts`, OG image, LocalBusiness JSON-LD, metadata kept in `<head>`.
-- ✅ Domain purchased. ⬜ Private GitHub repo → Vercel → env vars (`.env.example`) → add domain + DNS records; replace the Unsplash remote pattern; analytics (**requires adding a cookie-consent banner**), Sentry, uptime; Google Search Console + Business Profile.
+- ✅ `sitemap.ts`, `robots.ts`, OG image, Organization JSON-LD with logo, canonical + Open Graph URLs, metadata kept in `<head>`.
+- ✅ Live on Vercel (GitHub `main` auto-deploys) at **https://wwwbellavere.com**; functions in **cpt1**; public pages served from the edge cache; security headers + CSP; `[env]` start-up check (Vercel → Logs).
+- ⬜ `www.wwwbellavere.com` still needs its HTTPS certificate: Vercel → Settings → Domains must show "Valid Configuration" for it (redirecting to the apex).
+- ⬜ Replace the Unsplash remote pattern with self-hosted photos; analytics (**requires adding a cookie-consent banner**), Sentry, an uptime monitor (the audit saw a 2–3 minute `DEPLOYMENT_NOT_FOUND` during domain changes); Google Search Console + Business Profile once `SITE_INDEXABLE=true`.
+- ⬜ Instagram and Facebook: `bellavere.ltd` does not appear to exist publicly on either yet — create/publish them or correct the handles in `data/company.ts`.
 
 ## 🟢 F. Legal & compliance
 

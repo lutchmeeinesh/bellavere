@@ -8,6 +8,11 @@
  *  - checks the EUR/MUR switch, signed sessions (forged/tampered cookies are
  *    rejected) and the admin area. For the admin flow, set
  *    ADMIN_TEST_EMAIL and ADMIN_TEST_PASSWORD.
+ *  - checks brand fonts, content visible without JavaScript, cross-page
+ *    section links, security headers, edge caching of public pages and the
+ *    API's handling of hostile or malformed requests
+ *  - scans the browser bundles for secrets (the local build, or the deployed
+ *    chunks when a remote URL is given)
  *
  * Usage: node scripts/review.mjs [baseUrl]  (default http://localhost:3010)
  * The app must already be running (npm run build && npx next start -p 3010).
@@ -46,6 +51,15 @@ const note = (severity, where, message) => {
 
 const slug = (route) => (route === "/" ? "home" : route.replace(/^\//, "").replace(/[\/\[\]]/g, "-"));
 
+// Opens a page and lets it settle. Not "networkidle": on a repeat visit the
+// Next.js router can keep background prefetches open for ~30 s (navigation
+// itself is instant), which would stall every check.
+async function open(page, url, timeout = 45000) {
+  const res = await page.goto(url, { waitUntil: "load", timeout });
+  await page.waitForLoadState("networkidle", { timeout: 3000 }).catch(() => {});
+  return res;
+}
+
 async function inspectPage(page, route, label) {
   const errors = [];
   const pageErrors = [];
@@ -57,7 +71,7 @@ async function inspectPage(page, route, label) {
   page.on("pageerror", onPageError);
   page.on("response", onResponse);
 
-  const res = await page.goto(BASE + route, { waitUntil: "networkidle", timeout: 45000 }).catch((e) => {
+  const res = await open(page, BASE + route).catch((e) => {
     note("ERROR", label, `navigation failed: ${e.message}`);
     return null;
   });
@@ -91,7 +105,7 @@ async function inspectPage(page, route, label) {
 
 async function shoot(page, route, name) {
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto(BASE + route, { waitUntil: "networkidle", timeout: 45000 }).catch(() => {});
+  await open(page, BASE + route).catch(() => {});
   await page.waitForTimeout(900);
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
   await page.waitForTimeout(700);
@@ -107,9 +121,24 @@ async function shoot(page, route, name) {
 // ---------- browser bundles must not carry secrets ----------
 // Anything imported by client components ships to every visitor. Password
 // hashes, admin details and Krit's personal email must never be in there.
-{
+const IS_LOCAL = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(BASE);
+const SECRET = [/scrypt:/, /passwordHash/, /ADMIN_[A-Z]+_PASSWORD_HASH/, /kritgoburdhan/i, /lutchmeeinesh/i, /SESSION_SECRET/];
+if (!IS_LOCAL) {
+  // Remote site: scan the chunks its pages actually load.
+  const chunkUrls = new Set();
+  for (const route of PUBLIC_ROUTES) {
+    const html = await fetch(BASE + route).then((r) => r.text()).catch(() => "");
+    for (const m of html.matchAll(/\/_next\/static\/[^"'\s)]+?\.js/g)) chunkUrls.add(m[0]);
+  }
+  let leaks = 0;
+  for (const url of chunkUrls) {
+    const code = await fetch(BASE + url).then((r) => r.text()).catch(() => "");
+    for (const pattern of SECRET) if (pattern.test(code)) { leaks++; note("ERROR", "bundles", `${url} contains ${pattern}`); }
+  }
+  if (!chunkUrls.size) note("WARN", "bundles", "no JavaScript chunks found in the deployed pages");
+  else if (!leaks) console.log(`OK: ${chunkUrls.size} deployed browser bundles contain no secrets or private emails`);
+} else {
   const dir = path.join(process.cwd(), ".next", "static", "chunks");
-  const SECRET = [/scrypt:/, /passwordHash/, /ADMIN_[A-Z]+_PASSWORD_HASH/, /kritgoburdhan/i, /lutchmeeinesh/i, /SESSION_SECRET/];
   if (!fs.existsSync(dir)) note("WARN", "bundles", "no .next/static/chunks — run npm run build first");
   else {
     const files = fs.readdirSync(dir, { recursive: true }).filter((f) => String(f).endsWith(".js"));
@@ -120,6 +149,55 @@ async function shoot(page, route, name) {
     }
     if (!leaks) console.log(`OK: ${files.length} browser bundles contain no secrets or private emails`);
   }
+}
+
+// ---------- HTTP: security headers, caching, API robustness ----------
+{
+  const REQUIRED_HEADERS = ["content-security-policy", "x-frame-options", "x-content-type-options", "referrer-policy", "permissions-policy"];
+  for (const route of ["/", "/contact", "/login"]) {
+    const res = await fetch(BASE + route);
+    for (const h of REQUIRED_HEADERS) if (!res.headers.get(h)) note("ERROR", `headers ${route}`, `missing ${h}`);
+    if (res.headers.get("x-powered-by")) note("ERROR", `headers ${route}`, "X-Powered-By is still sent");
+  }
+  console.log("OK: security headers checked");
+
+  // Public pages are prerendered: never "no-store", and cached at the edge.
+  for (const route of PUBLIC_ROUTES) {
+    await fetch(BASE + route); // warm the cache
+    const res = await fetch(BASE + route);
+    const cacheControl = res.headers.get("cache-control") ?? "";
+    if (/no-store|private/.test(cacheControl)) note("ERROR", `caching ${route}`, `public page is rendered per request (cache-control: ${cacheControl})`);
+    if (!IS_LOCAL) {
+      const edge = res.headers.get("x-vercel-cache") ?? "";
+      if (!/HIT|STALE|PRERENDER/.test(edge)) note("WARN", `caching ${route}`, `not served from the edge cache (x-vercel-cache: ${edge || "none"})`);
+    }
+  }
+  console.log("OK: public pages are static (edge-cacheable)");
+
+  const api = (route, init = {}) =>
+    fetch(BASE + route, { redirect: "manual", ...init }).then((r) => ({ status: r.status, allow: r.headers.get("allow"), type: r.headers.get("content-type") ?? "" }));
+  const json = (body, extra = {}) => ({ method: "POST", headers: { "content-type": "application/json", ...extra }, body: typeof body === "string" ? body : JSON.stringify(body) });
+  const expectStatus = async (label, promise, expected) => {
+    const r = await promise;
+    if (r.status !== expected) note("ERROR", "api", `${label}: expected ${expected}, got ${r.status}`);
+    return r;
+  };
+  // Malformed or wrong-shape bodies are rejected cleanly (never a 500).
+  for (const body of ["[]", '"text"', "null", { name: 5, email: [], message: {} }]) {
+    await expectStatus(`contact with body ${JSON.stringify(body)}`, api("/api/contact", json(body)), 400);
+    await expectStatus(`login with body ${JSON.stringify(body)}`, api("/api/auth/login", json(body)), 400);
+  }
+  await expectStatus("login with empty fields", api("/api/auth/login", json({ email: "", password: "" })), 400);
+  // Cross-site requests are refused (login CSRF, forced logout).
+  await expectStatus("login as text/plain", api("/api/auth/login", { method: "POST", headers: { "content-type": "text/plain" }, body: JSON.stringify({ email: ACCOUNTS.sophie.email, password: "demo1234" }) }), 415);
+  await expectStatus("login from a foreign origin", api("/api/auth/login", json({ email: ACCOUNTS.sophie.email, password: "demo1234" }, { origin: "https://evil.example" })), 403);
+  await expectStatus("logout from a foreign origin", api("/api/auth/logout", { method: "POST", headers: { origin: "https://evil.example" } }), 403);
+  // Wrong methods and unknown endpoints answer in JSON, with an Allow header.
+  const get = await expectStatus("GET /api/contact", api("/api/contact"), 405);
+  if (!/POST/.test(get.allow ?? "")) note("ERROR", "api", "405 from /api/contact has no Allow: POST header");
+  const unknown = await expectStatus("unknown API path", api("/api/definitely-not-here"), 404);
+  if (!unknown.type.includes("application/json")) note("ERROR", "api", `unknown API path answered ${unknown.type}, not JSON`);
+  console.log("OK: API robustness checked");
 }
 
 const browser = await chromium.launch();
@@ -135,9 +213,34 @@ const browser = await chromium.launch();
     await shoot(page, route, slug(route));
   }
 
+  // Brand fonts are applied (the font variables must resolve on :root).
+  for (const route of PUBLIC_ROUTES.filter((r) => r !== "/login")) {
+    await open(page, BASE + route).catch(() => {});
+    const fonts = await page.evaluate(() => ({
+      heading: getComputedStyle(document.querySelector("h1")).fontFamily,
+      body: getComputedStyle(document.body).fontFamily,
+    }));
+    if (!/Cormorant/i.test(fonts.heading)) note("ERROR", `fonts ${route}`, `h1 is not in Cormorant Garamond (${fonts.heading})`);
+    if (!/Inter/i.test(fonts.body)) note("ERROR", `fonts ${route}`, `body is not in Inter (${fonts.body})`);
+  }
+  console.log("OK: brand fonts checked on the public pages");
+
+  // Links to a section of another page land on that section.
+  for (const [target, id] of [["/services", "syndic"], ["/contact", "faq"]]) {
+    await open(page, `${BASE}/`);
+    const link = page.locator(`footer a[href="${target}#${id}"]`).first();
+    if (!(await link.count())) { note("WARN", "anchors", `no footer link to ${target}#${id}`); continue; }
+    await link.click();
+    await page.waitForURL(`**${target}#${id}`, { timeout: 10000 }).catch(() => {});
+    await page.waitForTimeout(1500);
+    const top = await page.evaluate((sectionId) => document.getElementById(sectionId)?.getBoundingClientRect().top ?? null, id);
+    if (top === null || top < -5 || top > 250) note("ERROR", "anchors", `footer link ${target}#${id} did not scroll to the section (top ${top})`);
+  }
+  console.log("OK: cross-page section links land on their section");
+
   // Removed fake filler must not reappear on any public page.
   for (const route of PUBLIC_ROUTES) {
-    await page.goto(BASE + route, { waitUntil: "networkidle" }).catch(() => {});
+    await open(page, BASE + route).catch(() => {});
     // Full page source: visible text plus metadata and structured data.
     const text = await page.evaluate(() => document.documentElement.outerHTML);
     for (const pattern of REMOVED_FILLER) {
@@ -147,7 +250,7 @@ const browser = await chromium.launch();
   console.log("OK: removed fake filler checked on every public page");
 
   // Confirmed contact details are published where they belong.
-  await page.goto(`${BASE}/contact`, { waitUntil: "networkidle" });
+  await open(page, `${BASE}/contact`);
   const contactHtml = await page.evaluate(() => document.documentElement.outerHTML);
   for (const expected of ["Ankit Dookhorun", "+230 5531 0734", "zoodookhorun@gmail.com", "Nihal Lutchmee", "+230 5817 4529", "executive@wwwbellavere.com", "24/7", "the same day", "instagram.com/bellavere.ltd", "facebook.com/bellavere.ltd"]) {
     if (!contactHtml.includes(expected)) note("ERROR", "contact", `contact page is missing "${expected}"`);
@@ -155,7 +258,7 @@ const browser = await chromium.launch();
   console.log("OK: contact page shows Ankit, Nihal, 24/7, same-day replies and both social accounts");
 
   // Exactly two demo accounts are offered on the sign-in page.
-  await page.goto(`${BASE}/login`, { waitUntil: "networkidle" });
+  await open(page, `${BASE}/login`);
   const demoButtons = await page.getByRole("button", { name: /^Sign in as / }).count();
   if (demoButtons !== 2) note("ERROR", "login", `expected 2 demo accounts on the sign-in page, found ${demoButtons}`);
   else console.log("OK: sign-in page offers exactly 2 demo accounts");
@@ -166,7 +269,7 @@ const browser = await chromium.launch();
   else console.log("OK: public portfolio removed (/properties is 404)");
 
   // 404 page (the 404 network status itself logs a console error — expected)
-  await page.goto(BASE + "/definitely-not-a-page", { waitUntil: "networkidle" }).catch(() => {});
+  await open(page, BASE + "/definitely-not-a-page").catch(() => {});
   const notFoundOk = await page.evaluate(() => /404|lost/i.test(document.body.innerText));
   if (!notFoundOk) note("ERROR", "404 page", "custom 404 content not detected");
   await shoot(page, "/definitely-not-a-page", "404");
@@ -178,14 +281,34 @@ const browser = await chromium.launch();
   await ctx.close();
 }
 
+// ---------- without JavaScript ----------
+// The server HTML must show the content by itself (search engines, link
+// previews, slow phones): nothing may wait for hydration to become visible.
+{
+  const ctx = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } });
+  const page = await ctx.newPage();
+  for (const route of PUBLIC_ROUTES) {
+    await page.goto(BASE + route, { waitUntil: "load" }).catch(() => {});
+    const result = await page.evaluate(() => {
+      const scope = document.querySelector("main") ?? document.body;
+      const hidden = [...scope.querySelectorAll("[style]")].filter((el) => /opacity:\s*0(?![.\d])/.test(el.getAttribute("style") ?? ""));
+      return { text: scope.innerText.trim().length, hidden: hidden.length };
+    });
+    if (result.text < 100) note("ERROR", `no-js ${route}`, `page shows almost no text without JavaScript (${result.text} chars)`);
+    if (result.hidden) note("ERROR", `no-js ${route}`, `${result.hidden} element(s) rendered with opacity 0 in the server HTML`);
+  }
+  console.log("OK: public pages are readable without JavaScript");
+  await ctx.close();
+}
+
 // ---------- currency switch ----------
 // Click MUR in the header, then confirm prices re-render in rupees and the
 // choice persists across navigation (cookie) and into the dashboard.
 {
   const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
   const page = await ctx.newPage();
-  const RUPEE = /Rs \d[\d,]*/;
-  await page.goto(`${BASE}/`, { waitUntil: "networkidle" });
+  const RUPEE = /Rs\s\d{1,3}(,\d{3})+/;
+  await open(page, `${BASE}/`);
   const before = await page.evaluate(() => document.body.innerText);
   if (!/€\d/.test(before)) note("ERROR", "currency", "home dashboard preview does not show euro amounts by default");
   await page.getByRole("radio", { name: /Mauritian rupee/ }).first().click();
@@ -193,12 +316,12 @@ const browser = await chromium.launch();
   const after = await page.evaluate(() => document.body.innerText);
   if (!RUPEE.test(after)) note("ERROR", "currency", "clicking MUR did not switch the home preview to rupees");
   else console.log("OK: MUR switch re-renders amounts in rupees");
-  await page.reload({ waitUntil: "networkidle" });
+  await page.reload({ waitUntil: "load" }).then(() => page.waitForTimeout(1500));
   const reloaded = await page.evaluate(() => document.body.innerText);
   if (!RUPEE.test(reloaded)) note("ERROR", "currency", "MUR choice did not survive a full page reload (cookie)");
   else console.log("OK: MUR choice persists across a reload");
   await ctx.request.post(`${BASE}/api/auth/login`, { data: { email: "sophie@demo.bellavere.com", password: "demo1234" } });
-  await page.goto(`${BASE}/dashboard/statements`, { waitUntil: "networkidle" });
+  await open(page, `${BASE}/dashboard/statements`);
   const stmt = await page.evaluate(() => document.body.innerText);
   if (!RUPEE.test(stmt)) note("ERROR", "currency", "dashboard statements not in rupees after choosing MUR");
   else console.log("OK: dashboard statements follow the MUR choice");
@@ -296,7 +419,7 @@ const browser = await chromium.launch();
 
       // Open Hamilton's portal: their data, the admin banner, and isolation kept.
       await ctx.request.post(`${BASE}/api/admin/view-as`, { form: { clientId: "c-hamilton" }, maxRedirects: 0 });
-      await page.goto(`${BASE}/dashboard/properties`, { waitUntil: "networkidle" });
+      await open(page, `${BASE}/dashboard/properties`);
       const portal = await page.evaluate(() => document.body.innerText);
       if (!portal.includes("Cap Ouest Penthouse") || !portal.includes("Admin view")) note("ERROR", "admin", "view-as did not open Hamilton's portal with the admin banner");
       else if (portal.includes("Villa Azure")) note("ERROR", "admin", "view-as leaked another owner's property");
@@ -334,16 +457,20 @@ for (const [name, acct] of Object.entries(ACCOUNTS)) {
   shotDashboards = true; // screenshot dashboard routes once (sophie)
 
   // isolation: own property names visible, foreign names absent
-  await page.goto(`${BASE}/dashboard/properties`, { waitUntil: "networkidle" });
+  await open(page, `${BASE}/dashboard/properties`);
   const text = await page.evaluate(() => document.body.innerText);
   for (const n of acct.ownNames) if (!text.includes(n)) note("ERROR", `${name} isolation`, `own property "${n}" NOT visible on /dashboard/properties`);
   for (const n of acct.foreignNames) if (text.includes(n)) note("ERROR", `${name} isolation`, `foreign property "${n}" VISIBLE on /dashboard/properties`);
 
   // isolation: foreign property detail must 404
   const foreign = await page.goto(`${BASE}/dashboard/properties/${acct.foreign}`, { waitUntil: "domcontentloaded" });
-  const notFound = foreign.status() === 404 || (await page.evaluate(() => /not.?in your portfolio|not found|404/i.test(document.body.innerText)));
-  if (!notFound) note("ERROR", `${name} isolation`, `foreign property ${acct.foreign} did NOT return 404 (status ${foreign.status()})`);
+  const foreignText = await page.evaluate(() => document.body.innerText);
+  if (foreign.status() !== 404) note("ERROR", `${name} isolation`, `foreign property ${acct.foreign} did NOT return 404 (status ${foreign.status()})`);
+  else if (acct.foreignNames.some((n) => foreignText.includes(n))) note("ERROR", `${name} isolation`, `the 404 for ${acct.foreign} shows the foreign property's name`);
   else console.log(`OK: ${name} -> ${acct.foreign} returns 404`);
+  const unknown = await page.goto(`${BASE}/dashboard/definitely-not-a-page`, { waitUntil: "domcontentloaded" });
+  if (unknown.status() !== 404) note("ERROR", `${name} 404`, `unknown dashboard path returned ${unknown.status()}`);
+  else console.log(`OK: ${name} -> unknown dashboard path returns 404`);
 
   // logout clears session
   const logout = await ctx.request.post(`${BASE}/api/auth/logout`, { maxRedirects: 0 });

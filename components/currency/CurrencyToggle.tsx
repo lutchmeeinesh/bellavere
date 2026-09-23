@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useMoney } from "@/components/currency/CurrencyProvider";
 import { CURRENCIES, type Currency } from "@/lib/format";
@@ -26,6 +27,14 @@ export function CurrencyToggle({
 }) {
   const { currency, setCurrency } = useMoney();
   const light = tone === "light";
+  // On static pages the switch first renders the default currency and jumps
+  // to the visitor's saved choice while hydrating. Enable the sliding pill
+  // only after that, so it animates real clicks, not the page load.
+  const [animatePill, setAnimatePill] = useState(false);
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => setAnimatePill(true));
+    return () => cancelAnimationFrame(frame);
+  }, []);
 
   return (
     <div
@@ -63,7 +72,7 @@ export function CurrencyToggle({
           >
             {active ? (
               <motion.span
-                layoutId={layoutId}
+                layoutId={animatePill ? layoutId : undefined}
                 className={cn(
                   "absolute inset-0 rounded-full",
                   light ? "bg-white" : "bg-navy-900"

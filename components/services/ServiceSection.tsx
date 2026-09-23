@@ -23,6 +23,7 @@ export function ServiceSection({
   included,
   detailIcon: DetailIcon,
   detail,
+  priority = false,
 }: {
   id: string;
   eyebrow: string;
@@ -34,6 +35,8 @@ export function ServiceSection({
   included: string[];
   detailIcon: IconComponent;
   detail: React.ReactNode;
+  /** Set on the first section: its photo is the page's largest early image. */
+  priority?: boolean;
 }) {
   return (
     <section
@@ -48,7 +51,9 @@ export function ServiceSection({
                 src={image.src}
                 alt={image.alt}
                 fill
-                sizes="(min-width: 1024px) 50vw, 100vw"
+                priority={priority}
+                fetchPriority={priority ? "high" : undefined}
+                sizes="(min-width: 1280px) 560px, (min-width: 1024px) 45vw, 100vw"
                 className="object-cover"
               />
             </div>

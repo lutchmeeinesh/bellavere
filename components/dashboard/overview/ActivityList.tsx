@@ -6,7 +6,7 @@ import { formatDateShort } from "@/lib/format";
 export function ActivityList({ items }: { items: ActivityItem[] }) {
   return (
     <div>
-      <h3 className="text-lg">Recent activity</h3>
+      <h2 className="text-lg">Recent activity</h2>
       <p className="mt-0.5 text-xs text-ink-500">
         Across your whole portfolio
       </p>

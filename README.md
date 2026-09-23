@@ -2,7 +2,9 @@
 
 A polished demo site for **Bellavere** (trading as Bellavere Property Care), a property management and syndic company working all around Mauritius: marketing site, owner dashboard and staff admin area, with mock data and signed-cookie auth. Prices and figures display in **EUR or MUR**, visitor's choice.
 
-**Stack**: Next.js 15 (App Router) · TypeScript · Tailwind CSS v4 · Framer Motion · Recharts · lucide-react. No backend, no database.
+**Stack**: Next.js 15 (App Router) · TypeScript · Tailwind CSS v4 · Framer Motion · Recharts · lucide-react. A small backend (sign-in, the contact form via Resend), no database: owners and figures are mock data.
+
+**Live:** https://wwwbellavere.com (Vercel, deployed from GitHub `main`).
 
 ## Run it
 
@@ -99,8 +101,9 @@ Ankit's and Nihal's emails and both phone numbers are published on the contact p
 
 ## SEO, legal and spam protection
 
-- `app/sitemap.ts`, `app/robots.ts` (dashboard, login and API blocked from indexing), `app/opengraph-image.tsx`, and LocalBusiness JSON-LD (`components/site/JsonLd.tsx`).
-- `htmlLimitedBots: /.*/` in `next.config.ts` keeps `<meta>`/Open Graph tags in `<head>` for every visitor (pages are dynamic, and Next.js 15 would otherwise stream them into the body).
+- `app/sitemap.ts`, `app/robots.ts` (dashboard, admin and API blocked from indexing; the login page carries `noindex`), `app/opengraph-image.tsx`, canonical and Open Graph URLs, and Organization JSON-LD with a logo (`components/site/JsonLd.tsx`).
+- Public pages are prerendered and cached at the edge; the owner and admin portals render per request. `htmlLimitedBots: /.*/` in `next.config.ts` keeps the portals' `<meta>` tags in `<head>`.
+- Security headers and a Content-Security-Policy are set in `next.config.ts`; `instrumentation.ts` logs missing or malformed environment variables at start-up (`[env]` in Vercel → Logs).
 - `/privacy` (Mauritius Data Protection Act 2017 + GDPR) and `/terms` — templates, to be reviewed by a lawyer. No cookie banner: the site sets only a strictly necessary session cookie and the user-requested currency preference. Add a consent banner as soon as analytics or marketing cookies are introduced.
 - Contact form: honeypot field + IP rate limit (`lib/rateLimit.ts`; in-memory, so use Upstash Redis on Vercel), consent record logged with timestamp.
 
@@ -126,7 +129,7 @@ Suggested: **Supabase** (auth + Postgres + storage).
 
 The domain **wwwbellavere.com** was bought through Google Domains, which now lives at **Squarespace Domains** (domains.squarespace.com). Its email runs on **Google Workspace** — the DNS records for that must be left alone.
 
-1. **GitHub:** create an empty **private** repository (no README), then push this project to it (`git remote add origin <url>` and `git push -u origin master`; Git's credential manager opens a GitHub sign-in window).
+1. **GitHub:** create an empty **private** repository (no README), then push this project to it (`git remote add origin <url>` and `git push -u origin main`; Git's credential manager opens a GitHub sign-in window).
 2. **Vercel:** Add New → Project → import the repository. The Next.js defaults are correct.
 3. **Environment variables:** in Vercel → Settings → Environment Variables, paste the contents of **`.env.vercel.local`** (git-ignored; it has a fresh production `SESSION_SECRET`, the admin password hashes, `DEMO_MODE=true`, `SITE_INDEXABLE=false` and `CONTACT_TO_EMAIL`). Then add your own **`RESEND_API_KEY`** (see "Contact form email" below). Without `SESSION_SECRET`, sign-in is refused (fail-closed); without `RESEND_API_KEY`, the contact form shows the direct contacts instead of sending.
 4. **Deploy**, then test everything on the temporary `*.vercel.app` address: `node scripts/review.mjs https://<project>.vercel.app`.

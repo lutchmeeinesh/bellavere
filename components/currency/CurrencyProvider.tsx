@@ -1,16 +1,68 @@
 "use client";
 
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useSyncExternalStore,
+} from "react";
 import { useRouter } from "next/navigation";
 import {
   CURRENCY_COOKIE,
+  DEFAULT_CURRENCY,
   convertFromEur,
   currencySymbol,
   formatMoney,
   formatMoneyCompact,
   formatMoneyPrecise,
+  isCurrency,
   type Currency,
 } from "@/lib/format";
+
+/**
+ * The display currency lives in the bv_currency cookie, which is the single
+ * source of truth: every provider reads it, and a change is announced to the
+ * other providers on the page (event) and in other tabs (BroadcastChannel).
+ */
+const CHANGE_EVENT = "bv:currency";
+const CHANNEL_NAME = "bv-currency";
+
+function readCurrencyCookie(): Currency {
+  for (const part of document.cookie.split(";")) {
+    const [name, value] = part.trim().split("=");
+    if (name === CURRENCY_COOKIE && isCurrency(value)) return value;
+  }
+  return DEFAULT_CURRENCY;
+}
+
+function writeCurrencyCookie(next: Currency) {
+  document.cookie = `${CURRENCY_COOKIE}=${next}; path=/; max-age=31536000; samesite=lax`;
+  window.dispatchEvent(new Event(CHANGE_EVENT));
+  if (typeof BroadcastChannel !== "undefined") {
+    const channel = new BroadcastChannel(CHANNEL_NAME);
+    channel.postMessage(next);
+    channel.close();
+  }
+}
+
+function subscribe(onChange: () => void) {
+  window.addEventListener(CHANGE_EVENT, onChange);
+  // A page restored from the back/forward cache may have missed a change.
+  window.addEventListener("pageshow", onChange);
+  const channel =
+    typeof BroadcastChannel !== "undefined"
+      ? new BroadcastChannel(CHANNEL_NAME)
+      : null;
+  if (channel) channel.onmessage = onChange;
+  return () => {
+    window.removeEventListener(CHANGE_EVENT, onChange);
+    window.removeEventListener("pageshow", onChange);
+    channel?.close();
+  };
+}
 
 interface CurrencyContextValue {
   currency: Currency;
@@ -20,30 +72,48 @@ interface CurrencyContextValue {
 const CurrencyContext = createContext<CurrencyContextValue | null>(null);
 
 /**
- * Holds the display currency. The root layout reads the bv_currency cookie
- * on the server and passes it in, so the first paint is already in the right
- * currency (no flash, no hydration mismatch). Changing it updates client
- * components instantly, persists the cookie for a year, and refreshes server
- * components so everything re-renders in the new currency.
+ * Holds the display currency.
+ *
+ * - Public pages are static, so the root layout cannot read the cookie: its
+ *   provider renders in the default currency on the server and switches to
+ *   the visitor's choice as the page hydrates (only the home page's
+ *   dashboard preview, below the fold, shows money).
+ * - The owner and admin portals are rendered per request: their layouts read
+ *   the cookie and pass `initialCurrency`, so the first paint is already in
+ *   the right currency (no flash, no hydration mismatch). Whenever the
+ *   choice moves away from what the server rendered (a switch here, in
+ *   another tab, or on the public site), they refresh their server
+ *   components, which format some amounts on the server.
  */
 export function CurrencyProvider({
   initialCurrency,
   children,
 }: {
-  initialCurrency: Currency;
+  /** The cookie value read on the server; set by per-request layouts only. */
+  initialCurrency?: Currency;
   children: React.ReactNode;
 }) {
-  const [currency, setState] = useState<Currency>(initialCurrency);
   const router = useRouter();
-
-  const setCurrency = useCallback(
-    (next: Currency) => {
-      setState(next);
-      document.cookie = `${CURRENCY_COOKIE}=${next}; path=/; max-age=31536000; samesite=lax`;
-      router.refresh();
-    },
-    [router]
+  const currency = useSyncExternalStore(
+    subscribe,
+    readCurrencyCookie,
+    () => initialCurrency ?? DEFAULT_CURRENCY
   );
+
+  // Portals only: re-render the server components in the new currency. The
+  // ref stops a refresh loop if the server ever renders a different value.
+  const lastRefreshed = useRef(initialCurrency);
+  useEffect(() => {
+    if (initialCurrency === undefined) return;
+    if (currency !== initialCurrency && lastRefreshed.current !== currency) {
+      lastRefreshed.current = currency;
+      router.refresh();
+    }
+  }, [currency, initialCurrency, router]);
+
+  const setCurrency = useCallback((next: Currency) => {
+    writeCurrencyCookie(next);
+  }, []);
 
   const value = useMemo(() => ({ currency, setCurrency }), [currency, setCurrency]);
 

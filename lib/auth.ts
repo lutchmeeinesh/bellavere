@@ -1,4 +1,5 @@
 import "server-only";
+import { cache } from "react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getClientByEmail, getClientById } from "@/data/clients";
@@ -22,10 +23,14 @@ import type { Client } from "@/lib/types";
 
 export { SESSION_COOKIE, VIEW_AS_COOKIE };
 
-export async function getSession(): Promise<SessionPayload | null> {
+/**
+ * The verified session. Memoised per request: the layout, the page and their
+ * metadata all ask for it, and the HMAC check only needs to run once.
+ */
+export const getSession = cache(async (): Promise<SessionPayload | null> => {
   const store = await cookies();
   return verifySession(store.get(SESSION_COOKIE)?.value);
-}
+});
 
 /** The signed-in administrator, or null. */
 export async function getAdmin(): Promise<Admin | null> {

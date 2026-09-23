@@ -1,21 +1,20 @@
-"use client";
-
 import Image from "next/image";
-import { motion, useReducedMotion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { company } from "@/data/company";
 import { siteImages } from "@/data/siteImages";
 
-const EASE = [0.22, 1, 0.36, 1] as const;
+/** Inline animation-delay for the CSS entrance classes in globals.css. */
+const delay = (seconds: number) => ({ animationDelay: `${seconds}s` });
 
 /**
  * Full-viewport home hero. The fixed site header floats transparently over
- * it; the image runs the slow Ken Burns zoom defined in globals.css.
+ * it; the image runs the slow Ken Burns zoom and the text the entrance
+ * animations defined in globals.css. Both are CSS, so the hero paints and
+ * animates straight from the server HTML, before JavaScript loads.
  */
 export function Hero() {
-  const reduceMotion = useReducedMotion();
   const words = company.tagline.split(" ");
 
   return (
@@ -25,6 +24,7 @@ export function Hero() {
         alt={siteImages.homeHero.alt}
         fill
         priority
+        fetchPriority="high"
         sizes="100vw"
         className="animate-kenburns object-cover"
       />
@@ -35,47 +35,36 @@ export function Hero() {
       />
 
       <Container className="relative z-10 pt-28 pb-24">
-        <motion.p
-          className="eyebrow eyebrow-light mb-6"
-          initial={reduceMotion ? undefined : { opacity: 0 }}
-          animate={reduceMotion ? undefined : { opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.1, ease: EASE }}
-        >
+        <p className="eyebrow eyebrow-light animate-fade-in mb-6" style={delay(0.1)}>
           Property management &amp; syndic · Mauritius
-        </motion.p>
+        </p>
 
         <h1 className="max-w-3xl text-white">
           {words.map((word, i) => (
-            <motion.span
+            <span
               key={`${word}-${i}`}
-              className="inline-block"
-              initial={reduceMotion ? undefined : { opacity: 0, y: "0.4em" }}
-              animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.25 + i * 0.05, ease: EASE }}
+              className="animate-rise inline-block [--rise-from:0.4em]"
+              style={delay(0.25 + i * 0.05)}
             >
               {word}
               {i < words.length - 1 ? " " : ""}
-            </motion.span>
+            </span>
           ))}
         </h1>
 
-        <motion.p
-          className="mt-6 max-w-xl text-lg text-white/80"
-          initial={reduceMotion ? undefined : { opacity: 0, y: 16 }}
-          animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.55, ease: EASE }}
+        <p
+          className="animate-rise mt-6 max-w-xl text-lg text-white/80"
+          style={delay(0.55)}
         >
           We look after villas, apartments and residences all around
           Mauritius — no hidden fees, always a real person to
           answer you, and a live dashboard that shows exactly how your property
           is performing.
-        </motion.p>
+        </p>
 
-        <motion.div
-          className="mt-10 flex flex-wrap items-center gap-4"
-          initial={reduceMotion ? undefined : { opacity: 0, y: 16 }}
-          animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.7, ease: EASE }}
+        <div
+          className="animate-rise mt-10 flex flex-wrap items-center gap-4"
+          style={delay(0.7)}
         >
           <Button href="/contact" variant="primary" size="lg">
             List your property
@@ -83,24 +72,16 @@ export function Hero() {
           <Button href="/login" variant="light" size="lg">
             Owner login
           </Button>
-        </motion.div>
+        </div>
       </Container>
 
       {/* Subtle scroll cue */}
-      <motion.div
+      <div
         className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2 text-white/60"
         aria-hidden
-        initial={reduceMotion ? undefined : { opacity: 0 }}
-        animate={
-          reduceMotion ? undefined : { opacity: 1, y: [0, 8, 0] }
-        }
-        transition={{
-          opacity: { duration: 0.6, delay: 1.2 },
-          y: { duration: 2.4, repeat: Infinity, ease: "easeInOut", delay: 1.2 },
-        }}
       >
-        <ChevronDown className="size-6" />
-      </motion.div>
+        <ChevronDown className="animate-bob size-6" />
+      </div>
     </section>
   );
 }

@@ -7,11 +7,18 @@ import { formatMoney } from "@/lib/format";
 import { Sidebar } from "@/components/dashboard/shell/Sidebar";
 import { Topbar } from "@/components/dashboard/shell/Topbar";
 import { MobileNav } from "@/components/dashboard/shell/MobileNav";
+import { CurrencyProvider } from "@/components/currency/CurrencyProvider";
 
 export const metadata: Metadata = {
-  title: "Owner dashboard — Bellavere",
+  // The root template adds " · Bellavere" to the default; pages get
+  // "Bookings · Owner dashboard · Bellavere".
+  title: {
+    default: "Owner dashboard",
+    template: "%s · Owner dashboard · Bellavere",
+  },
   description:
     "Your Bellavere owner portal: revenue, occupancy, bookings and property care in one place.",
+  robots: { index: false, follow: false },
 };
 
 /**
@@ -33,6 +40,7 @@ export default async function DashboardLayout({
   );
 
   return (
+    <CurrencyProvider initialCurrency={currency}>
     <div className="min-h-svh bg-sand-50">
       <Sidebar
         client={{
@@ -54,5 +62,6 @@ export default async function DashboardLayout({
       </div>
       <MobileNav />
     </div>
+    </CurrencyProvider>
   );
 }

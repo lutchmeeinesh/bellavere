@@ -45,7 +45,7 @@ export function KpiTile({
           <Icon className="size-4" />
         </span>
       </div>
-      <p className="mt-2 font-serif text-3xl font-semibold text-navy-900 lg:text-4xl">
+      <p className="mt-2 font-serif text-3xl font-semibold text-navy-900 lining-nums tabular-nums lg:text-4xl">
         {money ? (
           <MoneyCountUp eur={value} />
         ) : (
@@ -53,7 +53,7 @@ export function KpiTile({
         )}
       </p>
       {showDeltaRow ? (
-        <p className="mt-2 flex items-center gap-1.5 text-xs">
+        <p className="mt-2 flex items-center gap-1.5 text-xs tabular-nums">
           {delta === null ? (
             <span className="text-ink-500">—</span>
           ) : (
