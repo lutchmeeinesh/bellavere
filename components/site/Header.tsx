@@ -10,6 +10,17 @@ import { Button } from "@/components/ui/Button";
 import { CurrencyToggle } from "@/components/currency/CurrencyToggle";
 import { cn } from "@/lib/utils";
 
+/**
+ * The current path, with "/index" read as "/". When Vercel regenerates the
+ * home page (ISR) it renders it as "/index" (vercel/next.js#95648) while the
+ * browser sees "/", so without this the header would differ between server
+ * and browser and React would throw the server HTML away.
+ */
+function useSitePathname(): string {
+  const pathname = usePathname();
+  return pathname === "/index" ? "/" : pathname;
+}
+
 const NAV_LINKS = [
   { href: "/", label: "Home" },
   { href: "/services", label: "Services" },
@@ -25,7 +36,7 @@ const NAV_LINKS = [
  * back to the menu button).
  */
 export function Header() {
-  const pathname = usePathname();
+  const pathname = useSitePathname();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);

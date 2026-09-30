@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Inter } from "next/font/google";
 import { MotionProvider } from "@/components/motion/MotionProvider";
 import { CurrencyProvider } from "@/components/currency/CurrencyProvider";
+import { OPEN_GRAPH_BASE } from "@/lib/seo";
 import "./globals.css";
 
 const cormorant = Cormorant_Garamond({
@@ -30,12 +31,7 @@ export const metadata: Metadata = {
   // "./" resolves against metadataBase and each page's own path, so every
   // page gets its own absolute canonical URL and og:url.
   alternates: { canonical: "./" },
-  openGraph: {
-    type: "website",
-    siteName: "Bellavere",
-    locale: "en_GB",
-    url: "./",
-  },
+  openGraph: { ...OPEN_GRAPH_BASE, url: "./" },
   twitter: { card: "summary_large_image" },
   // Keep the site out of search results until launch (see app/robots.ts).
   ...(process.env.SITE_INDEXABLE === "true"

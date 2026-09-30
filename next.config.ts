@@ -51,6 +51,9 @@ const nextConfig: NextConfig = {
   // middleware.ts, which rewrites unknown or foreign paths with status 404.)
   htmlLimitedBots: /.*/,
   images: {
+    // 75 is the default; 40 is the faint photo behind the call-to-action band.
+    // Listing them is required from Next.js 16.
+    qualities: [40, 75],
     remotePatterns: [
       {
         protocol: "https",
