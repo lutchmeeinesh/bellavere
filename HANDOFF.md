@@ -39,7 +39,7 @@ Node 20+ required (built and tested on Node 24).
 ### Confirmed company facts (from the client, 22 Sep 2026)
 
 - **Legal entity:** **Bellavere Ltd**, Company No. **238321**, incorporated **19 August 2026** in Mauritius as a private company limited by shares (Certificate of Incorporation). Registered address not yet provided (not on the certificate).
-- **Domain:** **bellaveremu.com** (Squarespace Domains), main address **www.bellaveremu.com**, on a fresh Vercel account from 30 Sep 2026. The first domain, **wwwbellavere.com**, is being retired; it still carries the Google Workspace mailbox executive@wwwbellavere.com until that moves, so don't touch its MX/SPF records or let it lapse before then.
+- **Domain:** **bellaveremu.com** (Squarespace Domains), main address **www.bellaveremu.com**, on a fresh Vercel account from 30 Sep 2026. The first domain, **wwwbellavere.com**, stays registered **for email only**: Nihal's mailbox is and remains executive@wwwbellavere.com (client decision, 30 Sep 2026) on Google Workspace — keep the domain renewed, never touch its MX/SPF/DKIM records, and point its web address at the new site with Vercel redirects.
 - **Name:** Bellavere (lowercase v; the original brief's "BellaVere" was retired). Trading name "Bellavere Property Care".
 - **Team:** **Krit Goburdhan**, General Manager & Site Supervisor (surname confirmed by the client); **Ankit Dookhorun**, Client Relations (surname confirmed — his email is zoodookhorun@gmail.com); **Nihal Lutchmee** (no role given, so none shown).
 - **Contacts (confirmed 22 Sep):** Ankit +230 5531 0734 and zoodookhorun@gmail.com; Nihal +230 5817 4529 and executive@wwwbellavere.com. Both reachable **every day, 24/7**. **Every query is answered the same day.** Social: Instagram and Facebook **bellavere.ltd**. Krit's email is **not** published.
@@ -290,7 +290,7 @@ Recreate `data/*.ts` + `lib/metrics.ts` as Supabase tables and queries, keeping 
 
 - ✅ `sitemap.ts`, `robots.ts`, OG image, Organization JSON-LD with logo, canonical + Open Graph URLs, metadata kept in `<head>`.
 - ✅ Ran live on Vercel (GitHub `main` auto-deploys) at wwwbellavere.com; functions in **cpt1**; public pages served from the edge cache; security headers + CSP; `[env]` start-up check (Vercel → Logs).
-- ⬜ **Move to www.bellaveremu.com on a new Vercel account** (30 Sep 2026): steps in README → "Deploying"; `.env.vercel.local` already holds the new address and a fresh `SESSION_SECRET`. Then Resend on `bellaveremu.com`, then Nihal's mailbox (Google Workspace) onto the new domain before `wwwbellavere.com` is let go.
+- ⬜ **Move to www.bellaveremu.com on a new Vercel account** (30 Sep 2026): steps in README → "Deploying"; `.env.vercel.local` already holds the new address and a fresh `SESSION_SECRET`. ✅ Done 30 Sep 2026: new Vercel project live at www.bellaveremu.com (cpt1), Resend verified on `bellaveremu.com`, contact form delivering (test accepted). ⬜ Add `wwwbellavere.com` + `www.wwwbellavere.com` to the Vercel project as redirects to www.bellaveremu.com (the old address currently shows Vercel's DEPLOYMENT_NOT_FOUND).
 - ⬜ Replace the Unsplash remote pattern with self-hosted photos; analytics (**requires adding a cookie-consent banner**), Sentry, an uptime monitor (the audit saw a 2–3 minute `DEPLOYMENT_NOT_FOUND` during domain changes); Google Search Console + Business Profile once `SITE_INDEXABLE=true`.
 - ⬜ Instagram and Facebook: `bellavere.ltd` does not appear to exist publicly on either yet — create/publish them or correct the handles in `data/company.ts`.
 

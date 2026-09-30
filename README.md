@@ -4,7 +4,7 @@ A polished demo site for **Bellavere** (trading as Bellavere Property Care), a p
 
 **Stack**: Next.js 15 (App Router) · TypeScript · Tailwind CSS v4 · Framer Motion · Recharts · lucide-react. A small backend (sign-in, the contact form via Resend), no database: owners and figures are mock data.
 
-**Live:** https://www.bellaveremu.com (Vercel, deployed from GitHub `main`) — being moved there from wwwbellavere.com on 30 Sep 2026.
+**Live:** https://www.bellaveremu.com (Vercel, deployed from GitHub `main`), since 30 Sep 2026.
 
 ## Run it
 
@@ -127,7 +127,7 @@ Suggested: **Supabase** (auth + Postgres + storage).
 
 ## Deploying (www.bellaveremu.com)
 
-The site's domain is **bellaveremu.com**, registered at **Squarespace Domains** (domains.squarespace.com); the main address is **www.bellaveremu.com** and the bare domain redirects to it. (Until 30 Sep 2026 the site ran on a first Vercel account at wwwbellavere.com; that domain is being retired.)
+The site's domain is **bellaveremu.com**, registered at **Squarespace Domains** (domains.squarespace.com); the main address is **www.bellaveremu.com** and the bare domain redirects to it. (Until 30 Sep 2026 the site ran on a first Vercel account at wwwbellavere.com. That domain is **kept** — it carries Nihal's Google Workspace mailbox, executive@wwwbellavere.com — so keep it renewed and never touch its `MX`, SPF `TXT` or `google._domainkey` records; its web address should redirect to www.bellaveremu.com: add `wwwbellavere.com` and `www.wwwbellavere.com` to the Vercel project as redirects.)
 
 1. **Retire the old setup first:** in the old Vercel account, remove every domain from the `bellavere` project (Settings → Domains), then delete the project (Settings → General → Delete Project). Otherwise the new account can't take `bellaveremu.com`, and every push would deploy twice.
 2. **New Vercel account:** sign up (with the business email if possible). If Vercel says your GitHub account is already linked to another Vercel account, sign up with email instead, or delete the old Vercel account.
