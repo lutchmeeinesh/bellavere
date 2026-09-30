@@ -28,7 +28,7 @@ import { CONTACT_LIMITS, EMAIL_PATTERN } from "@/lib/contactLimits";
  *                       which can only deliver to the email address the
  *                       Resend account was created with. Once a domain is
  *                       verified in Resend, set e.g.
- *                       "Bellavere website <website@wwwbellavere.com>".
+ *                       "Bellavere website <website@bellaveremu.com>".
  *   RESEND_API_URL      override for tests only.
  *
  * Same-site JSON only (lib/http.ts), rate limiting (lib/rateLimit.ts —

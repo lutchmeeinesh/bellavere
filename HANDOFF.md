@@ -39,7 +39,7 @@ Node 20+ required (built and tested on Node 24).
 ### Confirmed company facts (from the client, 22 Sep 2026)
 
 - **Legal entity:** **Bellavere Ltd**, Company No. **238321**, incorporated **19 August 2026** in Mauritius as a private company limited by shares (Certificate of Incorporation). Registered address not yet provided (not on the certificate).
-- **Domain:** **wwwbellavere.com** (bought via Google Domains → now Squarespace Domains); email on **Google Workspace** — never touch its MX/SPF records.
+- **Domain:** **bellaveremu.com** (Squarespace Domains), main address **www.bellaveremu.com**, on a fresh Vercel account from 30 Sep 2026. The first domain, **wwwbellavere.com**, is being retired; it still carries the Google Workspace mailbox executive@wwwbellavere.com until that moves, so don't touch its MX/SPF records or let it lapse before then.
 - **Name:** Bellavere (lowercase v; the original brief's "BellaVere" was retired). Trading name "Bellavere Property Care".
 - **Team:** **Krit Goburdhan**, General Manager & Site Supervisor (surname confirmed by the client); **Ankit Dookhorun**, Client Relations (surname confirmed — his email is zoodookhorun@gmail.com); **Nihal Lutchmee** (no role given, so none shown).
 - **Contacts (confirmed 22 Sep):** Ankit +230 5531 0734 and zoodookhorun@gmail.com; Nihal +230 5817 4529 and executive@wwwbellavere.com. Both reachable **every day, 24/7**. **Every query is answered the same day.** Social: Instagram and Facebook **bellavere.ltd**. Krit's email is **not** published.
@@ -289,8 +289,8 @@ Recreate `data/*.ts` + `lib/metrics.ts` as Supabase tables and queries, keeping 
 ## 🟢 E. Infrastructure & SEO
 
 - ✅ `sitemap.ts`, `robots.ts`, OG image, Organization JSON-LD with logo, canonical + Open Graph URLs, metadata kept in `<head>`.
-- ✅ Live on Vercel (GitHub `main` auto-deploys) at **https://wwwbellavere.com**; functions in **cpt1**; public pages served from the edge cache; security headers + CSP; `[env]` start-up check (Vercel → Logs).
-- ⬜ `www.wwwbellavere.com` still needs its HTTPS certificate: Vercel → Settings → Domains must show "Valid Configuration" for it (redirecting to the apex).
+- ✅ Ran live on Vercel (GitHub `main` auto-deploys) at wwwbellavere.com; functions in **cpt1**; public pages served from the edge cache; security headers + CSP; `[env]` start-up check (Vercel → Logs).
+- ⬜ **Move to www.bellaveremu.com on a new Vercel account** (30 Sep 2026): steps in README → "Deploying"; `.env.vercel.local` already holds the new address and a fresh `SESSION_SECRET`. Then Resend on `bellaveremu.com`, then Nihal's mailbox (Google Workspace) onto the new domain before `wwwbellavere.com` is let go.
 - ⬜ Replace the Unsplash remote pattern with self-hosted photos; analytics (**requires adding a cookie-consent banner**), Sentry, an uptime monitor (the audit saw a 2–3 minute `DEPLOYMENT_NOT_FOUND` during domain changes); Google Search Console + Business Profile once `SITE_INDEXABLE=true`.
 - ⬜ Instagram and Facebook: `bellavere.ltd` does not appear to exist publicly on either yet — create/publish them or correct the handles in `data/company.ts`.
 

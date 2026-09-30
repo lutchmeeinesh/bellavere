@@ -140,3 +140,11 @@ The client asked to strip everything fake, keep two demo accounts, and rename th
 - **"Today" is the Mauritius calendar date** for all demo data, whoever is looking and wherever the server runs.
 - **The social profiles are kept although they don't resolve yet**, because the client asked for them; they should be created or corrected before launch.
 
+---
+
+## Update 7 — 30 September 2026 (new domain)
+
+- **The site moves to bellaveremu.com** (client's decision): the client registered it, prefers it to wwwbellavere.com, and is setting up a new Vercel account for it. **www.bellaveremu.com** is the main address (Vercel's recommended set-up, and what the client chose when first adding the domain); the bare domain redirects to it.
+- **Nothing is rebuilt:** the GitHub repository, code, admin accounts and password hashes carry over. Only the hosting account, DNS and email services are set up again. A fresh `SESSION_SECRET` was generated for the new deployment (existing sign-ins simply end).
+- **Nihal's address stays executive@wwwbellavere.com on the site** until the Google Workspace mailbox has moved to the new domain; publishing an address that doesn't receive mail yet would lose enquiries.
+

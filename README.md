@@ -4,7 +4,7 @@ A polished demo site for **Bellavere** (trading as Bellavere Property Care), a p
 
 **Stack**: Next.js 15 (App Router) · TypeScript · Tailwind CSS v4 · Framer Motion · Recharts · lucide-react. A small backend (sign-in, the contact form via Resend), no database: owners and figures are mock data.
 
-**Live:** https://wwwbellavere.com (Vercel, deployed from GitHub `main`).
+**Live:** https://www.bellaveremu.com (Vercel, deployed from GitHub `main`) — being moved there from wwwbellavere.com on 30 Sep 2026.
 
 ## Run it
 
@@ -125,33 +125,30 @@ Suggested: **Supabase** (auth + Postgres + storage).
 3. **Contact form** — `app/api/contact/route.ts` validates, rate-limits and emails each enquiry to BellavereLtd@gmail.com through Resend (see "Contact form email"). A CRM can be added later next to the Resend call.
 4. **Statements PDF** — replace the print-window with a real renderer (e.g. react-pdf or a server route) once statements come from the database.
 
-## Deploying (wwwbellavere.com)
+## Deploying (www.bellaveremu.com)
 
-The domain **wwwbellavere.com** was bought through Google Domains, which now lives at **Squarespace Domains** (domains.squarespace.com). Its email runs on **Google Workspace** — the DNS records for that must be left alone.
+The site's domain is **bellaveremu.com**, registered at **Squarespace Domains** (domains.squarespace.com); the main address is **www.bellaveremu.com** and the bare domain redirects to it. (Until 30 Sep 2026 the site ran on a first Vercel account at wwwbellavere.com; that domain is being retired.)
 
-1. **GitHub:** create an empty **private** repository (no README), then push this project to it (`git remote add origin <url>` and `git push -u origin main`; Git's credential manager opens a GitHub sign-in window).
-2. **Vercel:** Add New → Project → import the repository. The Next.js defaults are correct.
-3. **Environment variables:** in Vercel → Settings → Environment Variables, paste the contents of **`.env.vercel.local`** (git-ignored; it has a fresh production `SESSION_SECRET`, the admin password hashes, `DEMO_MODE=true`, `SITE_INDEXABLE=false` and `CONTACT_TO_EMAIL`). Then add your own **`RESEND_API_KEY`** (see "Contact form email" below). Without `SESSION_SECRET`, sign-in is refused (fail-closed); without `RESEND_API_KEY`, the contact form shows the direct contacts instead of sending.
-4. **Deploy**, then test everything on the temporary `*.vercel.app` address: `node scripts/review.mjs https://<project>.vercel.app`.
-5. **Domain:** Vercel → Settings → Domains → add `wwwbellavere.com` (primary) and `www.wwwbellavere.com` (redirect).
-6. **DNS at domains.squarespace.com → wwwbellavere.com → DNS:**
-   - Remove the **Squarespace Defaults** website records (the `@` and `www` A/CNAME records pointing to Squarespace).
-   - Add the records Vercel shows (typically an `A` record for `@` and a `CNAME` for `www`).
-   - **Do not touch** the `MX` record (`smtp.google.com`) or the `TXT` record starting `v=spf1` — they carry the Google Workspace email (executive@wwwbellavere.com).
-   HTTPS is issued automatically once DNS propagates (minutes to a few hours).
-7. **Launch:** when ready to be found on Google, set `SITE_INDEXABLE=true` and redeploy; add the site to Google Search Console and submit `/sitemap.xml`.
+1. **Retire the old setup first:** in the old Vercel account, remove every domain from the `bellavere` project (Settings → Domains), then delete the project (Settings → General → Delete Project). Otherwise the new account can't take `bellaveremu.com`, and every push would deploy twice.
+2. **New Vercel account:** sign up (with the business email if possible). If Vercel says your GitHub account is already linked to another Vercel account, sign up with email instead, or delete the old Vercel account.
+3. **Import:** Add New → Project → Import Git Repository → `lutchmeeinesh/bellavere` (allow the Vercel GitHub app access to that repository). Keep the Next.js defaults.
+4. **Environment variables, before the first deploy:** expand "Environment Variables" and paste the contents of **`.env.vercel.local`** (git-ignored: the site address, a fresh `SESSION_SECRET`, the three admin password hashes, `DEMO_MODE=true`, `SITE_INDEXABLE=false`, `CONTACT_TO_EMAIL`). `RESEND_API_KEY` and `CONTACT_FROM_EMAIL` are added once Resend is set up (below). Without `SESSION_SECRET`, sign-in is refused (fail-closed).
+5. **Deploy**, then test the temporary address: `node scripts/review.mjs https://<project>.vercel.app`.
+6. **Domain:** Settings → Domains → add `bellaveremu.com` and accept Vercel's recommendation to add `www.bellaveremu.com` and redirect the bare domain to it.
+7. **DNS at domains.squarespace.com → bellaveremu.com → DNS → DNS Settings:** delete the **Squarespace Defaults** (four `A` records starting `198.` and the `www` CNAME to `ext-sq.squarespace.com`), then add the records Vercel shows — normally `A  @  216.198.79.1` and `CNAME  www  cname.vercel-dns.com`. Leave `_domainconnect`, the SPF `TXT` and `_dmarc` alone. HTTPS certificates are issued once DNS has propagated (minutes to a few hours; Squarespace's defaults were cached for up to 4 hours).
+8. **Launch:** when ready to be found on Google, set `SITE_INDEXABLE=true` and redeploy; add the site to Google Search Console and submit `/sitemap.xml`.
 
-Notes: Vercel's free **Hobby** plan is for personal, non-commercial use — a business site needs **Pro**. `next/font/google` downloads fonts at build time; a transient network failure shows up as a Turbopack `next/font/google` import-map error — simply redeploy. Cookies are `secure` in production automatically.
+Notes: Vercel's free **Hobby** plan is for personal, non-commercial use — a business site needs **Pro**. `vercel.json` pins functions to `cpt1` (Cape Town). `next/font/google` downloads fonts at build time; a transient network failure shows up as a Turbopack `next/font/google` import-map error — simply redeploy. Changing `DEMO_MODE` needs a redeploy (the sign-in page is prerendered).
 
 ## Contact form email (Resend)
 
 Enquiries are emailed to **BellavereLtd@gmail.com** with *Reply-To* set to the enquirer, so replying answers the customer directly.
 
-1. Sign up at **resend.com with BellavereLtd@gmail.com** (free tier: 3,000 emails/month). Until a domain is verified, Resend's test sender only delivers to the account's own email address — which is exactly where enquiries should go.
-2. Resend → API Keys → create a key → paste it into Vercel as `RESEND_API_KEY` (never into chat or the code).
-3. Optional, better deliverability: Resend → Domains → add `wwwbellavere.com` and add the DNS records it shows at Squarespace (they sit on a `send.` subdomain, alongside Google Workspace), then set `CONTACT_FROM_EMAIL="Bellavere website <website@wwwbellavere.com>"`.
+1. Sign up at **resend.com with BellavereLtd@gmail.com** (free tier: 3,000 emails/month).
+2. Resend → **Domains → Add** `bellaveremu.com`, add the DNS records it shows at Squarespace (a DKIM `TXT` on `resend._domainkey` and records on the `send` subdomain), then **Verify**. `bellaveremu.com` carries a strict `_dmarc` policy (`p=reject`), so mail from the domain must be DKIM-signed — which the verified Resend domain does.
+3. Resend → **API Keys** → create a key with sending access → in Vercel set `RESEND_API_KEY` to it (never into chat or the code) and `CONTACT_FROM_EMAIL` to `Bellavere website <website@bellaveremu.com>` → **Redeploy**.
 
-If sending fails, the visitor is shown the company email and both phone numbers (the real safeguard); the enquiry is also written to the runtime log, which Vercel keeps for only about 1 hour on Hobby (1 day on Pro). Resend's free plan allows 100 emails a day; the form only accepts same-site JSON requests so other sites can't use up that quota.
+If sending fails, the visitor is shown the company email and both phone numbers, and the reason is logged (Vercel → Logs → search `Delivery failed`; `[env]` lines list missing settings).
 
 ## Review artifacts
 
