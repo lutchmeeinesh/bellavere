@@ -291,7 +291,8 @@ Recreate `data/*.ts` + `lib/metrics.ts` as Supabase tables and queries, keeping 
 - ✅ `sitemap.ts`, `robots.ts`, OG image, Organization JSON-LD with logo, canonical + Open Graph URLs, metadata kept in `<head>`.
 - ✅ Ran live on Vercel (GitHub `main` auto-deploys) at wwwbellavere.com; functions in **cpt1**; public pages served from the edge cache; security headers + CSP; `[env]` start-up check (Vercel → Logs).
 - ⬜ **Move to www.bellaveremu.com on a new Vercel account** (30 Sep 2026): steps in README → "Deploying"; `.env.vercel.local` already holds the new address and a fresh `SESSION_SECRET`. ✅ Done 30 Sep 2026: new Vercel project live at www.bellaveremu.com (cpt1), Resend verified on `bellaveremu.com`, contact form delivering (test accepted). ⬜ Add `wwwbellavere.com` + `www.wwwbellavere.com` to the Vercel project as redirects to www.bellaveremu.com (the old address currently shows Vercel's DEPLOYMENT_NOT_FOUND).
-- ⬜ Replace the Unsplash remote pattern with self-hosted photos; analytics (**requires adding a cookie-consent banner**), Sentry, an uptime monitor (the audit saw a 2–3 minute `DEPLOYMENT_NOT_FOUND` during domain changes); Google Search Console + Business Profile once `SITE_INDEXABLE=true`.
+- ✅ **Indexing switched on 30 Sep 2026:** `SITE_INDEXABLE=true`, Google Search Console (Domain property `bellaveremu.com`, verified by DNS TXT), sitemap submitted, home page indexing requested. The three illustrative testimonials are therefore public — replace them with real quotes.
+- ⬜ Replace the Unsplash remote pattern with self-hosted photos; analytics (**requires adding a cookie-consent banner**), Sentry, an uptime monitor (the audit saw a 2–3 minute `DEPLOYMENT_NOT_FOUND` during domain changes); Google Business Profile.
 - ⬜ Instagram and Facebook: `bellavere.ltd` does not appear to exist publicly on either yet — create/publish them or correct the handles in `data/company.ts`.
 
 ## 🟢 F. Legal & compliance

@@ -136,7 +136,7 @@ The site's domain is **bellaveremu.com**, registered at **Squarespace Domains** 
 5. **Deploy**, then test the temporary address: `node scripts/review.mjs https://<project>.vercel.app`.
 6. **Domain:** Settings → Domains → add `bellaveremu.com` and accept Vercel's recommendation to add `www.bellaveremu.com` and redirect the bare domain to it.
 7. **DNS at domains.squarespace.com → bellaveremu.com → DNS → DNS Settings:** delete the **Squarespace Defaults** (four `A` records starting `198.` and the `www` CNAME to `ext-sq.squarespace.com`), then add the records Vercel shows — normally `A  @  216.198.79.1` and `CNAME  www  cname.vercel-dns.com`. Leave `_domainconnect`, the SPF `TXT` and `_dmarc` alone. HTTPS certificates are issued once DNS has propagated (minutes to a few hours; Squarespace's defaults were cached for up to 4 hours).
-8. **Launch:** when ready to be found on Google, set `SITE_INDEXABLE=true` and redeploy; add the site to Google Search Console and submit `/sitemap.xml`.
+8. **Launch** (done 30 Sep 2026): `SITE_INDEXABLE=true` and redeploy; Google Search Console → Domain property `bellaveremu.com` (verify with the DNS `TXT` record it gives), submit `https://www.bellaveremu.com/sitemap.xml`, then URL Inspection → Request indexing for the home page.
 
 Notes: Vercel's free **Hobby** plan is for personal, non-commercial use — a business site needs **Pro**. `vercel.json` pins functions to `cpt1` (Cape Town). `next/font/google` downloads fonts at build time; a transient network failure shows up as a Turbopack `next/font/google` import-map error — simply redeploy. Changing `DEMO_MODE` needs a redeploy (the sign-in page is prerendered).
 
