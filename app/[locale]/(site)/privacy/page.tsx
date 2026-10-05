@@ -6,6 +6,7 @@ import { Reveal } from "@/components/ui/Reveal";
 import { company } from "@/data/company";
 import { PUBLIC_EMAIL } from "@/data/site";
 import { Link } from "@/i18n/navigation";
+import { ANALYTICS_ENABLED, ANALYTICS_POLICY_DATE } from "@/lib/analytics";
 import { CURRENCY_COOKIE, formatDateLong } from "@/lib/format";
 import { localizedMetadata } from "@/lib/i18n/metadata";
 import { getPageLocale, type LocaleParams } from "@/lib/i18n/server";
@@ -19,18 +20,29 @@ import { SESSION_COOKIE, VIEW_AS_COOKIE } from "@/lib/session";
  * administrator is viewing) and `bv_currency` (a preference the visitor sets
  * themselves by choosing MUR or EUR). Strictly necessary and user-requested
  * preference cookies are exempt from prior consent under GDPR / ePrivacy
- * guidance and the Mauritius Data Protection Act 2017. As soon as analytics
- * (e.g. GA4) or marketing/advertising cookies are added, a consent banner
- * that blocks them until the visitor opts in becomes necessary — and this
- * page must be updated.
+ * guidance and the Mauritius Data Protection Act 2017. As soon as cookie-
+ * based analytics (e.g. GA4) or marketing/advertising cookies are added, a
+ * consent banner that blocks them until the visitor opts in becomes
+ * necessary — and this page must be updated.
+ *
+ * Analytics: Plausible (switched on by NEXT_PUBLIC_PLAUSIBLE_DOMAIN, see
+ * lib/analytics.ts) sets no cookies and stores no personal data, so it needs
+ * no banner either. While it is on, this page describes it under "What we
+ * collect" and its cookie paragraph says so (messages `analytics.privacy.*`),
+ * and "Last updated" shows the date that wording was added. While it is
+ * off, the page says no analytics are used.
  *
  * Wording: messages `legal.privacy.*` (and `legal.shared.*`, shared with the
  * terms page). Facts — company details, the email address, cookie names,
  * dates — come from the data files and are interpolated.
  */
 
-/** Shown as "Last updated", formatted in the page's language. */
-const LAST_UPDATED = "2026-09-22";
+/**
+ * Shown as "Last updated", formatted in the page's language (with analytics
+ * on, the date the analytics wording was added). app/sitemap.ts uses the
+ * same dates.
+ */
+const LAST_UPDATED = ANALYTICS_ENABLED ? ANALYTICS_POLICY_DATE : "2026-09-22";
 
 export async function generateMetadata({
   params,
@@ -84,6 +96,7 @@ export default async function PrivacyPage({
   const t = await getTranslations("legal.privacy");
   const tShared = await getTranslations("legal.shared");
   const tCommon = await getTranslations("common");
+  const tAnalytics = await getTranslations("analytics.privacy");
   return (
     <>
       <div className="pt-32 lg:pt-40">
@@ -155,6 +168,12 @@ export default async function PrivacyPage({
             <ul>
               <li>{t("collection.technical.items.serverLogs")}</li>
             </ul>
+            {ANALYTICS_ENABLED ? (
+              <>
+                <h3>{tAnalytics("heading")}</h3>
+                <p>{tAnalytics.rich("body", { strong })}</p>
+              </>
+            ) : null}
 
             <h2>{t("purposes.heading")}</h2>
             <ul>
@@ -204,11 +223,17 @@ export default async function PrivacyPage({
               ))}
             </ul>
             <p>
-              {t.rich("cookies.noTracking", {
-                sessionCookie: SESSION_COOKIE,
-                code,
-                strong,
-              })}
+              {ANALYTICS_ENABLED
+                ? tAnalytics.rich("noTracking", {
+                    sessionCookie: SESSION_COOKIE,
+                    code,
+                    strong,
+                  })
+                : t.rich("cookies.noTracking", {
+                    sessionCookie: SESSION_COOKIE,
+                    code,
+                    strong,
+                  })}
             </p>
 
             <h2>{t("security.heading")}</h2>
