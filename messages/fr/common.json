@@ -1,177 +1,177 @@
 {
   "meta": {
-    "defaultTitle": "Bellavere — Property Management & Syndic Services in Mauritius",
-    "description": "Bellavere looks after villas, apartments and residences across Mauritius: rentals, maintenance, syndic services, client care, concierge and a live owner dashboard."
+    "defaultTitle": "Bellavere – Gestion de propriétés et services de syndic à Maurice",
+    "description": "Bellavere veille sur villas, appartements et résidences à Maurice : gestion locative, entretien, services de syndic, accompagnement client, conciergerie et tableau de bord propriétaire en temps réel."
   },
   "nav": {
-    "label": "Main navigation",
-    "mobileLabel": "Mobile navigation",
-    "openMenu": "Open menu",
-    "closeMenu": "Close menu",
-    "home": "Home",
+    "label": "Navigation principale",
+    "mobileLabel": "Navigation mobile",
+    "openMenu": "Ouvrir le menu",
+    "closeMenu": "Fermer le menu",
+    "home": "Accueil",
     "services": "Services",
-    "estimate": "Estimate my income",
-    "about": "About",
+    "estimate": "Estimer mes revenus",
+    "about": "À propos",
     "contact": "Contact"
   },
   "actions": {
-    "ownerLogin": "Owner login",
-    "listProperty": "List your property",
-    "contactUs": "Contact us"
+    "ownerLogin": "Espace propriétaire",
+    "listProperty": "Confier votre bien",
+    "contactUs": "Nous contacter"
   },
   "logo": {
-    "label": "{company} — home"
+    "label": "{company} – accueil"
   },
   "currency": {
-    "label": "Display currency",
+    "label": "Devise d’affichage",
     "names": {
       "EUR": "Euro (€)",
-      "MUR": "Mauritian rupee (Rs)"
+      "MUR": "Roupie mauricienne (Rs)"
     },
-    "conversionNote": "Rupee amounts are converted from euros at {rate} for information."
+    "conversionNote": "Les montants en roupies sont convertis depuis l’euro au taux de {rate}, à titre indicatif."
   },
   "footer": {
-    "blurb": "{tagline} Property management and syndic services all around Mauritius — north, south, east, west and the central plateau.",
-    "callUs": "Call us — {hours}",
+    "blurb": "{tagline} Gestion de propriétés et services de syndic aux quatre coins de l’île Maurice – nord, sud, est, ouest et plateau central.",
+    "callUs": "Appelez-nous – {hours}",
     "columns": {
-      "company": "Company",
+      "company": "Entreprise",
       "services": "Services",
-      "owners": "Owners"
+      "owners": "Propriétaires"
     },
     "links": {
-      "about": "About us",
+      "about": "Qui sommes-nous ?",
       "contact": "Contact",
-      "ownerLogin": "Owner login",
-      "listProperty": "List your property",
-      "ownerFaq": "Owner FAQ"
+      "ownerLogin": "Espace propriétaire",
+      "listProperty": "Confier votre bien",
+      "ownerFaq": "FAQ propriétaires"
     },
-    "copyright": "© {year} {legalName}. All rights reserved.",
-    "registration": "Company No. {number} · {country}",
-    "privacy": "Privacy policy",
-    "terms": "Terms of use",
-    "demoNote": "The owner-portal demo uses sample accounts and figures."
+    "copyright": "© {year} {legalName}. Tous droits réservés.",
+    "registration": "Société n° {number} · {country}",
+    "privacy": "Politique de confidentialité",
+    "terms": "Conditions d’utilisation",
+    "demoNote": "La démo de l’espace propriétaire utilise des comptes et des chiffres fictifs."
   },
   "social": {
-    "instagram": "{company} on Instagram",
-    "facebook": "{company} on Facebook",
-    "linkedin": "{company} on LinkedIn",
-    "newTab": "{label} (opens in a new tab)"
+    "instagram": "{company} sur Instagram",
+    "facebook": "{company} sur Facebook",
+    "linkedin": "{company} sur LinkedIn",
+    "newTab": "{label} (s’ouvre dans un nouvel onglet)"
   },
   "serviceNames": {
-    "rental": "Rental management",
-    "maintenance": "Maintenance",
-    "clientCare": "Client care",
-    "concierge": "Concierge & services",
-    "syndic": "Syndic & residences"
+    "rental": "Gestion locative",
+    "maintenance": "Entretien & maintenance",
+    "clientCare": "Accompagnement client",
+    "concierge": "Conciergerie & services",
+    "syndic": "Syndic & résidences"
   },
   "notFound": {
-    "title": "Page not found",
-    "heading": "Lost at sea?",
-    "body": "The page you’re looking for has drifted off with the tide. The coast, happily, is easy to find again.",
-    "home": "Back to the beach house",
-    "contact": "Contact us"
+    "title": "Page introuvable",
+    "heading": "Vous avez pris le large ?",
+    "body": "La page que vous cherchez a dérivé au gré de la marée. Heureusement, le rivage est facile à retrouver.",
+    "home": "Retour à la villa",
+    "contact": "Nous contacter"
   },
   "error": {
-    "eyebrow": "Something went wrong",
-    "heading": "Sorry, this page didn’t load",
-    "body": "Something on our side stopped it from loading. Please try again — and if it keeps happening, a real person is always there to help.",
-    "tryAgain": "Try again",
-    "home": "Back to the home page",
-    "contact": "Contact us",
-    "callUs": "Call us",
-    "callUsHours": "Call us — {hours}",
-    "writeTo": "or write to <link>{email}</link>",
-    "reference": "Reference: {digest}"
+    "eyebrow": "Un problème est survenu",
+    "heading": "Désolés, cette page ne s’est pas chargée",
+    "body": "Un incident de notre côté a interrompu son chargement. Merci de réessayer – et si le problème persiste, une vraie personne est toujours là pour vous aider.",
+    "tryAgain": "Réessayer",
+    "home": "Retour à l’accueil",
+    "contact": "Nous contacter",
+    "callUs": "Appelez-nous",
+    "callUsHours": "Appelez-nous – {hours}",
+    "writeTo": "ou écrivez-nous à <link>{email}</link>",
+    "reference": "Référence : {digest}"
   },
   "company": {
-    "tagline": "Your property, perfectly managed.",
-    "market": "Across Mauritius",
-    "marketLong": "Villas, apartments and residences across Mauritius — north, west, east, south and the central plateau.",
-    "country": "Mauritius",
-    "companyType": "private company limited by shares",
-    "hours": "Every day, 24/7",
-    "hoursInline": "every day, 24/7",
-    "responseTime": "the same day",
-    "mission": "Our mission is to provide the best service while maintaining full transparency. No hidden fees — and there will always be a human to answer you.",
+    "tagline": "Votre bien, parfaitement géré.",
+    "market": "Partout à Maurice",
+    "marketLong": "Villas, appartements et résidences partout à Maurice – au nord, à l’ouest, à l’est, au sud et sur le plateau central.",
+    "country": "Maurice",
+    "companyType": "société privée à responsabilité limitée par actions",
+    "hours": "7j/7, 24h/24",
+    "hoursInline": "7j/7, 24h/24",
+    "responseTime": "le jour même",
+    "mission": "Notre mission est d’offrir le meilleur service, en toute transparence. Aucuns frais cachés – et toujours un interlocuteur humain pour vous répondre.",
     "pricing": {
-      "short": "Negotiable — never more than {maxFee, number, percent}",
-      "model": "a fee agreed with you after our first meeting, never more than {maxFee, number, percent} of gross rental income",
-      "detail": "Your management fee is negotiated with you and set after our first meeting — it never exceeds {maxFee, number, percent} of gross rental income. No hidden fees: every cost is itemised on your monthly statement."
+      "short": "Négociable – jamais plus de {maxFee, number, percent}",
+      "model": "des frais de gestion convenus avec vous après notre premier rendez-vous, jamais plus de {maxFee, number, percent} des revenus locatifs bruts",
+      "detail": "Vos frais de gestion sont négociés avec vous et fixés après notre premier rendez-vous – ils ne dépassent jamais {maxFee, number, percent} des revenus locatifs bruts. Aucuns frais cachés : chaque dépense est détaillée sur votre relevé mensuel."
     },
     "team": {
       "krit": {
-        "role": "General Manager & Site Supervisor",
-        "bio": "Runs Bellavere day to day and is on site in person — supervising maintenance, inspections and every contractor who works on your property."
+        "role": "Directeur général et superviseur terrain",
+        "bio": "Dirige Bellavere au quotidien et se rend en personne sur place – il supervise l’entretien, les inspections et chaque prestataire qui intervient sur votre bien."
       },
       "ankit": {
-        "role": "Client Relations",
-        "bio": "Your first point of contact for statements, bookings and questions — reachable every day, 24/7, and never a chatbot."
+        "role": "Relations clients",
+        "bio": "Votre premier interlocuteur pour vos relevés, vos réservations et toutes vos questions – joignable 7j/7, 24h/24, et jamais un robot."
       },
       "nihal": {
-        "bio": "Reachable every day, 24/7, on {phone}."
+        "bio": "Joignable 7j/7, 24h/24, au {phone}."
       }
     },
     "commitments": {
       "hiddenFees": {
-        "label": "Hidden fees"
+        "label": "Frais cachés"
       },
       "reachable": {
-        "display": "24/7",
-        "label": "Always reachable"
+        "display": "24h/24",
+        "label": "Toujours joignables"
       },
       "sameDay": {
-        "display": "Same day",
-        "label": "Every query answered"
+        "display": "Le jour même",
+        "label": "Réponse à chaque demande"
       },
       "human": {
-        "label": "Human answers, no bots"
+        "label": "Réponses humaines, aucun robot"
       }
     }
   },
   "jsonLd": {
-    "companyNumber": "Company number (Registrar of Companies, Mauritius)",
+    "companyNumber": "Numéro de société (Registrar of Companies, Maurice)",
     "services": {
       "rental": {
-        "name": "Rental management",
-        "description": "Holiday-rental management for villas and apartments: listings, pricing, bookings and guest communication."
+        "name": "Gestion locative",
+        "description": "Gestion de locations saisonnières pour villas et appartements : annonces, tarifs, réservations et relation avec les voyageurs."
       },
       "maintenance": {
-        "name": "Maintenance",
-        "description": "Property maintenance, inspections and supervision of contractors."
+        "name": "Entretien et maintenance",
+        "description": "Entretien des propriétés, inspections et supervision des prestataires."
       },
       "clientCare": {
-        "name": "Client care",
-        "description": "A dedicated human point of contact for owners, with transparent monthly statements."
+        "name": "Accompagnement client",
+        "description": "Un interlocuteur humain dédié pour les propriétaires, avec des relevés mensuels transparents."
       },
       "concierge": {
-        "name": "Concierge",
-        "description": "Concierge services for owners and their guests."
+        "name": "Conciergerie",
+        "description": "Services de conciergerie pour les propriétaires et leurs voyageurs."
       },
       "syndic": {
-        "name": "Syndic & residence management",
-        "description": "Syndic and residence management for co-owned buildings and residences."
+        "name": "Syndic et gestion de résidences",
+        "description": "Services de syndic et gestion de résidences pour les immeubles et résidences en copropriété."
       }
     }
   },
   "og": {
-    "alt": "{company} — {tagline}",
-    "line": "Property management & syndic services · Mauritius"
+    "alt": "{company} – {tagline}",
+    "line": "Gestion de propriétés & services de syndic · Maurice"
   },
   "images": {
-    "homeHero": "Contemporary white villa and pool in tropical sunshine",
-    "loginBackdrop": "Contemporary villa with a long pool in bright sunshine",
-    "dashboardTeaser": "Contemporary beach house perched above breaking waves",
-    "finalCta": "Aerial view of a wave breaking on white sand",
+    "homeHero": "Villa blanche contemporaine et sa piscine sous le soleil des tropiques",
+    "loginBackdrop": "Villa contemporaine dotée d’une longue piscine, en plein soleil",
+    "dashboardTeaser": "Maison de plage contemporaine perchée au-dessus des vagues qui déferlent",
+    "finalCta": "Vue aérienne d’une vague qui se brise sur le sable blanc",
     "services": {
-      "rental": "Contemporary white villa with a long swimming pool",
-      "maintenance": "Infinity pool framed by palm trees above the ocean",
-      "clientCare": "Modern open-plan living room with a pale sofa and timber feature wall",
-      "concierge": "Resort pool reflecting warm lights at dusk",
-      "syndic": "Low-rise white residence with a shared pool and palm trees at dusk"
+      "rental": "Villa blanche contemporaine avec une longue piscine",
+      "maintenance": "Piscine à débordement bordée de palmiers, surplombant l’océan",
+      "clientCare": "Séjour moderne ouvert, avec un canapé clair et un mur habillé de bois",
+      "concierge": "Piscine d’un complexe hôtelier où se reflètent des lumières chaudes au crépuscule",
+      "syndic": "Résidence blanche de faible hauteur avec piscine commune et palmiers, au crépuscule"
     },
     "about": {
-      "story": "Calm beach at sunrise with gentle waves",
-      "coast": "White-sand beach with a palm tree and a thatched parasol"
+      "story": "Plage paisible au lever du soleil, aux vagues douces",
+      "coast": "Plage de sable blanc avec un palmier et un parasol en paille"
     }
   }
 }

@@ -1,104 +1,104 @@
 {
   "meta": {
-    "description": "Bellavere manages luxury villas and apartments across Mauritius — rentals, maintenance, client care and concierge, with a live dashboard for every owner."
+    "description": "Bellavere gère des villas et appartements de prestige partout à Maurice : gestion locative, entretien, accompagnement client et conciergerie, avec un tableau de bord en temps réel pour chaque propriétaire."
   },
   "hero": {
-    "eyebrow": "Property management & syndic · Mauritius",
-    "intro": "We look after villas, apartments and residences all around Mauritius — no hidden fees, always a real person to answer you, and a live dashboard that shows exactly how your property is performing."
+    "eyebrow": "Gestion de propriétés et syndic · Maurice",
+    "intro": "Nous prenons soin de villas, d’appartements et de résidences aux quatre coins de l’île Maurice – sans frais cachés, avec toujours une vraie personne pour vous répondre et un tableau de bord en temps réel qui vous montre précisément comment se porte votre bien."
   },
   "services": {
-    "eyebrow": "What we do",
-    "title": "Everything your property needs, under one roof",
-    "sub": "One team, no hidden fees, and a real person at the end of the line — so owning property in Mauritius stays a pleasure.",
-    "learnMore": "Learn more",
+    "eyebrow": "Nos métiers",
+    "title": "Tout ce dont votre bien a besoin, sous un même toit",
+    "sub": "Une seule équipe, aucuns frais cachés et une vraie personne au bout du fil – pour qu’être propriétaire à Maurice reste un plaisir.",
+    "learnMore": "En savoir plus",
     "items": {
-      "rental": "From listing, marketing and pricing to enquiries, bookings and guest check-ins, we run your rental end to end.",
-      "maintenance": "Preventive care, repairs and regular inspections keep your property in good order year-round. Every job is logged and its status is visible on your dashboard.",
-      "clientCare": "One contact knows your property, your preferences and your guests by name — and a real person always answers. Clear statements arrive monthly.",
-      "concierge": "Airport transfers, welcome packs, housekeeping and guest services — the extras that make a stay memorable and lift your rental yield."
+      "rental": "Annonce, promotion et tarification, demandes, réservations et accueil des voyageurs : nous gérons votre location de A à Z.",
+      "maintenance": "Entretien préventif, réparations et inspections régulières gardent votre bien en bon état toute l’année. Chaque intervention est enregistrée, et vous suivez son avancement sur votre tableau de bord.",
+      "clientCare": "Un interlocuteur unique connaît votre bien, vos préférences et jusqu’au nom de vos voyageurs – et c’est toujours une vraie personne qui vous répond. Des relevés clairs vous parviennent chaque mois.",
+      "concierge": "Transferts aéroport, paniers de bienvenue, ménage et services aux voyageurs – ces petits plus qui rendent un séjour mémorable et améliorent votre rendement locatif."
     },
     "syndic": {
-      "eyebrow": "For residences, estates & developers",
-      "title": "Syndic & residence management",
-      "copy": "Common areas, pools and gardens, preventive maintenance, contractor supervision and clear owner reporting — one reliable point of contact for every co-owner."
+      "eyebrow": "Pour les résidences, domaines et promoteurs",
+      "title": "Syndic et gestion de résidences",
+      "copy": "Parties communes, piscines et jardins, entretien préventif, supervision des prestataires et comptes rendus clairs aux propriétaires – un interlocuteur unique et fiable pour chaque copropriétaire."
     }
   },
   "howItWorks": {
-    "eyebrow": "How it works",
-    "title": "Three steps to an effortless property",
+    "eyebrow": "Notre démarche",
+    "title": "Trois étapes pour un bien sans contraintes",
     "steps": {
       "onboard": {
-        "title": "Onboard",
-        "copy": "We meet you, inspect your property, agree your fee and set up your listing — onboarding takes one to two weeks."
+        "title": "Mise en place",
+        "copy": "Nous vous rencontrons, visitons votre bien, convenons avec vous des frais de gestion et créons votre annonce – la mise en place prend une à deux semaines."
       },
       "manage": {
-        "title": "We manage",
-        "copy": "Guests welcomed, upkeep handled, statements prepared — one team runs the whole operation."
+        "title": "Nous gérons",
+        "copy": "Voyageurs accueillis, entretien assuré, relevés préparés – une seule équipe s’occupe de tout."
       },
       "grow": {
-        "title": "You watch it grow",
-        "copy": "Occupancy, revenue and maintenance, live on your owner dashboard — from Paris, London or the beach house next door."
+        "title": "Vous le voyez prospérer",
+        "copy": "Taux d’occupation, revenus et entretien, en direct sur votre tableau de bord propriétaire – depuis Paris, Londres ou la maison de plage d’à côté."
       }
     }
   },
   "dashboardTeaser": {
-    "eyebrow": "The owner portal",
-    "title": "Your portfolio, live",
-    "sub": "No more waiting for the end-of-season phone call. Your dashboard shows how your property is performing, the moment anything changes.",
+    "eyebrow": "L’espace propriétaire",
+    "title": "Votre patrimoine, en direct",
+    "sub": "Plus besoin d’attendre le coup de fil de fin de saison. Votre tableau de bord reflète les performances de votre bien au moindre changement.",
     "bullets": {
-      "live": "Real-time occupancy and revenue, updated with every booking",
-      "calendar": "Bookings and the guest calendar at a glance",
-      "maintenance": "Maintenance status, from first report to resolution",
-      "statements": "Monthly statements, itemised and ready to download"
+      "live": "Taux d’occupation et revenus en temps réel, mis à jour à chaque réservation",
+      "calendar": "Réservations et calendrier des séjours en un coup d’œil",
+      "maintenance": "Suivi des interventions, du premier signalement jusqu’à leur résolution",
+      "statements": "Relevés mensuels détaillés, prêts à télécharger"
     },
-    "ownFiguresOnly": "Every owner sees only their own properties — your figures stay yours, and yours alone.",
-    "action": "See the owner portal"
+    "ownFiguresOnly": "Chaque propriétaire ne voit que ses propres biens – vos chiffres n’appartiennent qu’à vous.",
+    "action": "Découvrir l’espace propriétaire"
   },
   "dashboardPreview": {
-    "label": "Preview of the Bellavere owner dashboard showing live revenue, occupancy and bookings",
-    "greeting": "Good morning, {name}",
-    "revenue": "Revenue · {month}",
-    "occupancy": "Occupancy",
-    "checkIns": "Check-ins · {days}d",
-    "openTickets": "{count, plural, one {# open ticket} other {# open tickets}}",
-    "revenueTrend": "Revenue — last {months} months",
+    "label": "Aperçu du tableau de bord propriétaire Bellavere : revenus, taux d’occupation et réservations en temps réel",
+    "greeting": "Bonjour {name}",
+    "revenue": "Revenus · {month}",
+    "occupancy": "Occupation",
+    "checkIns": "Arrivées · {days} j",
+    "openTickets": "{count, plural, one {# intervention en cours} other {# interventions en cours}}",
+    "revenueTrend": "Revenus – {months} derniers mois",
     "monthRange": "{from} – {to}",
     "delta": {
-      "percent": "{delta}% vs last month",
-      "points": "{delta} pts vs last month"
+      "percent": "{delta} % vs mois dernier",
+      "points": "{delta} pts vs mois dernier"
     }
   },
   "testimonials": {
-    "eyebrow": "Owners' words",
-    "title": "In their own words",
+    "eyebrow": "Paroles de propriétaires",
+    "title": "Ce qu’ils en disent",
     "carousel": {
-      "label": "Owner testimonials",
-      "roleDescription": "carousel",
-      "previous": "Previous testimonial",
-      "next": "Next testimonial",
-      "goTo": "Go to testimonial {index} of {count}"
+      "label": "Témoignages de propriétaires",
+      "roleDescription": "carrousel",
+      "previous": "Témoignage précédent",
+      "next": "Témoignage suivant",
+      "goTo": "Aller au témoignage {index} sur {count}"
     },
     "items": {
       "elise": {
-        "quote": "I live abroad and my villa is on the north coast, yet I always know exactly how it is doing. And when I call, a real person answers — every time.",
+        "quote": "Je vis à l’étranger et ma villa se trouve sur la côte nord, pourtant je sais toujours précisément comment elle se porte. Et quand j’appelle, c’est une vraie personne qui répond – à chaque fois.",
         "name": "Élise M.",
-        "role": "Villa owner, living in France"
+        "role": "Propriétaire d’une villa, réside en France"
       },
       "deepak": {
-        "quote": "No surprise charges. Every repair is on the statement with a line explaining it, and the fee was agreed face to face before we started.",
+        "quote": "Pas de frais surprise. Chaque réparation figure sur le relevé, avec une ligne qui l’explique, et les frais de gestion ont été convenus en personne avant de commencer.",
         "name": "Deepak R.",
-        "role": "Apartment owner, west coast"
+        "role": "Propriétaire d’un appartement, côte ouest"
       },
       "nathalie": {
-        "quote": "As a residence we needed one reliable contact for the pool, the gardens and the contractors. That is exactly what we got.",
+        "quote": "Pour notre résidence, il nous fallait un interlocuteur fiable pour la piscine, les jardins et les prestataires. C’est exactement ce que nous avons trouvé.",
         "name": "Nathalie C.",
-        "role": "Residence co-owner, north coast"
+        "role": "Copropriétaire d’une résidence, côte nord"
       }
     }
   },
   "ctaBand": {
-    "title": "Let your island home work beautifully",
-    "sub": "Tell us about your property and we'll show you, openly, what it could achieve.",
-    "action": "Start the conversation"
+    "title": "Laissez votre maison sur l’île donner le meilleur d’elle-même",
+    "sub": "Parlez-nous de votre bien : nous vous montrerons, en toute transparence, ce qu’il pourrait vous rapporter.",
+    "action": "Parlons-en"
   }
 }

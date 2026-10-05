@@ -1,139 +1,139 @@
 {
   "meta": {
-    "title": "Property management & syndic services",
-    "description": "Rental management, maintenance, client care, concierge and syndic services for villas, apartments and residences in Mauritius — one team, no hidden fees."
+    "title": "Gestion de propriétés et services de syndic",
+    "description": "Gestion locative, entretien, accompagnement client, conciergerie et services de syndic pour villas, appartements et résidences à Maurice – une seule équipe, aucuns frais cachés."
   },
   "hero": {
     "eyebrow": "Services",
-    "title": "Everything your property needs",
-    "intro": "Five services, one team, no hidden fees. Bellavere looks after villas, apartments and whole residences across Mauritius, end to end, for {pricingModel}. Every cost is itemised on your monthly statement."
+    "title": "Tout ce dont votre bien a besoin",
+    "intro": "Cinq services, une seule équipe, aucuns frais cachés. Bellavere prend en charge de A à Z villas, appartements et résidences entières, partout à Maurice, moyennant {pricingModel}. Chaque dépense est détaillée sur votre relevé mensuel."
   },
   "sections": {
     "rental": {
-      "eyebrow": "01 — Rental management",
-      "title": "Your home, earning while you sleep",
+      "eyebrow": "01 – Gestion locative",
+      "title": "Votre maison rapporte pendant que vous dormez",
       "paragraphs": {
-        "first": "We list and market your villa or apartment, answer every enquiry, manage bookings, pricing and occupancy, and handle every guest check-in and check-out.",
-        "second": "You watch it all happen from the owner dashboard: bookings as they land, occupancy against the season, revenue by month."
+        "first": "Nous publions et promouvons l’annonce de votre villa ou de votre appartement, répondons à chaque demande, gérons les réservations, les tarifs et le taux d’occupation, et assurons l’accueil comme le départ de chaque voyageur.",
+        "second": "Vous suivez tout depuis votre tableau de bord propriétaire : les réservations dès qu’elles arrivent, le taux d’occupation saison par saison, les revenus mois par mois."
       },
       "included": {
-        "listing": "Listing & marketing",
-        "bookings": "Enquiries & bookings",
-        "pricing": "Pricing & occupancy management",
-        "guestCommunication": "Guest communication",
-        "checkInOut": "Guest check-in & check-out",
-        "reporting": "Occupancy reporting"
+        "listing": "Annonces et promotion",
+        "bookings": "Demandes et réservations",
+        "pricing": "Gestion des tarifs et du taux d’occupation",
+        "guestCommunication": "Échanges avec les voyageurs",
+        "checkInOut": "Check-in et check-out des voyageurs",
+        "reporting": "Rapports sur le taux d’occupation"
       },
-      "detail": "Every query answered the same day, by a real person"
+      "detail": "Réponse le jour même à chaque question, par une vraie personne"
     },
     "maintenance": {
-      "eyebrow": "02 — Maintenance",
-      "title": "Kept immaculate, season after season",
+      "eyebrow": "02 – Entretien et maintenance",
+      "title": "Impeccable, saison après saison",
       "paragraphs": {
-        "first": "Salt air, cyclone season and back-to-back guests are hard on an island home. We run regular inspections, look after pools and gardens, and coordinate repairs before small issues become expensive ones.",
-        "second": "Every job is logged against your property and itemised on your statement, with contractors coordinated and supervised on site — no hidden fees."
+        "first": "L’air salin, la saison cyclonique et l’enchaînement des séjours mettent une maison sur l’île à rude épreuve. Nous réalisons des inspections régulières, entretenons piscines et jardins, et coordonnons les réparations avant que les petits soucis ne deviennent coûteux.",
+        "second": "Chaque intervention est enregistrée au nom de votre bien et détaillée sur votre relevé ; les prestataires sont coordonnés et encadrés sur place – sans frais cachés."
       },
       "included": {
-        "repairs": "Routine upkeep & repairs",
-        "inspections": "Regular property inspections",
-        "renovation": "Renovation follow-up",
-        "poolGarden": "Pool & garden care",
-        "cleaning": "Cleaning & housekeeping",
-        "emergencies": "Emergency coordination",
-        "contractors": "Supervised contractors, every invoice itemised"
+        "repairs": "Entretien courant et réparations",
+        "inspections": "Inspections régulières du bien",
+        "renovation": "Suivi des travaux de rénovation",
+        "poolGarden": "Entretien de la piscine et du jardin",
+        "cleaning": "Nettoyage et intendance",
+        "emergencies": "Gestion des urgences",
+        "contractors": "Prestataires encadrés, chaque facture détaillée"
       },
-      "detail": "Work supervised on site, in person"
+      "detail": "Travaux supervisés sur place, en personne"
     },
     "clientCare": {
-      "eyebrow": "03 — Client care",
-      "title": "One person who knows your property by name",
+      "eyebrow": "03 – Accompagnement client",
+      "title": "Un interlocuteur qui connaît votre bien par cœur",
       "paragraphs": {
-        "first": "Your client-relations contact is the single point of contact for everything that touches your property: statements, compliance, insurance, utility bills, tenant and guest matters — and a real person always answers.",
-        "second": "You receive one clear statement every month and straight answers in between — without chasing."
+        "first": "Votre contact relation client centralise tout ce qui touche à votre bien : relevés, conformité, assurances, factures d’eau et d’électricité, questions liées aux locataires et aux voyageurs – et c’est toujours une vraie personne qui vous répond.",
+        "second": "Vous recevez chaque mois un relevé clair, et des réponses directes entre deux relevés – sans avoir à relancer."
       },
       "included": {
-        "contact": "Dedicated client-relations contact",
-        "statements": "Monthly owner statements",
-        "compliance": "Compliance administration",
-        "insuranceUtilities": "Insurance & utilities administration",
-        "issues": "Guest & tenant issue resolution"
+        "contact": "Contact relation client dédié",
+        "statements": "Relevés mensuels pour le propriétaire",
+        "compliance": "Gestion de la conformité",
+        "insuranceUtilities": "Gestion des assurances et des abonnements",
+        "issues": "Résolution des incidents liés aux voyageurs et aux locataires"
       },
-      "detail": "One contact. Every answer."
+      "detail": "Un seul contact. Toutes les réponses."
     },
     "concierge": {
-      "eyebrow": "04 — Concierge & services",
-      "title": "The extras guests remember — and pay for",
+      "eyebrow": "04 – Conciergerie et services",
+      "title": "Les petits plus qui marquent les voyageurs – et qu’ils paient volontiers",
       "paragraphs": {
-        "first": "Airport transfers, welcome packs, housekeeping and guest services — we arrange the details that turn a good stay into the one guests talk about.",
-        "second": "It is hospitality that earns: well-run extras increase the rental yield of your property."
+        "first": "Transferts aéroport, paniers de bienvenue, ménage et services aux voyageurs : nous orchestrons les détails qui font d’un bon séjour celui dont les voyageurs parlent autour d’eux.",
+        "second": "Une hospitalité qui rapporte : des services bien menés augmentent le rendement locatif de votre bien."
       },
       "included": {
-        "airportTransfers": "Airport transfers",
-        "welcomePacks": "Welcome packs",
-        "guestServices": "Guest services",
-        "housekeeping": "Housekeeping"
+        "airportTransfers": "Transferts aéroport",
+        "welcomePacks": "Paniers de bienvenue",
+        "guestServices": "Services aux voyageurs",
+        "housekeeping": "Ménage"
       },
-      "detail": "Extras that increase your rental yield"
+      "detail": "Des petits plus qui augmentent votre rendement locatif"
     },
     "syndic": {
-      "eyebrow": "05 — Syndic & residences",
-      "title": "Common areas cared for, co-owners kept informed",
+      "eyebrow": "05 – Services de syndic",
+      "title": "Des parties communes soignées, des copropriétaires bien informés",
       "paragraphs": {
-        "first": "For residences, villa estates and apartment complexes, Bellavere acts as syndic and facilities coordinator. We look after the shared spaces — pools, gardens, common areas and security — so every co-owner can enjoy them without having to manage them.",
-        "second": "Preventive maintenance plans, supervised contractors and clear owner reporting keep the building in good order, with one reliable point of contact for day-to-day property care."
+        "first": "Pour les résidences, les domaines de villas et les ensembles d’appartements, Bellavere assure le rôle de syndic et de coordinateur des services généraux. Nous prenons soin des espaces partagés – piscines, jardins, parties communes et sécurité – pour que chaque copropriétaire en profite sans avoir à s’en occuper.",
+        "second": "Plans d’entretien préventif, prestataires encadrés et comptes rendus clairs aux copropriétaires maintiennent la résidence en bon état, avec un interlocuteur unique et fiable pour l’entretien au quotidien."
       },
       "included": {
-        "commonAreas": "Common-area management & cleaning coordination",
-        "preventiveMaintenance": "Preventive maintenance plans",
-        "poolLandscaping": "Pool & landscaping supervision",
-        "contractors": "Contractor coordination & on-site supervision",
-        "security": "Security & emergency coordination",
-        "reporting": "Owner reporting & renovation follow-up"
+        "commonAreas": "Gestion des parties communes et coordination du nettoyage",
+        "preventiveMaintenance": "Plans d’entretien préventif",
+        "poolLandscaping": "Supervision de la piscine et des espaces verts",
+        "contractors": "Coordination des prestataires et supervision sur place",
+        "security": "Coordination de la sécurité et des urgences",
+        "reporting": "Comptes rendus aux copropriétaires et suivi des travaux"
       },
-      "detail": "One point of contact for every co-owner."
+      "detail": "Un interlocuteur unique pour chaque copropriétaire."
     }
   },
   "serviceSection": {
-    "included": "What’s included"
+    "included": "Prestations incluses"
   },
   "atAGlance": {
-    "eyebrow": "At a glance",
-    "title": "What Bellavere handles for you",
-    "sub": "The day-to-day work we take off your desk."
+    "eyebrow": "En un coup d’œil",
+    "title": "Ce que Bellavere prend en charge pour vous",
+    "sub": "Les tâches du quotidien dont nous vous libérons."
   },
   "comparison": {
-    "caption": "The responsibilities Bellavere handles for you",
-    "responsibility": "Responsibility",
-    "handled": "Handled.",
+    "caption": "Les responsabilités que Bellavere assume pour vous",
+    "responsibility": "Responsabilité",
+    "handled": "Pris en charge.",
     "rows": {
       "bookings": {
-        "area": "Guest enquiries & bookings",
-        "note": "Answered and confirmed for you"
+        "area": "Demandes et réservations des voyageurs",
+        "note": "Traitées et confirmées à votre place"
       },
       "pricing": {
-        "area": "Pricing & yield",
-        "note": "Pricing and occupancy managed for you"
+        "area": "Tarifs et rendement",
+        "note": "Tarifs et taux d’occupation gérés pour vous"
       },
       "cleaning": {
-        "area": "Cleaning & housekeeping",
-        "note": "Cleaning and housekeeping between stays"
+        "area": "Nettoyage et intendance",
+        "note": "Nettoyage et intendance entre deux séjours"
       },
       "repairs": {
-        "area": "Repairs & contractors",
-        "note": "Supervised on site, every invoice itemised"
+        "area": "Réparations et prestataires",
+        "note": "Supervision sur place, chaque facture détaillée"
       },
       "statements": {
-        "area": "Statements & payouts",
-        "note": "One clear statement every month"
+        "area": "Relevés et versements",
+        "note": "Un relevé clair chaque mois"
       },
       "compliance": {
-        "area": "Compliance & insurance",
-        "note": "Compliance, insurance and utility bills handled for you"
+        "area": "Conformité et assurances",
+        "note": "Conformité, assurances et factures courantes gérées pour vous"
       }
     }
   },
   "getStarted": {
-    "eyebrow": "Get started",
-    "title": "One fee. Every detail handled."
+    "eyebrow": "Pour commencer",
+    "title": "Un seul tarif. Chaque détail pris en charge."
   }
 }
