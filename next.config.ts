@@ -12,7 +12,16 @@ const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
  * page to render dynamically, and the public pages are served static. Inline
  * style is needed for framer-motion, Recharts and the printable statement
  * window (an about:blank popup, which inherits this policy).
+ *
+ * Analytics: only when NEXT_PUBLIC_PLAUSIBLE_DOMAIN is set (read at build
+ * time, like the script tag in components/analytics/Analytics.tsx) may the
+ * browser load Plausible's script and send it events; otherwise the policy
+ * allows no third-party script or connection at all.
  */
+const ANALYTICS_ORIGINS = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN?.trim()
+  ? " https://plausible.io"
+  : "";
+
 const contentSecurityPolicy = [
   "default-src 'self'",
   "base-uri 'self'",
@@ -24,9 +33,9 @@ const contentSecurityPolicy = [
   "style-src 'self' 'unsafe-inline'",
   // React uses eval for its debugging tools in development, never in production.
   process.env.NODE_ENV === "development"
-    ? "script-src 'self' 'unsafe-inline' 'unsafe-eval'"
-    : "script-src 'self' 'unsafe-inline'",
-  "connect-src 'self'",
+    ? `script-src 'self' 'unsafe-inline' 'unsafe-eval'${ANALYTICS_ORIGINS}`
+    : `script-src 'self' 'unsafe-inline'${ANALYTICS_ORIGINS}`,
+  `connect-src 'self'${ANALYTICS_ORIGINS}`,
   "frame-src 'none'",
   "worker-src 'self' blob:",
   "manifest-src 'self'",

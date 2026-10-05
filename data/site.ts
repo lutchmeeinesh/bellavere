@@ -26,7 +26,9 @@ export const PUBLIC_EMAIL = HELLO_MAILBOX_LIVE
 
 /**
  * WhatsApp numbers in wa.me format (country code + number, digits only),
- * confirmed by the client with the phone numbers in data/company.ts.
+ * confirmed by the client with the phone numbers in data/company.ts. Keyed
+ * by the contact ids of `company.contacts`, so the contact page's cards
+ * (components/whatsapp/WhatsAppContactCards.tsx) find each person's number.
  */
 export const WHATSAPP_NUMBERS = {
   /** Ankit Dookhorun, Client Relations: +230 5531 0734. */
@@ -35,15 +37,16 @@ export const WHATSAPP_NUMBERS = {
   nihal: "23058174529",
 } as const;
 
-/** The number behind the floating WhatsApp button. */
+/** The number behind the floating WhatsApp button (Ankit, Client Relations). */
 export const WHATSAPP_PRIMARY = WHATSAPP_NUMBERS.ankit;
 
 /**
- * Text pre-filled in WhatsApp when a visitor opens a chat without a more
- * specific message (pages can set their own, see WhatsAppProvider). The
- * visitor can edit it before sending.
+ * Text pre-filled in WhatsApp when a visitor opens a chat from the floating
+ * button without a more specific message (pages can set their own, see
+ * WhatsAppProvider; the contact cards greet each person by name, messages
+ * `whatsapp.contactCards.prefill`). The visitor can edit it before sending.
  */
 export const WHATSAPP_DEFAULT_MESSAGE: Record<AppLocale, string> = {
   en: "Hello Bellavere, I'd like to know more about your property management services.",
-  fr: "Bonjour Bellavere, je souhaiterais en savoir plus sur vos services de gestion immobilière.",
+  fr: "Bonjour Bellavere, je souhaiterais en savoir plus sur vos services de gestion de propriétés.",
 };

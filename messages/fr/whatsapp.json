@@ -1,5 +1,13 @@
 {
   "button": {
-    "label": "Chat with us on WhatsApp"
+    "label": "Écrivez-nous sur WhatsApp"
+  },
+  "contactCards": {
+    "heading": "Par WhatsApp ou par téléphone<muted> – {hours}</muted>",
+    "headingNoHours": "Par WhatsApp ou par téléphone",
+    "whatsapp": "WhatsApp",
+    "whatsappLabel": "Écrire à {name} sur WhatsApp",
+    "callLabel": "Appeler {name} au {phone}",
+    "prefill": "Bonjour {name}, je souhaiterais en savoir plus sur les services de gestion de propriétés de Bellavere."
   }
 }

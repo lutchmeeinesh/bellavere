@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { Mail, Phone } from "lucide-react";
+import { Mail } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Reveal, RevealItem, RevealStagger } from "@/components/ui/Reveal";
@@ -8,9 +8,10 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { SocialLink, publishedSocialLinks } from "@/components/site/SocialIcons";
 import { ContactForm } from "@/components/contact/ContactForm";
 import { FaqAccordion } from "@/components/contact/FaqAccordion";
+import { WhatsAppContactCards } from "@/components/whatsapp/WhatsAppContactCards";
+import { WhatsAppIcon } from "@/components/whatsapp/WhatsAppIcon";
 import { company } from "@/data/company";
 import { PUBLIC_EMAIL } from "@/data/site";
-import type { Messages } from "@/i18n/messages";
 import { localizedMetadata } from "@/lib/i18n/metadata";
 import { getPageLocale, type LocaleParams } from "@/lib/i18n/server";
 
@@ -30,21 +31,12 @@ export async function generateMetadata({
   });
 }
 
-// Only details the client has confirmed are shown. Phone, hours and social
-// links appear automatically once they are filled in data/company.ts.
+// Only details the client has confirmed are shown. Contacts, hours and
+// social links appear automatically once they are filled in data/company.ts.
 const SOCIAL_LINKS = publishedSocialLinks(company.social);
 
-type Team = Messages["common"]["company"]["team"];
-/**
- * People whose role is worded in messages (`common.company.team.<id>.role`).
- * data/company.ts gives a contact a role only if they have one there.
- */
-type RoleId = {
-  [Id in keyof Team]: Team[Id] extends { role: string } ? Id : never;
-}[keyof Team];
-
-// Phone and email links: a 20px line plus 2px padding above and below gives
-// every tap target the 24px minimum height, without changing the layout much.
+// The email link: a 20px line plus 2px padding above and below gives the tap
+// target the 24px minimum height, without changing the layout much.
 const DETAIL_LINK =
   "block w-fit py-0.5 text-sm/5 text-ink-500 transition-colors duration-150 hover:text-gold-700";
 
@@ -64,7 +56,7 @@ export default async function ContactPage({
   await getPageLocale(params);
   const t = await getTranslations("contact");
   const tc = await getTranslations("common");
-  const team = await getTranslations("common.company.team");
+  const tw = await getTranslations("whatsapp");
   return (
     <>
       {/* Page header */}
@@ -88,15 +80,15 @@ export default async function ContactPage({
           <div className="grid gap-16 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-20">
             {/* Contact details */}
             <RevealStagger className="space-y-8">
-              {company.phone ? (
+              {company.contacts.length > 0 ? (
                 <RevealItem className="flex gap-4">
                   <DetailIcon>
-                    <Phone className="size-5" aria-hidden />
+                    <WhatsAppIcon className="size-5" />
                   </DetailIcon>
-                  <div>
+                  <div className="min-w-0 flex-1">
                     <p className="text-sm font-medium text-navy-900">
                       {company.hours
-                        ? t.rich("details.callWithHours", {
+                        ? tw.rich("contactCards.heading", {
                             hours: tc("company.hoursInline"),
                             muted: (chunks) => (
                               <span className="font-normal text-ink-500">
@@ -104,37 +96,9 @@ export default async function ContactPage({
                               </span>
                             ),
                           })
-                        : t("details.call")}
+                        : tw("contactCards.headingNoHours")}
                     </p>
-                    <ul className="mt-2 space-y-3">
-                      {company.contacts.map((person) => (
-                        <li key={person.name}>
-                          <p className="text-sm text-navy-900">
-                            {person.name}
-                            {person.role ? (
-                              <span className="text-ink-500">
-                                {" "}
-                                · {team(`${person.id as RoleId}.role`)}
-                              </span>
-                            ) : null}
-                          </p>
-                          <a
-                            href={`tel:${person.phone.replace(/\s/g, "")}`}
-                            className={DETAIL_LINK}
-                          >
-                            {person.phone}
-                          </a>
-                          {person.email ? (
-                            <a
-                              href={`mailto:${person.email}`}
-                              className={DETAIL_LINK}
-                            >
-                              {person.email}
-                            </a>
-                          ) : null}
-                        </li>
-                      ))}
-                    </ul>
+                    <WhatsAppContactCards className="mt-4" />
                   </div>
                 </RevealItem>
               ) : null}
