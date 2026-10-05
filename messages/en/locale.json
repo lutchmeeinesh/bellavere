@@ -5,5 +5,11 @@
       "en": "English",
       "fr": "Français"
     }
+  },
+  "suggestion": {
+    "label": "Version française disponible",
+    "message": "Ce site est aussi disponible en français.",
+    "action": "Voir en français",
+    "dismiss": "Fermer"
   }
 }
