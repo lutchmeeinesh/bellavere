@@ -1,9 +1,15 @@
 {
   "toggle": {
-    "label": "Language",
+    "label": "Langue",
     "names": {
       "en": "English",
       "fr": "Français"
     }
+  },
+  "suggestion": {
+    "label": "English version available",
+    "message": "This site is also available in English.",
+    "action": "View in English",
+    "dismiss": "Close"
   }
 }

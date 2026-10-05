@@ -10,12 +10,37 @@ import type { AppLocale } from "@/i18n/routing";
  *
  * Same shape as the currency preference (bv_currency): a first-party
  * preference the visitor sets themselves, kept for a year.
+ *
+ * Imported by the middleware too: nothing here may touch `document` or
+ * `window` outside the browser-only functions.
  */
 export const LOCALE_COOKIE = "NEXT_LOCALE";
+
+/**
+ * Fired on `window` (detail: the locale) whenever the visitor picks a
+ * language, so other components (the French-suggestion banner) can react
+ * without a reload.
+ */
+export const LOCALE_CHOICE_EVENT = "bellavere:locale-choice";
 
 const ONE_YEAR = 60 * 60 * 24 * 365;
 
 /** Browser only: remembers the visitor's language choice. */
 export function writeLocaleCookie(locale: AppLocale) {
-  document.cookie = `${LOCALE_COOKIE}=${locale}; path=/; max-age=${ONE_YEAR}; samesite=lax`;
+  const secure = window.location.protocol === "https:" ? "; secure" : "";
+  document.cookie = `${LOCALE_COOKIE}=${locale}; path=/; max-age=${ONE_YEAR}; samesite=lax${secure}`;
+  window.dispatchEvent(
+    new CustomEvent<AppLocale>(LOCALE_CHOICE_EVENT, { detail: locale }),
+  );
+}
+
+/** Browser only: whether the visitor has picked a language before. */
+export function hasLocaleCookie(): boolean {
+  try {
+    return document.cookie
+      .split(";")
+      .some((part) => part.trim().startsWith(`${LOCALE_COOKIE}=`));
+  } catch {
+    return false;
+  }
 }

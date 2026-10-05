@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, UserRound, X } from "lucide-react";
 import { Link, usePathname } from "@/i18n/navigation";
+import type { AppLocale } from "@/i18n/routing";
 import { Logo } from "@/components/site/Logo";
 import { LanguageToggle } from "@/components/site/LanguageToggle";
 import { Button } from "@/components/ui/Button";
@@ -36,6 +37,50 @@ const NAV_LINKS = [
 ] as const;
 
 /**
+ * Where each part of the bar appears, per language (measured with the
+ * longest labels; the bar is at most 1200px wide):
+ *
+ * - English: the full bar from 1024px (lg). The owner login appears as an
+ *   icon button from 1120px and with its label from 1280px (xl); below
+ *   1120px it stays in the footer and the home hero.
+ * - French: the labels are longer ("Estimer mes revenus", "Espace
+ *   propriétaire", "Confier votre bien"), so the full bar starts at 1152px,
+ *   with the owner login as an icon button (its label does not fit next to
+ *   everything else even at 1200px). Below 1152px the French header keeps
+ *   the menu.
+ * - With the menu: currency and EN | FR switches stay in the bar (the
+ *   language switch tighter on phones, and only in the menu below 360px);
+ *   the menu itself always has a language row with the full names.
+ *
+ * Literal class names, so Tailwind generates them.
+ */
+const BAR_CLASSES: Record<
+  AppLocale,
+  {
+    nav: string;
+    actions: string;
+    compact: string;
+    ownerIcon: string;
+    ownerLabel: string | null;
+  }
+> = {
+  en: {
+    nav: "hidden lg:block",
+    actions: "hidden lg:flex",
+    compact: "lg:hidden",
+    ownerIcon: "hidden min-[1120px]:flex xl:hidden",
+    ownerLabel: "hidden xl:flex",
+  },
+  fr: {
+    nav: "hidden min-[1152px]:block",
+    actions: "hidden min-[1152px]:flex",
+    compact: "min-[1152px]:hidden",
+    ownerIcon: "hidden min-[1152px]:flex",
+    ownerLabel: null,
+  },
+};
+
+/**
  * Fixed site header. Transparent over the home hero; frosted sand with a
  * bottom border after 40px of scroll (and always on inner pages). The active
  * link underline slides between items via a shared layoutId. The mobile menu
@@ -44,6 +89,9 @@ const NAV_LINKS = [
  */
 export function Header() {
   const t = useTranslations("common");
+  const tLocale = useTranslations("locale.toggle");
+  const locale = useLocale() as AppLocale;
+  const bar = BAR_CLASSES[locale];
   const pathname = useSitePathname();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -73,6 +121,7 @@ export function Header() {
 
   // Only the home page has a dark full-bleed hero behind the header.
   const overHero = pathname === "/" && !scrolled && !menuOpen;
+  const tone = overHero ? "light" : "default";
 
   return (
     <header
@@ -83,10 +132,10 @@ export function Header() {
           : "border-b border-sand-300 bg-sand-50/80 backdrop-blur-md",
       )}
     >
-      <div className="mx-auto flex h-18 w-full max-w-[1200px] items-center justify-between px-5 sm:px-8">
+      <div className="mx-auto flex h-18 w-full max-w-[1200px] items-center justify-between gap-4 px-5 sm:px-8">
         <Logo dark={overHero} />
 
-        <nav aria-label={t("nav.label")} className="hidden lg:block">
+        <nav aria-label={t("nav.label")} className={bar.nav}>
           <ul className="flex items-center gap-1">
             {NAV_LINKS.map((link) => {
               const active =
@@ -99,7 +148,7 @@ export function Header() {
                     href={link.href}
                     aria-current={active ? "page" : undefined}
                     className={cn(
-                      "relative block px-3 py-2 text-sm font-medium whitespace-nowrap transition-colors duration-200 xl:px-4",
+                      "relative block px-3 py-2 text-sm font-medium whitespace-nowrap transition-colors duration-200 xl:px-3.5",
                       overHero
                         ? "text-white/85 hover:text-white"
                         : "text-ink-900 hover:text-navy-900",
@@ -110,7 +159,7 @@ export function Header() {
                     {active ? (
                       <motion.span
                         layoutId="nav-underline"
-                        className="absolute inset-x-3 -bottom-0.5 h-0.5 rounded-full bg-gold-500 xl:inset-x-4"
+                        className="absolute inset-x-3 -bottom-0.5 h-0.5 rounded-full bg-gold-500 xl:inset-x-3.5"
                         transition={{ duration: 0.3, ease: "easeOut" }}
                       />
                     ) : null}
@@ -121,38 +170,51 @@ export function Header() {
           </ul>
         </nav>
 
-        {/* From lg to xl the bar is too narrow for everything: the owner
-            login stays in the footer (and the home hero) until xl. */}
-        <div className="hidden items-center gap-3 lg:flex">
-          <CurrencyToggle
-            tone={overHero ? "light" : "default"}
-            layoutId="currency-pill-header"
-          />
-          <LanguageToggle tone={overHero ? "light" : "default"} />
+        <div className={cn("items-center gap-3", bar.actions)}>
+          <CurrencyToggle tone={tone} layoutId="currency-pill-header" />
+          <LanguageToggle tone={tone} />
+          {/* Compact owner login where its label does not fit (see BAR_CLASSES). */}
+          <span className={bar.ownerIcon} title={t("actions.ownerLogin")}>
+            <Button
+              href="/login"
+              variant={overHero ? "light" : "outline"}
+              size="sm"
+            >
+              <UserRound className="size-5" aria-hidden />
+              <span className="sr-only">{t("actions.ownerLogin")}</span>
+            </Button>
+          </span>
+          {bar.ownerLabel ? (
+            <span className={bar.ownerLabel}>
+              <Button
+                href="/login"
+                variant={overHero ? "light" : "outline"}
+                size="sm"
+                className="whitespace-nowrap"
+              >
+                {t("actions.ownerLogin")}
+              </Button>
+            </span>
+          ) : null}
           <Button
-            href="/login"
-            variant={overHero ? "light" : "outline"}
+            href="/contact"
+            variant="primary"
             size="sm"
-            className="max-xl:hidden"
+            className="whitespace-nowrap"
           >
-            {t("actions.ownerLogin")}
-          </Button>
-          <Button href="/contact" variant="primary" size="sm">
             {t("actions.listProperty")}
           </Button>
         </div>
 
-        <div className="flex items-center gap-2 lg:hidden">
-          <CurrencyToggle
-            tone={overHero ? "light" : "default"}
-            layoutId="currency-pill-header-mobile"
-          />
-          {/* Below 360px it moves into the menu (see the end of the menu). */}
+        <div className={cn("flex items-center gap-1 sm:gap-2", bar.compact)}>
+          <CurrencyToggle tone={tone} layoutId="currency-pill-header-mobile" />
+          {/* Below 360px it is only in the menu (see the end of the menu). */}
           <LanguageToggle
-            tone={overHero ? "light" : "default"}
+            tone={tone}
             compact
-            className="max-[359px]:hidden"
+            className="max-[359px]:hidden sm:hidden"
           />
+          <LanguageToggle tone={tone} className="max-sm:hidden" />
           <button
             ref={menuButtonRef}
             type="button"
@@ -184,7 +246,10 @@ export function Header() {
             onClick={(e) => {
               if ((e.target as HTMLElement).closest("a")) setMenuOpen(false);
             }}
-            className="border-t border-sand-300 bg-sand-50/95 backdrop-blur-md lg:hidden"
+            className={cn(
+              "border-t border-sand-300 bg-sand-50/95 backdrop-blur-md",
+              bar.compact,
+            )}
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
@@ -213,15 +278,20 @@ export function Header() {
                   </li>
                 );
               })}
-              <li className="px-4 pt-2 min-[360px]:hidden">
-                <LanguageToggle />
+              <li className="mt-3 flex items-center justify-between gap-4 border-t border-sand-300 px-4 pt-3">
+                <span id="mobile-menu-language" className="text-sm text-ink-500">
+                  {tLocale("label")}
+                </span>
+                <LanguageToggle names labelledBy="mobile-menu-language" />
               </li>
-              <li className="flex gap-3 px-4 pt-3 pb-1">
+              {/* Side by side when both labels fit on one line each,
+                  otherwise stacked at full width. */}
+              <li className="flex flex-wrap gap-3 px-4 pt-3 pb-1">
                 <Button
                   href="/login"
                   variant="outline"
                   size="sm"
-                  className="flex-1"
+                  className="flex-1 whitespace-nowrap"
                 >
                   {t("actions.ownerLogin")}
                 </Button>
@@ -229,7 +299,7 @@ export function Header() {
                   href="/contact"
                   variant="primary"
                   size="sm"
-                  className="flex-1"
+                  className="flex-1 whitespace-nowrap"
                 >
                   {t("actions.listProperty")}
                 </Button>
