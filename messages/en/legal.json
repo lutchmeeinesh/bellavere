@@ -89,6 +89,7 @@
         "language": "<code>{name}</code> — <strong>preference</strong>. Remembers whether you chose to read the site in English or French. It is set only when you use the language switch and lasts 1 year.",
         "viewAs": "<code>{name}</code> — <strong>strictly necessary</strong>, {company} staff only. Remembers which owner’s portal an administrator is viewing. It is httpOnly and ends with the browser session."
       },
+      "localStorage": "If you close the suggestion to read this site in French, your browser also keeps a small note in its local storage (<code>{name}</code>) so that the suggestion is not shown again. It contains no personal data and never leaves your device.",
       "noTracking": "We do <strong>not</strong> use analytics, advertising or tracking cookies, and no third-party cookies are set. Because every cookie is either strictly necessary or set at your request, we do not show a cookie-consent banner. You can delete cookies at any time in your browser settings; deleting <code>{sessionCookie}</code> signs you out."
     },
     "security": {

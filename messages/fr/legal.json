@@ -89,6 +89,7 @@
         "language": "<code>{name}</code> – <strong>préférence</strong>. Mémorise si vous avez choisi de consulter le site en anglais ou en français. Il n’est déposé que lorsque vous utilisez le sélecteur de langue, pour une durée d’un an.",
         "viewAs": "<code>{name}</code> – <strong>strictement nécessaire</strong>, réservé à l’équipe {company}. Mémorise l’espace propriétaire qu’un administrateur est en train de consulter. Il est marqué httpOnly et expire à la fin de la session du navigateur."
       },
+      "localStorage": "Si vous fermez la suggestion de lire ce site en français, votre navigateur conserve aussi une petite note dans son stockage local (<code>{name}</code>) afin de ne plus vous la proposer. Elle ne contient aucune donnée personnelle et ne quitte jamais votre appareil.",
       "noTracking": "Nous <strong>n’utilisons pas</strong> de cookies de mesure d’audience, publicitaires ou de suivi, et aucun cookie tiers n’est déposé. Chaque cookie étant soit strictement nécessaire, soit déposé à votre demande, nous n’affichons pas de bandeau de consentement aux cookies. Vous pouvez supprimer les cookies à tout moment dans les paramètres de votre navigateur ; supprimer <code>{sessionCookie}</code> vous déconnecte."
     },
     "security": {

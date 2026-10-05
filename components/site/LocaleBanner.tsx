@@ -9,6 +9,7 @@ import { useLocaleSwitch } from "@/components/site/LanguageToggle";
 import {
   LOCALE_CHOICE_EVENT,
   hasLocaleCookie,
+  LOCALE_SUGGESTION_DISMISSED_KEY,
 } from "@/lib/i18n/localeCookie";
 
 /**
@@ -18,7 +19,7 @@ import {
 const SUGGESTION: Partial<Record<AppLocale, AppLocale>> = { en: "fr" };
 
 /** localStorage key: set once the visitor closes the suggestion. */
-const DISMISSED_KEY = "bv_locale_suggestion";
+const DISMISSED_KEY = LOCALE_SUGGESTION_DISMISSED_KEY;
 /** Let the page's own entrance animations finish first. */
 const SHOW_AFTER_MS = 1200;
 const EASE = [0.22, 1, 0.36, 1] as const;

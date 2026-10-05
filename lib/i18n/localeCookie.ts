@@ -23,6 +23,12 @@ export const LOCALE_COOKIE = "NEXT_LOCALE";
  */
 export const LOCALE_CHOICE_EVENT = "bellavere:locale-choice";
 
+/**
+ * localStorage key the French-suggestion banner sets once it is closed, so it
+ * is not shown again (named in the privacy policy).
+ */
+export const LOCALE_SUGGESTION_DISMISSED_KEY = "bv_locale_suggestion";
+
 const ONE_YEAR = 60 * 60 * 24 * 365;
 
 /** Browser only: remembers the visitor's language choice. */

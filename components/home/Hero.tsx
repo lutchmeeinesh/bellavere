@@ -53,7 +53,7 @@ export function Hero() {
               style={delay(0.25 + i * 0.05)}
             >
               {word}
-              {i < words.length - 1 ? " " : ""}
+              {i < words.length - 1 ? " " : ""}
             </span>
           ))}
         </h1>

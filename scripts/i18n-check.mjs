@@ -68,6 +68,11 @@ const IDENTICAL_KEYS = new Set([
   "home.testimonials.items.deepak.name",
   "home.testimonials.items.nathalie.name",
   "contact.faq.eyebrow",
+  "common.currency.names.EUR",
+  "estimator.types.penthouse.name",
+  "estimator.regions.north.towns",
+  "estimator.regions.east.towns",
+  "estimator.regions.south.towns",
 ]);
 
 let errors = 0;

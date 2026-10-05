@@ -10,7 +10,10 @@ import { ANALYTICS_ENABLED, ANALYTICS_POLICY_DATE } from "@/lib/analytics";
 import { CURRENCY_COOKIE, formatDateLong } from "@/lib/format";
 import { localizedMetadata } from "@/lib/i18n/metadata";
 import { getPageLocale, type LocaleParams } from "@/lib/i18n/server";
-import { LOCALE_COOKIE } from "@/lib/i18n/localeCookie";
+import {
+  LOCALE_COOKIE,
+  LOCALE_SUGGESTION_DISMISSED_KEY,
+} from "@/lib/i18n/localeCookie";
 import { SESSION_COOKIE, VIEW_AS_COOKIE } from "@/lib/session";
 
 /*
@@ -222,6 +225,9 @@ export default async function PrivacyPage({
                 </li>
               ))}
             </ul>
+            <p>
+              {t.rich("cookies.localStorage", { name: LOCALE_SUGGESTION_DISMISSED_KEY, code })}
+            </p>
             <p>
               {ANALYTICS_ENABLED
                 ? tAnalytics.rich("noTracking", {
