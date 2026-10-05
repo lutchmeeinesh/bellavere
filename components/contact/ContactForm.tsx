@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Check } from "lucide-react";
 import { useFormatter, useLocale, useTranslations } from "next-intl";
@@ -10,6 +10,7 @@ import { PUBLIC_EMAIL } from "@/data/site";
 import { Link } from "@/i18n/navigation";
 import { track } from "@/lib/analytics";
 import { CONTACT_LIMITS, EMAIL_PATTERN } from "@/lib/contactLimits";
+import { useEstimatePrefill } from "@/components/estimator/useEstimatePrefill";
 import { Button } from "@/components/ui/Button";
 import {
   Checkbox,
@@ -101,6 +102,37 @@ export function ContactForm() {
   const [errors, setErrors] = useState<FieldErrors>({});
   const [status, setStatus] = useState<"idle" | "sending" | "success">("idle");
   const [submitError, setSubmitError] = useState<string | null>(null);
+
+  // Arriving from the income estimator (/contact?source=estimate&…): pre-fill
+  // the property and a summary of the estimate. The summary follows a
+  // currency switch until the visitor edits it.
+  const estimatePrefill = useEstimatePrefill();
+  const prefillApplied = useRef(false);
+  const prefilledMessage = useRef<string | null>(null);
+  useEffect(() => {
+    if (!estimatePrefill) return;
+    const first = !prefillApplied.current;
+    const previous = prefilledMessage.current;
+    const { message } = estimatePrefill;
+    prefillApplied.current = true;
+    prefilledMessage.current = message;
+    setValues((prev) => {
+      const untouched =
+        (first && prev.message === "") ||
+        (previous !== null && prev.message === previous);
+      return {
+        ...prev,
+        ...(first
+          ? {
+              propertyType: prev.propertyType || estimatePrefill.propertyType,
+              propertyCount:
+                prev.propertyCount || estimatePrefill.propertyCount,
+            }
+          : {}),
+        message: message !== null && untouched ? message : prev.message,
+      };
+    });
+  }, [estimatePrefill]);
 
   /**
    * The visitor's message for an API error code (app/api/contact/route.ts),

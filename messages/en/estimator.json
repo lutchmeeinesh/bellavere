@@ -1,1 +1,210 @@
-{}
+{
+  "meta": {
+    "title": "Rental income estimator for Mauritius",
+    "description": "What could your villa, apartment or penthouse in Mauritius earn as a holiday rental? Five quick questions, an indicative monthly and yearly range — free."
+  },
+  "header": {
+    "eyebrow": "Rental income estimator",
+    "title": "What could your property earn?",
+    "intro": "Five quick questions, about 30 seconds. You’ll see an indicative monthly and yearly range for your property — in euros or rupees — and what stays with you after our fee."
+  },
+  "flow": {
+    "label": "Rental income estimator",
+    "step": "Step {current} of {total}",
+    "progress": "Progress",
+    "back": "Back",
+    "continue": "Continue",
+    "seeEstimate": "See my estimate"
+  },
+  "steps": {
+    "type": {
+      "title": "What kind of property is it?",
+      "hint": "Choose the closest match."
+    },
+    "region": {
+      "title": "Where on the island is it?",
+      "hint": "Rental rates vary from one coast to another."
+    },
+    "bedrooms": {
+      "title": "How many bedrooms does it have?",
+      "hint": "Count the bedrooms your guests can sleep in."
+    },
+    "features": {
+      "title": "What sets it apart?",
+      "hint": "Select all that apply — or none at all."
+    },
+    "availability": {
+      "title": "When can guests stay?",
+      "hint": "Let it all year, or keep some weeks for yourself."
+    }
+  },
+  "types": {
+    "villa": {
+      "name": "Villa",
+      "description": "A house of its own, often with a garden"
+    },
+    "apartment": {
+      "name": "Apartment",
+      "description": "A flat in a residence or building"
+    },
+    "penthouse": {
+      "name": "Penthouse",
+      "description": "A top-floor apartment, usually with a terrace"
+    }
+  },
+  "regions": {
+    "north": {
+      "name": "North",
+      "towns": "Grand Baie, Pereybère",
+      "located": "in the North"
+    },
+    "west": {
+      "name": "West",
+      "towns": "Flic en Flac, Tamarin, Black River",
+      "located": "in the West"
+    },
+    "east": {
+      "name": "East",
+      "towns": "Belle Mare, Trou d’Eau Douce",
+      "located": "in the East"
+    },
+    "south": {
+      "name": "South",
+      "towns": "Bel Ombre",
+      "located": "in the South"
+    },
+    "centre": {
+      "name": "Centre / Other",
+      "towns": "Moka, Curepipe and the rest of the island",
+      "located": "in the centre or elsewhere on the island"
+    }
+  },
+  "bedrooms": {
+    "label": "Bedrooms",
+    "count": "{count, plural, one {# bedroom} other {# bedrooms}}",
+    "countMax": "{count}+ bedrooms",
+    "fewer": "One bedroom fewer",
+    "more": "One bedroom more"
+  },
+  "features": {
+    "items": {
+      "privatePool": {
+        "label": "Private pool",
+        "inSentence": "private pool"
+      },
+      "seaView": {
+        "label": "Sea view",
+        "inSentence": "sea view"
+      },
+      "beachfront": {
+        "label": "Beachfront",
+        "inSentence": "beachfront"
+      },
+      "airCon": {
+        "label": "Air conditioning throughout",
+        "inSentence": "air conditioning throughout"
+      },
+      "housekeeping": {
+        "label": "Housekeeping included",
+        "inSentence": "housekeeping included"
+      }
+    },
+    "count": "{count, plural, =0 {Nothing selected — that’s fine too.} one {# selected} other {# selected}}"
+  },
+  "availability": {
+    "yearRound": {
+      "title": "Rent it year-round",
+      "description": "Open to guests all {weeks} weeks of the year"
+    },
+    "partYear": {
+      "title": "I use it part of the year",
+      "description": "Choose how many weeks guests can book"
+    },
+    "weeksLabel": "Weeks available to guests",
+    "weeks": "{weeks, plural, one {# week} other {# weeks}}",
+    "weeksPerYear": "{weeks, plural, one {# week} other {# weeks}} a year"
+  },
+  "result": {
+    "eyebrow": "Your estimate",
+    "title": "What your property could earn",
+    "change": "Change my answers",
+    "answersLabel": "Your answers",
+    "yearRound": "Year-round",
+    "noFeatures": "No extras",
+    "perMonth": "Per month",
+    "perYear": "Per year",
+    "gross": "Estimated gross rental income",
+    "range": "{low} to {high}",
+    "disclaimer": "Indicative estimate based on regional averages — your free assessment gives the exact figure.",
+    "occupancy": "{yearRound, select, yes {Based on about {occupancy, number, percent} occupancy across the year} other {Based on about {occupancy, number, percent} occupancy over the {weeks, plural, one {# week} other {# weeks}} you make available}} — {high, number, percent} in high season ({highFrom, date, ::MMM}–{highTo, date, ::MMM}), {low, number, percent} in low season ({lowFrom, date, ::MMM}–{lowTo, date, ::MMM}).",
+    "breakdown": {
+      "title": "Where it goes",
+      "period": "A year",
+      "gross": "Estimated gross rental income",
+      "fee": "Bellavere management fee",
+      "feeCap": "max {maxFee, number, percent}",
+      "upTo": "up to",
+      "net": "Estimated net to you",
+      "atLeast": "at least",
+      "note": "Your fee is agreed with you after our first meeting and never exceeds {maxFee, number, percent} of gross rental income. No hidden fees — every cost is itemised on your monthly statement."
+    },
+    "approach": {
+      "title": "How we’d get you there",
+      "items": {
+        "rental": {
+          "title": "Your rental, run end to end",
+          "copy": "Listing, marketing and pricing, enquiries, bookings and guest check-ins — we handle all of it."
+        },
+        "care": {
+          "title": "Guest-ready all year",
+          "copy": "Preventive care, repairs and regular inspections keep your property in good order year-round."
+        },
+        "reporting": {
+          "title": "Every figure in view",
+          "copy": "One contact who knows your property, clear monthly statements, and occupancy and revenue live on your owner dashboard."
+        }
+      }
+    },
+    "cta": {
+      "primary": "Get your exact figure — free assessment",
+      "whatsapp": "Talk it through on WhatsApp",
+      "newTab": "(opens in a new tab)"
+    }
+  },
+  "method": {
+    "eyebrow": "How the estimate works",
+    "title": "Clear assumptions, nothing hidden",
+    "sub": "We show a range — {spread, number, percent} either side of our central figure — because no two properties are alike. Your free assessment replaces it with the real number.",
+    "items": {
+      "rates": {
+        "title": "Regional nightly rates",
+        "copy": "We start from typical nightly rates for your type of property and region, then adjust for bedrooms and for features such as a private pool or a sea view."
+      },
+      "occupancy": {
+        "title": "Seasonal occupancy",
+        "copy": "We assume about {high, number, percent} occupancy in high season ({highFrom, date, ::MMMM} to {highTo, date, ::MMMM}) and {low, number, percent} in low season, spread over the weeks you make available."
+      },
+      "fees": {
+        "title": "Our fee, up front",
+        "copy": "Your management fee is agreed with you and never exceeds {maxFee, number, percent} of gross rental income — so the estimate shows what stays with you."
+      }
+    }
+  },
+  "teaser": {
+    "eyebrow": "Rental income estimator",
+    "title": "What could your property earn?",
+    "pitch": "Five quick questions, about 30 seconds: an indicative monthly and yearly range for your villa, apartment or penthouse.",
+    "formLabel": "Start your estimate",
+    "region": "Where is it?",
+    "anyRegion": "Choose a region",
+    "regionOption": "{name} — {towns}",
+    "bedrooms": "Bedrooms",
+    "action": "Estimate my income",
+    "note": "Free, indicative, no sign-up."
+  },
+  "whatsappMessage": "Hello Bellavere, I’ve just used your income estimator for {type, select, villa {a villa} apartment {an apartment} other {a penthouse}} with {bedrooms} {located}. It suggests {low}–{high} a year. Could we talk about it?",
+  "contactSummary": {
+    "full": "I used the income estimator: {type, select, villa {Villa} apartment {Apartment} other {Penthouse}} {located} ({towns}), {bedrooms}{hasFeatures, select, yes {, {features}} other {}}, {yearRound, select, yes {available year-round} other {available {weeks, plural, one {# week} other {# weeks}} a year}}. Estimate: {low}–{high} a year. I’d like my free assessment.",
+    "short": "I used the income estimator. Estimate: {low}–{high} a year. I’d like my free assessment."
+  }
+}
