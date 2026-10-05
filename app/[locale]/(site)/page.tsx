@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { Hero } from "@/components/home/Hero";
 import { TrustBar } from "@/components/home/TrustBar";
 import { ServicesOverview } from "@/components/home/ServicesOverview";
+import { EstimatorTeaser } from "@/components/home/EstimatorTeaser";
 import { HowItWorks } from "@/components/home/HowItWorks";
 import { DashboardTeaser } from "@/components/home/DashboardTeaser";
 import { Testimonials } from "@/components/home/Testimonials";
@@ -38,6 +39,7 @@ export default async function HomePage({ params }: { params: LocaleParams }) {
       <Hero />
       <TrustBar />
       <ServicesOverview />
+      <EstimatorTeaser />
       <HowItWorks />
       <DashboardTeaser />
       <Testimonials />

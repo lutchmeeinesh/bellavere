@@ -1,1 +1,210 @@
-{}
+{
+  "meta": {
+    "title": "Simulateur de revenus locatifs à l’île Maurice",
+    "description": "Que rapporterait votre villa, votre appartement ou votre penthouse à Maurice en location saisonnière\u00a0? Cinq questions, une fourchette indicative, gratuite."
+  },
+  "header": {
+    "eyebrow": "Simulateur de revenus locatifs",
+    "title": "Combien votre bien pourrait-\u2060il vous rapporter\u00a0?",
+    "intro": "Cinq questions, une trentaine de secondes. Vous obtenez une fourchette indicative de revenus, par mois et par an – en euros ou en roupies –, ainsi que ce qui vous revient après nos frais de gestion."
+  },
+  "flow": {
+    "label": "Simulateur de revenus locatifs",
+    "step": "Étape {current} sur {total}",
+    "progress": "Progression",
+    "back": "Retour",
+    "continue": "Continuer",
+    "seeEstimate": "Voir mon estimation"
+  },
+  "steps": {
+    "type": {
+      "title": "De quel type de bien s’agit-\u2060il\u00a0?",
+      "hint": "Choisissez celui qui correspond le mieux."
+    },
+    "region": {
+      "title": "Où se situe-\u2060t-\u2060il sur l’île\u00a0?",
+      "hint": "Les tarifs varient d’une côte à l’autre."
+    },
+    "bedrooms": {
+      "title": "Combien de chambres compte-\u2060t-\u2060il\u00a0?",
+      "hint": "Comptez les chambres où vos voyageurs peuvent dormir."
+    },
+    "features": {
+      "title": "Qu’est-ce qui le distingue\u00a0?",
+      "hint": "Sélectionnez tout ce qui s’applique – ou rien du tout."
+    },
+    "availability": {
+      "title": "Quand vos voyageurs peuvent-\u2060ils séjourner\u00a0?",
+      "hint": "Louez-le toute l’année, ou gardez quelques semaines pour vous."
+    }
+  },
+  "types": {
+    "villa": {
+      "name": "Villa",
+      "description": "Une maison indépendante, souvent avec jardin"
+    },
+    "apartment": {
+      "name": "Appartement",
+      "description": "Un logement en résidence ou en immeuble"
+    },
+    "penthouse": {
+      "name": "Penthouse",
+      "description": "Un appartement au dernier étage, souvent avec terrasse"
+    }
+  },
+  "regions": {
+    "north": {
+      "name": "Nord",
+      "towns": "Grand Baie, Pereybère",
+      "located": "dans le Nord"
+    },
+    "west": {
+      "name": "Ouest",
+      "towns": "Flic en Flac, Tamarin, Rivière Noire",
+      "located": "dans l’Ouest"
+    },
+    "east": {
+      "name": "Est",
+      "towns": "Belle Mare, Trou d’Eau Douce",
+      "located": "dans l’Est"
+    },
+    "south": {
+      "name": "Sud",
+      "towns": "Bel Ombre",
+      "located": "dans le Sud"
+    },
+    "centre": {
+      "name": "Centre / autre",
+      "towns": "Moka, Curepipe et le reste de l’île",
+      "located": "dans le centre ou ailleurs sur l’île"
+    }
+  },
+  "bedrooms": {
+    "label": "Chambres",
+    "count": "{count, plural, one {# chambre} other {# chambres}}",
+    "countMax": "{count} chambres et plus",
+    "fewer": "Une chambre de moins",
+    "more": "Une chambre de plus"
+  },
+  "features": {
+    "items": {
+      "privatePool": {
+        "label": "Piscine privée",
+        "inSentence": "piscine privée"
+      },
+      "seaView": {
+        "label": "Vue mer",
+        "inSentence": "vue mer"
+      },
+      "beachfront": {
+        "label": "Pieds dans l’eau",
+        "inSentence": "pieds dans l’eau"
+      },
+      "airCon": {
+        "label": "Climatisation dans toutes les pièces",
+        "inSentence": "climatisation dans toutes les pièces"
+      },
+      "housekeeping": {
+        "label": "Ménage inclus",
+        "inSentence": "ménage inclus"
+      }
+    },
+    "count": "{count, plural, =0 {Aucune sélection – c’est très bien aussi.} one {# option sélectionnée} other {# options sélectionnées}}"
+  },
+  "availability": {
+    "yearRound": {
+      "title": "Le louer toute l’année",
+      "description": "Ouvert à la réservation les {weeks} semaines de l’année"
+    },
+    "partYear": {
+      "title": "J’en profite une partie de l’année",
+      "description": "Choisissez le nombre de semaines ouvertes à la réservation"
+    },
+    "weeksLabel": "Semaines ouvertes à la location",
+    "weeks": "{weeks, plural, one {# semaine} other {# semaines}}",
+    "weeksPerYear": "{weeks, plural, one {# semaine} other {# semaines}} par an"
+  },
+  "result": {
+    "eyebrow": "Votre estimation",
+    "title": "Ce que votre bien pourrait vous rapporter",
+    "change": "Modifier mes réponses",
+    "answersLabel": "Vos réponses",
+    "yearRound": "Toute l’année",
+    "noFeatures": "Aucune option",
+    "perMonth": "Par mois",
+    "perYear": "Par an",
+    "gross": "Revenus locatifs bruts estimés",
+    "range": "de {low} à {high}",
+    "disclaimer": "Estimation indicative fondée sur des moyennes régionales – votre évaluation gratuite vous donnera le chiffre exact.",
+    "occupancy": "{yearRound, select, yes {Sur la base d’un taux d’occupation d’environ {occupancy, number, percent} sur l’année} other {Sur la base d’un taux d’occupation d’environ {occupancy, number, percent} sur les {weeks, plural, one {# semaine} other {# semaines}} où votre bien est disponible}} – {high, number, percent} en haute saison (de {highFrom, date, ::MMMM} à {highTo, date, ::MMMM}), {low, number, percent} en basse saison (de {lowFrom, date, ::MMMM} à {lowTo, date, ::MMMM}).",
+    "breakdown": {
+      "title": "Répartition",
+      "period": "Sur un an",
+      "gross": "Revenus locatifs bruts estimés",
+      "fee": "Frais de gestion Bellavere",
+      "feeCap": "{maxFee, number, percent} maximum",
+      "upTo": "jusqu’à",
+      "net": "Net estimé pour vous",
+      "atLeast": "au moins",
+      "note": "Vos frais de gestion sont convenus avec vous après notre premier rendez-vous et ne dépassent jamais {maxFee, number, percent} des revenus locatifs bruts. Aucuns frais cachés\u00a0: chaque dépense figure en détail sur votre relevé mensuel."
+    },
+    "approach": {
+      "title": "Notre méthode pour y parvenir",
+      "items": {
+        "rental": {
+          "title": "Votre location, gérée de A à Z",
+          "copy": "Annonce, promotion et tarifs, demandes, réservations et accueil des voyageurs\u00a0: nous nous occupons de tout."
+        },
+        "care": {
+          "title": "Prêt à accueillir, toute l’année",
+          "copy": "Entretien préventif, réparations et inspections régulières maintiennent votre bien en parfait état tout au long de l’année."
+        },
+        "reporting": {
+          "title": "Tous vos chiffres sous les yeux",
+          "copy": "Un interlocuteur qui connaît votre bien, des relevés mensuels clairs, et votre taux d’occupation comme vos revenus en direct sur votre tableau de bord."
+        }
+      }
+    },
+    "cta": {
+      "primary": "Obtenir le chiffre exact – évaluation gratuite",
+      "whatsapp": "En parler sur WhatsApp",
+      "newTab": "(s’ouvre dans un nouvel onglet)"
+    }
+  },
+  "method": {
+    "eyebrow": "Comment fonctionne l’estimation",
+    "title": "Des hypothèses claires, rien de caché",
+    "sub": "Nous affichons une fourchette – {spread, number, percent} de part et d’autre de notre estimation centrale –, car aucun bien ne ressemble à un autre. Votre évaluation gratuite la remplace par le chiffre réel.",
+    "items": {
+      "rates": {
+        "title": "Des tarifs à la nuit par région",
+        "copy": "Nous partons des tarifs à la nuit habituels pour votre type de bien et votre région, puis nous les ajustons selon le nombre de chambres et les atouts du bien, comme une piscine privée ou la vue mer."
+      },
+      "occupancy": {
+        "title": "Un taux d’occupation saisonnier",
+        "copy": "Nous retenons un taux d’occupation d’environ {high, number, percent} en haute saison (de {highFrom, date, ::MMMM} à {highTo, date, ::MMMM}) et de {low, number, percent} en basse saison, réparti sur les semaines où votre bien est disponible."
+      },
+      "fees": {
+        "title": "Nos frais, en toute transparence",
+        "copy": "Vos frais de gestion sont convenus avec vous et ne dépassent jamais {maxFee, number, percent} des revenus locatifs bruts\u00a0: l’estimation vous montre donc ce qui vous revient."
+      }
+    }
+  },
+  "teaser": {
+    "eyebrow": "Simulateur de revenus locatifs",
+    "title": "Combien votre bien pourrait-\u2060il vous rapporter\u00a0?",
+    "pitch": "Cinq questions, une trentaine de secondes\u00a0: une fourchette indicative de revenus, par mois et par an, pour votre villa, votre appartement ou votre penthouse.",
+    "formLabel": "Commencer votre estimation",
+    "region": "Où se situe votre bien\u00a0?",
+    "anyRegion": "Choisir une région",
+    "regionOption": "{name} – {towns}",
+    "bedrooms": "Chambres",
+    "action": "Estimer mes revenus",
+    "note": "Gratuit, indicatif et sans inscription."
+  },
+  "whatsappMessage": "Bonjour Bellavere, je viens d’utiliser votre simulateur de revenus pour {type, select, villa {une villa} apartment {un appartement} other {un penthouse}} de {bedrooms} {located}\u00a0: il indique de {low} à {high} par an. Pourrions-nous en parler\u00a0?",
+  "contactSummary": {
+    "full": "J’ai utilisé le simulateur de revenus\u00a0: {type, select, villa {villa} apartment {appartement} other {penthouse}} {located} ({towns}), {bedrooms}{hasFeatures, select, yes {, {features}} other {}}, {yearRound, select, yes {disponible toute l’année} other {disponible {weeks, plural, one {# semaine} other {# semaines}} par an}}. Estimation\u00a0: de {low} à {high} par an. Je souhaiterais bénéficier de mon évaluation gratuite.",
+    "short": "J’ai utilisé le simulateur de revenus. Estimation\u00a0: de {low} à {high} par an. Je souhaiterais bénéficier de mon évaluation gratuite."
+  }
+}
