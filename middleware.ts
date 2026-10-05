@@ -1,13 +1,79 @@
 import { NextRequest, NextResponse } from "next/server";
+import { hasLocale } from "next-intl";
+import createIntlMiddleware from "next-intl/middleware";
 import { clients } from "@/data/clients";
 import { admins } from "@/data/admins";
 import { properties } from "@/data/properties";
+import { routing } from "@/i18n/routing";
+import { LOCALE_COOKIE } from "@/lib/i18n/localeCookie";
 import {
   SESSION_COOKIE,
   VIEW_AS_COOKIE,
   isDemoMode,
   verifySession,
 } from "@/lib/session";
+
+const intlMiddleware = createIntlMiddleware(routing);
+
+/**
+ * Two kinds of path go through here:
+ *
+ *  - the owner portal (/login, /dashboard/**, /admin/**): English-only,
+ *    never localized, handled by portalMiddleware() below exactly as before
+ *    Wave 1 (route protection and the portal's real 404s);
+ *  - every other page: the public site, in English (/services) or French
+ *    (/fr/services), handled by next-intl (i18n/routing.ts), which maps
+ *    unprefixed English URLs onto app/[locale] with locale "en". Before
+ *    that, the visitor's language choice (NEXT_LOCALE cookie) sends an
+ *    unprefixed URL to its French version. Explicit /fr URLs are never
+ *    redirected away, and there is no Accept-Language detection.
+ *
+ * The API, Next.js and Vercel internals and files with an extension
+ * (/robots.txt, /sitemap.xml, /icon.svg, /images/...) skip it (see config).
+ */
+export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  if (isPortalPath(pathname)) return portalMiddleware(request);
+
+  const prefix = localePrefixOf(pathname);
+  if (prefix) {
+    // The portal has no French version: /fr/login -> /login.
+    const rest = pathname.slice(prefix.length + 1) || "/";
+    if (isPortalPath(rest)) return redirectTo(request, rest);
+  } else {
+    // Unprefixed public URL: follow the visitor's language choice.
+    const preferred = request.cookies.get(LOCALE_COOKIE)?.value;
+    if (
+      hasLocale(routing.locales, preferred) &&
+      preferred !== routing.defaultLocale
+    ) {
+      return redirectTo(
+        request,
+        `/${preferred}${pathname === "/" ? "" : pathname}`,
+      );
+    }
+  }
+
+  return intlMiddleware(request);
+}
+
+/** "/login", "/dashboard", "/dashboard/...", "/admin", "/admin/...". */
+function isPortalPath(pathname: string): boolean {
+  return pathname === "/login" || /^\/(dashboard|admin)(\/|$)/.test(pathname);
+}
+
+/** The locale a path starts with ("/fr/services" -> "fr"), if any. */
+function localePrefixOf(pathname: string): string | undefined {
+  const first = pathname.split("/")[1];
+  return hasLocale(routing.locales, first) ? first : undefined;
+}
+
+/** Temporary redirect to another path, keeping the query string. */
+function redirectTo(request: NextRequest, pathname: string) {
+  const url = request.nextUrl.clone();
+  url.pathname = pathname;
+  return NextResponse.redirect(url);
+}
 
 /**
  * The pages that exist under app/dashboard (plus the property detail page
@@ -40,7 +106,7 @@ const ADMIN_NOT_FOUND = "/admin/clients/__missing";
  * Also answers unknown pages and other owners' properties with a real 404
  * (see below).
  */
-export async function middleware(request: NextRequest) {
+async function portalMiddleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const rawSession = request.cookies.get(SESSION_COOKIE)?.value;
   const session = await verifySession(rawSession);
@@ -120,5 +186,13 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/admin/:path*", "/login"],
+  matcher: [
+    // The portal, exactly as before Wave 1 (including paths with a dot).
+    "/dashboard/:path*",
+    "/admin/:path*",
+    "/login",
+    // Public pages: everything except the API, Next.js and Vercel
+    // internals, and files with an extension.
+    "/((?!api|_next|_vercel|.*\\..*).*)",
+  ],
 };

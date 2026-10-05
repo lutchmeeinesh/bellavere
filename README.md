@@ -13,7 +13,7 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:3000. Node 20+ required. `npm run build` passes with zero TypeScript/lint errors.
+Open http://localhost:3000 (French: http://localhost:3000/fr). Node 20+ required. `npm run build` passes with zero TypeScript/lint errors.
 
 ## Admin accounts (Bellavere staff)
 
@@ -46,10 +46,14 @@ The login page lists these with one-click "Use" buttons.
 | --- | --- |
 | Design tokens (colors, type, radius, shadows) | `app/globals.css` |
 | Company facts (single source for all placeholder copy) | `data/company.ts` |
+| Site-wide settings: public email, WhatsApp numbers, site URL | `data/site.ts` |
+| Public site (English `/…`, French `/fr/…`) | `app/[locale]/*` |
+| Owner portal and sign-in (English only) | `app/(portal)/*` |
+| Wording, both languages | `messages/<locale>/<namespace>.json` (see "Internationalisation") |
 | Mock data (clients, properties, bookings, tickets, documents) | `data/*.ts` |
 | Derived numbers — charts, KPIs, statements all agree | `lib/metrics.ts` |
 | Auth: signed sessions, hashed passwords, admins | `lib/session.ts`, `lib/password.ts`, `lib/auth.ts`, `data/admins.ts`, `app/api/auth/*`, `middleware.ts` |
-| Admin area | `app/admin/*`, `components/admin/*`, `app/api/admin/view-as` |
+| Admin area | `app/(portal)/admin/*`, `components/admin/*`, `app/api/admin/view-as` |
 | Environment variables | `.env.example` (template), `.env.local` (your secrets, git-ignored) |
 | Shared UI primitives | `components/ui/*` |
 | Automated review script (screenshots + checks) | `scripts/review.mjs` |
@@ -62,18 +66,18 @@ The login page lists these with one-click "Use" buttons.
 | --- | --- | --- |
 | Name | Bellavere (trading name: Bellavere Property Care) | `data/company.ts` |
 | Legal entity | **Bellavere Ltd**, Company No. **238321**, incorporated 19 Aug 2026 in Mauritius as a private company limited by shares (Certificate of Incorporation, CB No 82650) | `data/company.ts` |
-| Enquiries | Contact form emails **BellavereLtd@gmail.com** (via Resend) | `app/api/contact/route.ts` |
+| Enquiries | Contact form emails **BellavereLtd@gmail.com** (via Resend) | `app/api/contact/route.ts`, `PUBLIC_EMAIL` in `data/site.ts` |
 | Team | Krit Goburdhan — General Manager & Site Supervisor; Ankit Dookhorun — Client Relations; Nihal Lutchmee | `data/company.ts` |
 | Contacts | Ankit Dookhorun +230 5531 0734, zoodookhorun@gmail.com · Nihal Lutchmee +230 5817 4529, executive@wwwbellavere.com — both reachable every day, 24/7 | `data/company.ts` (`contacts`) |
 | Response time | Every query answered the same day | `data/company.ts` (`responseTime`) |
 | Social | Instagram and Facebook: bellavere.ltd | `data/company.ts` (`social`) |
-| Company email | BellavereLtd@gmail.com | `data/company.ts` |
+| Company email | BellavereLtd@gmail.com (hello@bellaveremu.com once it has a mailbox: flip `HELLO_MAILBOX_LIVE`) | `PUBLIC_EMAIL` in `data/site.ts` |
 | Mission | "Our mission is to provide the best service while maintaining full transparency. No hidden fees — and there will always be a human to answer you." | `data/company.ts` |
 | Currency | MUR and EUR, visitor chooses | `lib/format.ts` |
 | Fees | Negotiated and set after the first meeting; never more than 15% (each owner's agreed rate drives their statements) | `data/company.ts`, `data/clients.ts` |
 | Onboarding | One to two weeks | `components/contact/FaqAccordion.tsx` |
 | Coverage | All around Mauritius (the client's own map) | `public/images/coverage-map.webp`, About page |
-| Services incl. syndic | From the client's own prospect-list outreach copy | `app/(site)/services/page.tsx` |
+| Services incl. syndic | From the client's own prospect-list outreach copy | `app/[locale]/(site)/services/page.tsx` |
 
 Ankit's and Nihal's emails and both phone numbers are published on the contact page at the client's request. **Krit's email is not published** and is kept only in `data/admins.ts` (server-side) — `data/company.ts` is bundled into browser code, so it must never hold private data. Krit's surname (Goburdhan) was confirmed by the client on 22 Sep 2026.
 
@@ -87,7 +91,7 @@ Ankit's and Nihal's emails and both phone numbers are published on the contact p
 | Tagline | "Your property, perfectly managed." | `data/company.ts` |
 | Bios | written from the confirmed roles | `data/company.ts` |
 | Testimonials | **kept by client decision (22 Sep 2026)** — 3 illustrative quotes (Élise M., Deepak R., Nathalie C. — not real people, not the demo owners). Replace with real quotes, with permission, before the site is public | `data/testimonials.ts` |
-| Legal pages | templates for a lawyer to review; retention periods TODO | `app/(site)/privacy`, `app/(site)/terms` |
+| Legal pages | templates for a lawyer to review; retention periods TODO | `app/[locale]/(site)/privacy`, `app/[locale]/(site)/terms` |
 | Imagery | Unsplash stock (marketing pages + the portal demo) | `data/siteImages.ts`, `data/properties.ts` |
 
 ## Currency (EUR / MUR)
@@ -101,11 +105,27 @@ Ankit's and Nihal's emails and both phone numbers are published on the contact p
 
 ## SEO, legal and spam protection
 
-- `app/sitemap.ts`, `app/robots.ts` (dashboard, admin and API blocked from indexing; the login page carries `noindex`), `app/opengraph-image.tsx`, canonical and Open Graph URLs, and Organization JSON-LD with a logo (`components/site/JsonLd.tsx`).
+- `app/sitemap.ts`, `app/robots.ts` (dashboard, admin and API blocked from indexing; the login page carries `noindex`), `app/[locale]/opengraph-image.tsx` (one per language), canonical, hreflang and Open Graph URLs, and Organization JSON-LD with a logo (`components/site/JsonLd.tsx`).
 - Public pages are prerendered and cached at the edge; the owner and admin portals render per request. `htmlLimitedBots: /.*/` in `next.config.ts` keeps the portals' `<meta>` tags in `<head>`.
 - Security headers and a Content-Security-Policy are set in `next.config.ts`; `instrumentation.ts` logs missing or malformed environment variables at start-up (`[env]` in Vercel → Logs).
-- `/privacy` (Mauritius Data Protection Act 2017 + GDPR) and `/terms` — templates, to be reviewed by a lawyer. No cookie banner: the site sets only a strictly necessary session cookie and the user-requested currency preference. Add a consent banner as soon as analytics or marketing cookies are introduced.
+- `/privacy` (Mauritius Data Protection Act 2017 + GDPR) and `/terms` — templates, to be reviewed by a lawyer. No cookie banner: the site sets only a strictly necessary session cookie and the user-requested currency and language preferences. Add a consent banner as soon as analytics or marketing cookies are introduced.
 - Contact form: honeypot field + IP rate limit (`lib/rateLimit.ts`; in-memory, so use Upstash Redis on Vercel), consent record logged with timestamp.
+
+## Internationalisation (English / French)
+
+The public site is in **English** (default, British English, unprefixed URLs: `/`, `/services`, …) and **French** (`/fr`, `/fr/services`, …), with [next-intl](https://next-intl.dev). The owner portal (`/login`, `/dashboard`, `/admin`) is English only. The full design is in `UPGRADE-PLAN.md`.
+
+- **Locales and URLs**: `i18n/routing.ts` (`as-needed` prefixes, no browser-language redirects). `middleware.ts` maps unprefixed URLs to English, and sends them to French while the `NEXT_LOCALE` cookie says `fr` — a cookie written only when the visitor picks FR in the header switch.
+- **Where text lives**: one JSON file per namespace per locale, `messages/en/<namespace>.json` and `messages/fr/<namespace>.json`: `common` (header, footer, buttons, 404/error pages, company wording, structured data, image alt texts), one per page (`home`, `services`, `about`, `contact`, `legal`), and `estimator`, `whatsapp`, `locale`. Facts (names, phones, emails, numbers) stay in `data/company.ts` and `data/site.ts` and are inserted with placeholders.
+- **Adding a string**: add the key to the English file and the same key to the French file (translated), then use it:
+  - server component: `const t = await getTranslations("services");` (or `useTranslations` in a non-async one) → `t("hero.title")`;
+  - client component: `const t = useTranslations("contact");` — only for namespaces sent to the browser (`CLIENT_NAMESPACES` in `i18n/messages.ts`);
+  - placeholders and rich text: `"Call {name} on {phone}"` → `t("callUs", { name, phone })`; `"See our <link>privacy policy</link>"` → `t.rich("x", { link: (c) => <Link href="/privacy">{c}</Link> })`.
+  Keys are type-checked against the English files, so a typo fails `npx tsc`.
+- **Links, pages, metadata**: import `Link` from `@/i18n/navigation` (never `next/link` on public pages) and write hrefs without a locale; `<Button href>` does this already. Every page under `app/[locale]` starts with `await getPageLocale(params)` (keeps it static) and builds its metadata with `localizedMetadata()` (canonical, hreflang, Open Graph per language).
+- **Numbers and dates**: `useMoney()` and the helpers in `lib/format.ts` take the page's locale ("24 960 €", "Rs 24 960", "22 septembre 2026" in French; English unchanged).
+- **Check**: `npm run i18n:check` — key parity and ICU placeholders between English and French (must be clean), French values still identical to English, and user-facing text still hard-coded in components (`--strict` makes those fail too).
+- **Visual check**: `node scripts/visual-snapshot.mjs <url> <dir>` then `npm run visual:diff -- screenshots/baseline <dir> --ignore-top=72`.
 
 ## Security model
 

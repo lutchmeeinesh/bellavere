@@ -1,9 +1,9 @@
 import Image from "next/image";
 import { ChevronDown } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
-import { company } from "@/data/company";
-import { siteImages } from "@/data/siteImages";
+import { useSiteImages } from "@/lib/i18n/images";
 
 /** Inline animation-delay for the CSS entrance classes in globals.css. */
 const delay = (seconds: number) => ({ animationDelay: `${seconds}s` });
@@ -13,15 +13,21 @@ const delay = (seconds: number) => ({ animationDelay: `${seconds}s` });
  * it; the image runs the slow Ken Burns zoom and the text the entrance
  * animations defined in globals.css. Both are CSS, so the hero paints and
  * animates straight from the server HTML, before JavaScript loads.
+ *
+ * Text: messages `home.hero.*`; the headline is the company tagline and the
+ * buttons the shared actions (`common.company.tagline`, `common.actions.*`).
  */
 export function Hero() {
-  const words = company.tagline.split(" ");
+  const t = useTranslations("home.hero");
+  const tCommon = useTranslations("common");
+  const images = useSiteImages();
+  const words = tCommon("company.tagline").split(" ");
 
   return (
     <section className="relative flex min-h-svh items-center overflow-hidden bg-navy-900">
       <Image
-        src={siteImages.homeHero.src}
-        alt={siteImages.homeHero.alt}
+        src={images.homeHero.src}
+        alt={images.homeHero.alt}
         fill
         priority
         fetchPriority="high"
@@ -36,7 +42,7 @@ export function Hero() {
 
       <Container className="relative z-10 pt-28 pb-24">
         <p className="eyebrow eyebrow-light animate-fade-in mb-6" style={delay(0.1)}>
-          Property management &amp; syndic · Mauritius
+          {t("eyebrow")}
         </p>
 
         <h1 className="max-w-3xl text-white">
@@ -47,7 +53,7 @@ export function Hero() {
               style={delay(0.25 + i * 0.05)}
             >
               {word}
-              {i < words.length - 1 ? " " : ""}
+              {i < words.length - 1 ? " " : ""}
             </span>
           ))}
         </h1>
@@ -56,10 +62,7 @@ export function Hero() {
           className="animate-rise mt-6 max-w-xl text-lg text-white/80"
           style={delay(0.55)}
         >
-          We look after villas, apartments and residences all around
-          Mauritius — no hidden fees, always a real person to
-          answer you, and a live dashboard that shows exactly how your property
-          is performing.
+          {t("intro")}
         </p>
 
         <div
@@ -67,10 +70,10 @@ export function Hero() {
           style={delay(0.7)}
         >
           <Button href="/contact" variant="primary" size="lg">
-            List your property
+            {tCommon("actions.listProperty")}
           </Button>
           <Button href="/login" variant="light" size="lg">
-            Owner login
+            {tCommon("actions.ownerLogin")}
           </Button>
         </div>
       </Container>

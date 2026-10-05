@@ -1,38 +1,23 @@
+import { useLocale, useTranslations } from "next-intl";
 import { company } from "@/data/company";
+import { PUBLIC_EMAIL, SITE_URL } from "@/data/site";
+import { openGraphImagePath } from "@/lib/i18n/metadata";
 
-const SITE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
-).replace(/\/$/, "");
+// Wording: messages `common.jsonLd.services.<id>`.
+const SERVICES = ["rental", "maintenance", "clientCare", "concierge", "syndic"] as const;
 
-const SERVICES = [
-  {
-    name: "Rental management",
-    description:
-      "Holiday-rental management for villas and apartments: listings, pricing, bookings and guest communication.",
-  },
-  {
-    name: "Maintenance",
-    description:
-      "Property maintenance, inspections and supervision of contractors.",
-  },
-  {
-    name: "Client care",
-    description:
-      "A dedicated human point of contact for owners, with transparent monthly statements.",
-  },
-  {
-    name: "Concierge",
-    description: "Concierge services for owners and their guests.",
-  },
-  {
-    name: "Syndic & residence management",
-    description:
-      "Syndic and residence management for co-owned buildings and residences.",
-  },
-];
-
-/** Organization structured data, rendered once in the site layout. */
+/**
+ * Organization structured data, rendered once in the site layout, in the
+ * page's language (names, descriptions and slogan; facts are shared).
+ */
 export function JsonLd() {
+  const t = useTranslations("common");
+  const locale = useLocale();
+  const services = SERVICES.map((id) => ({
+    name: t(`jsonLd.services.${id}.name`),
+    description: t(`jsonLd.services.${id}.description`),
+  }));
+
   const data = {
     "@context": "https://schema.org",
     // TODO: once company.registeredAddress is confirmed, switch back to
@@ -47,7 +32,7 @@ export function JsonLd() {
     foundingDate: company.incorporated,
     identifier: {
       "@type": "PropertyValue",
-      propertyID: "Company number (Registrar of Companies, Mauritius)",
+      propertyID: t("jsonLd.companyNumber"),
       value: company.companyNumber,
     },
     url: SITE_URL,
@@ -58,11 +43,11 @@ export function JsonLd() {
       width: 512,
       height: 512,
     },
-    image: `${SITE_URL}/opengraph-image`,
-    email: company.email,
+    image: `${SITE_URL}${openGraphImagePath(locale)}`,
+    email: PUBLIC_EMAIL,
     ...(company.phone ? { telephone: company.phone } : {}),
-    slogan: company.tagline,
-    description: company.marketLong,
+    slogan: t("company.tagline"),
+    description: t("company.marketLong"),
     address: {
       "@type": "PostalAddress",
       addressCountry: "MU",
@@ -76,6 +61,7 @@ export function JsonLd() {
       name: person.name,
       telephone: person.phone,
       ...(person.email ? { email: person.email } : {}),
+      // schema.org vocabulary, not page text.
       contactType: "customer service",
       areaServed: "MU",
       ...(company.available247
@@ -98,8 +84,8 @@ export function JsonLd() {
         : {}),
     })),
     sameAs: Object.values(company.social).filter(Boolean),
-    knowsAbout: SERVICES.map((service) => service.name),
-    makesOffer: SERVICES.map((service) => ({
+    knowsAbout: services.map((service) => service.name),
+    makesOffer: services.map((service) => ({
       "@type": "Offer",
       itemOffered: {
         "@type": "Service",

@@ -2,14 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { useMoney } from "@/components/currency/CurrencyProvider";
-import { CURRENCIES, type Currency } from "@/lib/format";
+import { CURRENCIES } from "@/lib/format";
 import { cn } from "@/lib/utils";
-
-const LABELS: Record<Currency, { short: string; long: string }> = {
-  EUR: { short: "EUR", long: "Euro (€)" },
-  MUR: { short: "MUR", long: "Mauritian rupee (Rs)" },
-};
 
 /**
  * EUR / MUR segmented switch. `tone="light"` is for dark backgrounds (the
@@ -26,6 +22,7 @@ export function CurrencyToggle({
   className?: string;
 }) {
   const { currency, setCurrency } = useMoney();
+  const t = useTranslations("common.currency");
   const light = tone === "light";
   // On static pages the switch first renders the default currency and jumps
   // to the visitor's saved choice while hydrating. Enable the sliding pill
@@ -39,7 +36,7 @@ export function CurrencyToggle({
   return (
     <div
       role="radiogroup"
-      aria-label="Display currency"
+      aria-label={t("label")}
       className={cn(
         "inline-flex shrink-0 items-center rounded-full border p-0.5 text-xs font-semibold tracking-wide",
         light ? "border-white/30" : "border-sand-300 bg-white",
@@ -54,8 +51,8 @@ export function CurrencyToggle({
             type="button"
             role="radio"
             aria-checked={active}
-            aria-label={LABELS[code].long}
-            title={LABELS[code].long}
+            aria-label={t(`names.${code}`)}
+            title={t(`names.${code}`)}
             onClick={() => {
               if (!active) setCurrency(code);
             }}
@@ -80,7 +77,8 @@ export function CurrencyToggle({
                 transition={{ duration: 0.25, ease: "easeOut" }}
               />
             ) : null}
-            <span className="relative">{LABELS[code].short}</span>
+            {/* The ISO code itself ("EUR", "MUR") in every language. */}
+            <span className="relative">{code}</span>
           </button>
         );
       })}

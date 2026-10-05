@@ -1,4 +1,10 @@
 import type { NextConfig } from "next";
+// Must come before next-intl/plugin (see the file).
+import "./i18n/swc-native-cache.cjs";
+import createNextIntlPlugin from "next-intl/plugin";
+
+/** next-intl: points `next-intl/config` at the request configuration. */
+const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 
 /**
  * Content Security Policy, sent as a static header. It deliberately uses
@@ -67,4 +73,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);

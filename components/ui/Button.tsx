@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { LocaleLink } from "@/components/i18n/LocaleLink";
 import { cn } from "@/lib/utils";
 
 type ButtonVariant = "primary" | "dark" | "outline" | "light" | "ghost";
@@ -51,12 +51,15 @@ export function Button(props: ButtonAsButton | ButtonAsLink) {
     className
   );
 
+  // Internal hrefs are written without a locale ("/contact"); the link adds
+  // the page's locale ("/fr/contact"). Portal paths and external, mailto:,
+  // tel: and #anchor links are left as they are.
   if ("href" in rest && typeof rest.href === "string") {
     const { href, target } = rest as ButtonAsLink;
     return (
-      <Link href={href} target={target} className={classes}>
+      <LocaleLink href={href} target={target} className={classes}>
         {children}
-      </Link>
+      </LocaleLink>
     );
   }
 

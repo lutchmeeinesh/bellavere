@@ -1,7 +1,15 @@
-import Link from "next/link";
+"use client";
+
+import { useTranslations } from "next-intl";
+import { LocaleLink } from "@/components/i18n/LocaleLink";
+import { company } from "@/data/company";
 import { cn } from "@/lib/utils";
 
-/** Bellavere wordmark: small gold lozenge + Cormorant wordmark. */
+/**
+ * Bellavere wordmark: small gold lozenge + Cormorant wordmark. A client
+ * component so the English-only portal can render it too: the link and its
+ * label follow the language of the NextIntlClientProvider above it.
+ */
 export function Logo({
   dark = false,
   href = "/",
@@ -12,14 +20,15 @@ export function Logo({
   href?: string;
   className?: string;
 }) {
+  const t = useTranslations("common.logo");
   return (
-    <Link
+    <LocaleLink
       href={href}
       className={cn(
         "inline-flex items-center gap-2.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold-500",
         className
       )}
-      aria-label="Bellavere — home"
+      aria-label={t("label", { company: company.name })}
     >
       <svg
         width="18"
@@ -53,8 +62,8 @@ export function Logo({
           dark ? "text-white" : "text-navy-900"
         )}
       >
-        Bellavere
+        {company.name}
       </span>
-    </Link>
+    </LocaleLink>
   );
 }

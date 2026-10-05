@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Check } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Container } from "@/components/ui/Container";
 import { Reveal, RevealItem, RevealStagger } from "@/components/ui/Reveal";
 import { cn } from "@/lib/utils";
@@ -10,7 +11,8 @@ type IconComponent = React.ComponentType<React.SVGProps<SVGSVGElement>>;
  * Full-width service section: image on one side, copy + "What's included"
  * checklist + a gold detail chip on the other. Sides alternate down the
  * services page via `imageSide`; `tinted` swaps the background to sand-100
- * for editorial rhythm.
+ * for editorial rhythm. The copy arrives as props, already translated (the
+ * page reads `services.sections.*`); only the checklist label is read here.
  */
 export function ServiceSection({
   id,
@@ -38,6 +40,7 @@ export function ServiceSection({
   /** Set on the first section: its photo is the page's largest early image. */
   priority?: boolean;
 }) {
+  const t = useTranslations("services.serviceSection");
   return (
     <section
       id={id}
@@ -78,7 +81,7 @@ export function ServiceSection({
 
             <Reveal delay={0.12}>
               <p className="mt-9 text-xs font-semibold tracking-(--tracking-label) text-navy-900 uppercase">
-                What&rsquo;s included
+                {t("included")}
               </p>
             </Reveal>
             <RevealStagger

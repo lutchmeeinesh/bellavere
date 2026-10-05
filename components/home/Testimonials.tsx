@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion, useReducedMotion, type PanInfo } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
@@ -14,9 +15,11 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 
 /**
  * Draggable testimonial carousel. Auto-advances every 6s, pauses on hover
- * and focus, and never auto-advances under prefers-reduced-motion.
+ * and focus, and never auto-advances under prefers-reduced-motion. Text:
+ * messages `home.testimonials.*` (the order comes from data/testimonials.ts).
  */
 export function Testimonials() {
+  const t = useTranslations("home.testimonials");
   const reduceMotion = useReducedMotion();
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -45,16 +48,16 @@ export function Testimonials() {
     <section className="bg-white py-24 lg:py-32">
       <Container>
         <SectionHeading
-          eyebrow="Owners' words"
-          title="In their own words"
+          eyebrow={t("eyebrow")}
+          title={t("title")}
           align="center"
         />
 
         <Reveal delay={0.1}>
           <div
             role="group"
-            aria-roledescription="carousel"
-            aria-label="Owner testimonials"
+            aria-roledescription={t("carousel.roleDescription")}
+            aria-label={t("carousel.label")}
             className="mx-auto mt-12 max-w-3xl"
             onMouseEnter={() => setPaused(true)}
             onMouseLeave={() => setPaused(false)}
@@ -75,9 +78,9 @@ export function Testimonials() {
                     : { duration: 0.5, ease: EASE }
                 }
               >
-                {testimonials.map((t, i) => (
+                {testimonials.map((testimonial, i) => (
                   <figure
-                    key={t.name}
+                    key={testimonial.id}
                     aria-hidden={i !== index}
                     className="w-full shrink-0 px-2 text-center sm:px-8"
                   >
@@ -89,12 +92,16 @@ export function Testimonials() {
                     </span>
                     <blockquote className="mt-2">
                       <p className="font-serif text-2xl leading-snug text-navy-900 lg:text-3xl">
-                        {t.quote}
+                        {t(`items.${testimonial.id}.quote`)}
                       </p>
                     </blockquote>
                     <figcaption className="mt-8">
-                      <p className="font-medium text-ink-900">{t.name}</p>
-                      <p className="mt-1 text-sm text-ink-500">{t.role}</p>
+                      <p className="font-medium text-ink-900">
+                        {t(`items.${testimonial.id}.name`)}
+                      </p>
+                      <p className="mt-1 text-sm text-ink-500">
+                        {t(`items.${testimonial.id}.role`)}
+                      </p>
                     </figcaption>
                   </figure>
                 ))}
@@ -105,18 +112,18 @@ export function Testimonials() {
             <div className="mt-10 flex items-center justify-center gap-6">
               <button
                 type="button"
-                aria-label="Previous testimonial"
+                aria-label={t("carousel.previous")}
                 onClick={() => goTo(index - 1)}
                 className="flex size-10 items-center justify-center rounded-full border border-sand-300 text-navy-900 transition-colors duration-200 hover:border-navy-900"
               >
                 <ChevronLeft className="size-5" aria-hidden />
               </button>
               <div className="flex items-center gap-2.5">
-                {testimonials.map((t, i) => (
+                {testimonials.map((testimonial, i) => (
                   <button
-                    key={t.name}
+                    key={testimonial.id}
                     type="button"
-                    aria-label={`Go to testimonial ${i + 1} of ${count}`}
+                    aria-label={t("carousel.goTo", { index: i + 1, count })}
                     aria-current={i === index ? "true" : undefined}
                     onClick={() => goTo(i)}
                     className={cn(
@@ -130,7 +137,7 @@ export function Testimonials() {
               </div>
               <button
                 type="button"
-                aria-label="Next testimonial"
+                aria-label={t("carousel.next")}
                 onClick={() => goTo(index + 1)}
                 className="flex size-10 items-center justify-center rounded-full border border-sand-300 text-navy-900 transition-colors duration-200 hover:border-navy-900"
               >

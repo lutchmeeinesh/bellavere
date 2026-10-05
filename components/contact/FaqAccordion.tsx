@@ -3,53 +3,46 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
+import { useFormatter, useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { company } from "@/data/company";
 
-type FaqItem = {
-  id: string;
-  question: string;
-  answer: string;
-};
+/**
+ * The questions in display order: `id` builds the trigger and panel ids,
+ * `key` finds the wording in messages (`contact.faq.items.<key>`).
+ */
+const FAQ_ITEMS = [
+  { id: "fees", key: "fees" },
+  { id: "reply", key: "reply" },
+  { id: "payouts", key: "payouts" },
+  { id: "own-use", key: "ownUse" },
+  { id: "onboarding", key: "onboarding" },
+] as const;
 
-const FAQ_ITEMS: FaqItem[] = [
-  {
-    id: "fees",
-    question: "What does Bellavere charge?",
-    answer: company.pricing.detail,
-  },
-  {
-    id: "reply",
-    question: "How quickly will you get back to me?",
-    answer: `The same day — every query, every time. ${company.contacts
-      .map((person) => person.name.split(" ")[0])
-      .join(
-        " and ",
-      )} can be reached every day, 24/7, on the numbers on this page.`,
-  },
-  {
-    id: "payouts",
-    question: "When do I get paid?",
-    answer:
-      "Every month you receive a full statement — gross income, our fee and any expenses, line by line. Payout timing is set out in your management agreement.",
-  },
-  {
-    id: "own-use",
-    question: "Can I still use my property?",
-    answer:
-      "Of course — it’s your home. Talk to your client-relations contact about the dates you need; how owner stays work is set out in your management agreement.",
-  },
-  {
-    id: "onboarding",
-    question: "How fast is onboarding?",
-    answer:
-      "One to two weeks from our first meeting. In that time we inspect the property, agree your fee and set up your listing.",
-  },
-];
+type FaqKey = (typeof FAQ_ITEMS)[number]["key"];
 
 /** Accessible one-open-at-a-time FAQ accordion with animated panels. */
 export function FaqAccordion({ className }: { className?: string }) {
+  const t = useTranslations("contact.faq");
+  const tc = useTranslations("common");
+  const format = useFormatter();
   const [openId, setOpenId] = useState<string | null>(FAQ_ITEMS[0].id);
+
+  // The fee answer is the company's pricing wording; the reply answer names
+  // the contacts on this page ("Ankit and Nihal").
+  const answers: Record<FaqKey, string> = {
+    fees: tc("company.pricing.detail", {
+      maxFee: company.pricing.maxFeeRate,
+    }),
+    reply: t("items.reply.answer", {
+      names: format.list(
+        company.contacts.map((person) => person.name.split(" ")[0]),
+      ),
+    }),
+    payouts: t("items.payouts.answer"),
+    ownUse: t("items.ownUse.answer"),
+    onboarding: t("items.onboarding.answer"),
+  };
 
   return (
     <div className={cn("border-t border-sand-300", className)}>
@@ -76,7 +69,7 @@ export function FaqAccordion({ className }: { className?: string }) {
                     open ? "text-gold-700" : "text-navy-900",
                   )}
                 >
-                  {item.question}
+                  {t(`items.${item.key}.question`)}
                 </span>
                 <ChevronDown
                   aria-hidden
@@ -100,7 +93,9 @@ export function FaqAccordion({ className }: { className?: string }) {
                   transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
                   className="overflow-hidden"
                 >
-                  <p className="max-w-2xl pb-6 text-ink-500">{item.answer}</p>
+                  <p className="max-w-2xl pb-6 text-ink-500">
+                    {answers[item.key]}
+                  </p>
                 </motion.div>
               ) : null}
             </AnimatePresence>

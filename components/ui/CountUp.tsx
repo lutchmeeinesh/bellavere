@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useInView, useReducedMotion } from "framer-motion";
+import type { AppLocale } from "@/i18n/routing";
+import { formatNumber } from "@/lib/format";
 
 /**
  * Number that counts up from 0 when it scrolls into view. The real figure is
@@ -14,6 +16,7 @@ export function CountUp({
   prefix = "",
   suffix = "",
   duration = 1.8,
+  locale = "en",
   className,
 }: {
   value: number;
@@ -21,6 +24,8 @@ export function CountUp({
   prefix?: string;
   suffix?: string;
   duration?: number;
+  /** Digit grouping: "1,234" (en) or "1 234" (fr). */
+  locale?: AppLocale;
   className?: string;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
@@ -47,11 +52,7 @@ export function CountUp({
     return () => cancelAnimationFrame(frame);
   }, [inView, value, duration, reduceMotion]);
 
-  const format = (n: number) =>
-    n.toLocaleString("en-GB", {
-      minimumFractionDigits: decimals,
-      maximumFractionDigits: decimals,
-    });
+  const format = (n: number) => formatNumber(n, locale, decimals);
 
   return (
     <span ref={ref} className={className}>

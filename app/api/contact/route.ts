@@ -1,6 +1,10 @@
 import { createHash } from "node:crypto";
 import { NextResponse } from "next/server";
+import { createTranslator, hasLocale } from "next-intl";
 import { company } from "@/data/company";
+import { PUBLIC_EMAIL } from "@/data/site";
+import { getAllMessages } from "@/i18n/messages";
+import { routing, type AppLocale } from "@/i18n/routing";
 import {
   methodNotAllowed,
   readJsonObject,
@@ -22,8 +26,9 @@ import { CONTACT_LIMITS, EMAIL_PATTERN } from "@/lib/contactLimits";
  *                       an error (with direct contacts) instead of silently
  *                       dropping enquiries. In development the enquiry is
  *                       only logged.
- *   CONTACT_TO_EMAIL    recipient; defaults to company.email
- *                       (BellavereLtd@gmail.com).
+ *   CONTACT_TO_EMAIL    recipient; defaults to PUBLIC_EMAIL (data/site.ts,
+ *                       BellavereLtd@gmail.com until hello@bellaveremu.com
+ *                       has a mailbox).
  *   CONTACT_FROM_EMAIL  sender; defaults to Resend's shared test sender,
  *                       which can only deliver to the email address the
  *                       Resend account was created with. Once a domain is
@@ -36,7 +41,26 @@ import { CONTACT_LIMITS, EMAIL_PATTERN } from "@/lib/contactLimits";
  * shown the direct email and phone numbers (the real safeguard) and the
  * enquiry is written to the runtime log — a short-term net only: Vercel keeps
  * runtime logs for about 1 hour on Hobby and 1 day on Pro.
+ *
+ * Every error answer is { ok: false, code, error }: `code` is a stable
+ * ContactErrorCode, which the form (components/contact/ContactForm.tsx)
+ * shows in the visitor's language (messages `contact.form.errors.*`, with
+ * the direct contacts); `error` stays English text for any other client.
+ * The body may carry the page's `locale` ("en" | "fr"; anything else is
+ * ignored): the enquiry email shows the enquirer's language, and the
+ * consent record holds the consent sentence in the language they saw.
  */
+
+/** Machine-readable reason of every error answer (see above). */
+export type ContactErrorCode =
+  | "invalid_request"
+  | "missing_fields"
+  | "too_long"
+  | "rate_limited"
+  | "delivery_failed"
+  | "unsupported"
+  | "forbidden"
+  | "method_not_allowed";
 
 type Enquiry = {
   receivedAt: string;
@@ -46,17 +70,61 @@ type Enquiry = {
   propertyType: string | null;
   propertyCount: string | null;
   message: string;
+  /** The language of the page the enquiry was sent from, if known. */
+  locale: AppLocale | null;
 };
 
 const RATE_LIMIT = { limit: 5, windowMs: 10 * 60 * 1000 };
 
-const CONSENT_TEXT =
-  "I agree to be contacted about my enquiry, as described in the privacy policy";
+/** Language names for the team (the enquiry email is always in English). */
+const LANGUAGE_NAMES: Record<AppLocale, string> = {
+  en: "English",
+  fr: "French",
+};
+
+/**
+ * The consent sentence next to the form's checkbox, as plain text, in the
+ * language the visitor saw it in (messages `contact.form.consent`).
+ */
+function consentText(locale: AppLocale): string {
+  const t = createTranslator({
+    locale,
+    messages: getAllMessages(locale),
+    namespace: "contact.form",
+  });
+  return t.markup("consent", { link: (chunks) => chunks });
+}
 
 /** Offered whenever an enquiry cannot be delivered, so no lead is lost. */
-const DIRECT_CONTACT = `Please email ${company.email} or call ${company.contacts
+const DIRECT_CONTACT = `Please email ${PUBLIC_EMAIL} or call ${company.contacts
   .map((person) => `${person.name.split(" ")[0]} on ${person.phone}`)
   .join(" or ")} — we answer the same day.`;
+
+function errorResponse(
+  code: ContactErrorCode,
+  error: string,
+  init: { status: number; headers?: HeadersInit },
+): NextResponse {
+  return NextResponse.json({ ok: false, code, error }, init);
+}
+
+/**
+ * A refusal from the shared helpers in lib/http.ts (also used by the
+ * sign-in route) with this route's error code added; status, headers and
+ * text unchanged.
+ */
+async function withCode(
+  response: NextResponse,
+  code: ContactErrorCode,
+): Promise<NextResponse> {
+  const body = (await response.json().catch(() => null)) as {
+    error?: string;
+  } | null;
+  return errorResponse(code, body?.error ?? "", {
+    status: response.status,
+    headers: response.headers,
+  });
+}
 
 /** Short, non-reversible IP fingerprint for the consent record. */
 function hashIp(ip: string): string {
@@ -85,6 +153,7 @@ function emailContent(enquiry: Enquiry, consentAt: string) {
     ["Phone", enquiry.phone ?? "—"],
     ["Property type", enquiry.propertyType ?? "—"],
     ["Number of properties", enquiry.propertyCount ?? "—"],
+    ["Language", enquiry.locale ? LANGUAGE_NAMES[enquiry.locale] : "—"],
   ];
   const text = [
     "New enquiry from the Bellavere website",
@@ -139,7 +208,7 @@ async function deliver(enquiry: Enquiry, consentAt: string): Promise<boolean> {
         from:
           process.env.CONTACT_FROM_EMAIL ||
           "Bellavere website <onboarding@resend.dev>",
-        to: [process.env.CONTACT_TO_EMAIL || company.email],
+        to: [process.env.CONTACT_TO_EMAIL || PUBLIC_EMAIL],
         reply_to: enquiry.email,
         subject: oneLine(`New enquiry from ${enquiry.name}`).slice(0, 150),
         text,
@@ -159,15 +228,16 @@ export async function POST(request: Request) {
   // Only same-site JSON requests (see lib/http.ts): stops other sites from
   // posting through their visitors' browsers and using up the daily email
   // quota.
-  const refused = requireJson(request) ?? requireSameOrigin(request);
-  if (refused) return refused;
+  const notJson = requireJson(request);
+  if (notJson) return withCode(notJson, "unsupported");
+  const crossSite = requireSameOrigin(request);
+  if (crossSite) return withCode(crossSite, "forbidden");
 
   const body = await readJsonObject(request);
   if (!body) {
-    return NextResponse.json(
-      { ok: false, error: "Invalid request body." },
-      { status: 400 },
-    );
+    return errorResponse("invalid_request", "Invalid request body.", {
+      status: 400,
+    });
   }
 
   // Honeypot (hp_extra, hidden from humans) filled: pretend success so bots
@@ -188,6 +258,8 @@ export async function POST(request: Request) {
   const propertyType = oneLine(str(body.propertyType));
   const propertyCount = oneLine(str(body.propertyCount));
   const message = str(body.message).trim();
+  // Optional; an unknown value is ignored rather than refused (no lost lead).
+  const locale = hasLocale(routing.locales, body.locale) ? body.locale : null;
 
   const tooLong =
     name.length > CONTACT_LIMITS.name ||
@@ -198,11 +270,9 @@ export async function POST(request: Request) {
     message.length > CONTACT_LIMITS.message;
 
   if (tooLong) {
-    return NextResponse.json(
-      {
-        ok: false,
-        error: `Part of your message is too long — please shorten it (messages up to ${CONTACT_LIMITS.message.toLocaleString("en-GB")} characters). ${DIRECT_CONTACT}`,
-      },
+    return errorResponse(
+      "too_long",
+      `Part of your message is too long — please shorten it (messages up to ${CONTACT_LIMITS.message.toLocaleString("en-GB")} characters). ${DIRECT_CONTACT}`,
       { status: 400 },
     );
   }
@@ -213,8 +283,9 @@ export async function POST(request: Request) {
     !message ||
     body.consent !== true
   ) {
-    return NextResponse.json(
-      { ok: false, error: "Please complete the required fields." },
+    return errorResponse(
+      "missing_fields",
+      "Please complete the required fields.",
       { status: 400 },
     );
   }
@@ -224,11 +295,9 @@ export async function POST(request: Request) {
   const ip = getClientIp(request);
   const limited = rateLimit(`contact:${ip}`, RATE_LIMIT);
   if (!limited.ok) {
-    return NextResponse.json(
-      {
-        ok: false,
-        error: `You’ve sent several messages in a short time. Please wait a few minutes and try again. ${DIRECT_CONTACT}`,
-      },
+    return errorResponse(
+      "rate_limited",
+      `You’ve sent several messages in a short time. Please wait a few minutes and try again. ${DIRECT_CONTACT}`,
       { status: 429, headers: { "Retry-After": String(limited.retryAfter) } },
     );
   }
@@ -242,13 +311,16 @@ export async function POST(request: Request) {
     propertyType: propertyType || null,
     propertyCount: propertyCount || null,
     message,
+    locale,
   };
 
-  // Consent trail (see the privacy policy): what was agreed, when, and a
+  // Consent trail (see the privacy policy): what was agreed (in the
+  // language shown; English if the client did not say), when, and a
   // truncated hash of the IP rather than the raw address.
   const consentRecord = {
     consent: true,
-    consentText: CONSENT_TEXT,
+    consentText: consentText(locale ?? routing.defaultLocale),
+    locale,
     timestamp: receivedAt,
     ipHash: hashIp(ip),
   };
@@ -259,11 +331,9 @@ export async function POST(request: Request) {
   } catch (error) {
     // Short-term record in the runtime log (kept ~1 h on Hobby, 1 day on Pro).
     console.error("[contact] Delivery failed:", error, "Enquiry:", enquiry);
-    return NextResponse.json(
-      {
-        ok: false,
-        error: `We couldn’t send your message just now. ${DIRECT_CONTACT}`,
-      },
+    return errorResponse(
+      "delivery_failed",
+      `We couldn’t send your message just now. ${DIRECT_CONTACT}`,
       { status: 502 },
     );
   }
@@ -271,8 +341,12 @@ export async function POST(request: Request) {
   return NextResponse.json({ ok: true });
 }
 
-// Anything but POST: a JSON 405 with "Allow: POST".
-export const GET = methodNotAllowed();
-export const PUT = methodNotAllowed();
-export const PATCH = methodNotAllowed();
-export const DELETE = methodNotAllowed();
+// Anything but POST: a JSON 405 with "Allow: POST" (and its error code).
+const notAllowed = methodNotAllowed();
+function refuseMethod() {
+  return withCode(notAllowed(), "method_not_allowed");
+}
+export const GET = refuseMethod;
+export const PUT = refuseMethod;
+export const PATCH = refuseMethod;
+export const DELETE = refuseMethod;

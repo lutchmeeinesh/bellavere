@@ -1,0 +1,177 @@
+{
+  "meta": {
+    "defaultTitle": "Bellavere — Property Management & Syndic Services in Mauritius",
+    "description": "Bellavere looks after villas, apartments and residences across Mauritius: rentals, maintenance, syndic services, client care, concierge and a live owner dashboard."
+  },
+  "nav": {
+    "label": "Main navigation",
+    "mobileLabel": "Mobile navigation",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "home": "Home",
+    "services": "Services",
+    "estimate": "Estimate my income",
+    "about": "About",
+    "contact": "Contact"
+  },
+  "actions": {
+    "ownerLogin": "Owner login",
+    "listProperty": "List your property",
+    "contactUs": "Contact us"
+  },
+  "logo": {
+    "label": "{company} — home"
+  },
+  "currency": {
+    "label": "Display currency",
+    "names": {
+      "EUR": "Euro (€)",
+      "MUR": "Mauritian rupee (Rs)"
+    },
+    "conversionNote": "Rupee amounts are converted from euros at {rate} for information."
+  },
+  "footer": {
+    "blurb": "{tagline} Property management and syndic services all around Mauritius — north, south, east, west and the central plateau.",
+    "callUs": "Call us — {hours}",
+    "columns": {
+      "company": "Company",
+      "services": "Services",
+      "owners": "Owners"
+    },
+    "links": {
+      "about": "About us",
+      "contact": "Contact",
+      "ownerLogin": "Owner login",
+      "listProperty": "List your property",
+      "ownerFaq": "Owner FAQ"
+    },
+    "copyright": "© {year} {legalName}. All rights reserved.",
+    "registration": "Company No. {number} · {country}",
+    "privacy": "Privacy policy",
+    "terms": "Terms of use",
+    "demoNote": "The owner-portal demo uses sample accounts and figures."
+  },
+  "social": {
+    "instagram": "{company} on Instagram",
+    "facebook": "{company} on Facebook",
+    "linkedin": "{company} on LinkedIn",
+    "newTab": "{label} (opens in a new tab)"
+  },
+  "serviceNames": {
+    "rental": "Rental management",
+    "maintenance": "Maintenance",
+    "clientCare": "Client care",
+    "concierge": "Concierge & services",
+    "syndic": "Syndic & residences"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "heading": "Lost at sea?",
+    "body": "The page you’re looking for has drifted off with the tide. The coast, happily, is easy to find again.",
+    "home": "Back to the beach house",
+    "contact": "Contact us"
+  },
+  "error": {
+    "eyebrow": "Something went wrong",
+    "heading": "Sorry, this page didn’t load",
+    "body": "Something on our side stopped it from loading. Please try again — and if it keeps happening, a real person is always there to help.",
+    "tryAgain": "Try again",
+    "home": "Back to the home page",
+    "contact": "Contact us",
+    "callUs": "Call us",
+    "callUsHours": "Call us — {hours}",
+    "writeTo": "or write to <link>{email}</link>",
+    "reference": "Reference: {digest}"
+  },
+  "company": {
+    "tagline": "Your property, perfectly managed.",
+    "market": "Across Mauritius",
+    "marketLong": "Villas, apartments and residences across Mauritius — north, west, east, south and the central plateau.",
+    "country": "Mauritius",
+    "companyType": "private company limited by shares",
+    "hours": "Every day, 24/7",
+    "hoursInline": "every day, 24/7",
+    "responseTime": "the same day",
+    "mission": "Our mission is to provide the best service while maintaining full transparency. No hidden fees — and there will always be a human to answer you.",
+    "pricing": {
+      "short": "Negotiable — never more than {maxFee, number, percent}",
+      "model": "a fee agreed with you after our first meeting, never more than {maxFee, number, percent} of gross rental income",
+      "detail": "Your management fee is negotiated with you and set after our first meeting — it never exceeds {maxFee, number, percent} of gross rental income. No hidden fees: every cost is itemised on your monthly statement."
+    },
+    "team": {
+      "krit": {
+        "role": "General Manager & Site Supervisor",
+        "bio": "Runs Bellavere day to day and is on site in person — supervising maintenance, inspections and every contractor who works on your property."
+      },
+      "ankit": {
+        "role": "Client Relations",
+        "bio": "Your first point of contact for statements, bookings and questions — reachable every day, 24/7, and never a chatbot."
+      },
+      "nihal": {
+        "bio": "Reachable every day, 24/7, on {phone}."
+      }
+    },
+    "commitments": {
+      "hiddenFees": {
+        "label": "Hidden fees"
+      },
+      "reachable": {
+        "display": "24/7",
+        "label": "Always reachable"
+      },
+      "sameDay": {
+        "display": "Same day",
+        "label": "Every query answered"
+      },
+      "human": {
+        "label": "Human answers, no bots"
+      }
+    }
+  },
+  "jsonLd": {
+    "companyNumber": "Company number (Registrar of Companies, Mauritius)",
+    "services": {
+      "rental": {
+        "name": "Rental management",
+        "description": "Holiday-rental management for villas and apartments: listings, pricing, bookings and guest communication."
+      },
+      "maintenance": {
+        "name": "Maintenance",
+        "description": "Property maintenance, inspections and supervision of contractors."
+      },
+      "clientCare": {
+        "name": "Client care",
+        "description": "A dedicated human point of contact for owners, with transparent monthly statements."
+      },
+      "concierge": {
+        "name": "Concierge",
+        "description": "Concierge services for owners and their guests."
+      },
+      "syndic": {
+        "name": "Syndic & residence management",
+        "description": "Syndic and residence management for co-owned buildings and residences."
+      }
+    }
+  },
+  "og": {
+    "alt": "{company} — {tagline}",
+    "line": "Property management & syndic services · Mauritius"
+  },
+  "images": {
+    "homeHero": "Contemporary white villa and pool in tropical sunshine",
+    "loginBackdrop": "Contemporary villa with a long pool in bright sunshine",
+    "dashboardTeaser": "Contemporary beach house perched above breaking waves",
+    "finalCta": "Aerial view of a wave breaking on white sand",
+    "services": {
+      "rental": "Contemporary white villa with a long swimming pool",
+      "maintenance": "Infinity pool framed by palm trees above the ocean",
+      "clientCare": "Modern open-plan living room with a pale sofa and timber feature wall",
+      "concierge": "Resort pool reflecting warm lights at dusk",
+      "syndic": "Low-rise white residence with a shared pool and palm trees at dusk"
+    },
+    "about": {
+      "story": "Calm beach at sunrise with gentle waves",
+      "coast": "White-sand beach with a palm tree and a thatched parasol"
+    }
+  }
+}

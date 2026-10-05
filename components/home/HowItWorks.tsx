@@ -1,33 +1,24 @@
+import { useTranslations } from "next-intl";
 import { Container } from "@/components/ui/Container";
 import { RevealItem, RevealStagger } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 
+// Title and copy of each step: messages `home.howItWorks.steps.<id>`.
 const STEPS = [
-  {
-    number: "01",
-    title: "Onboard",
-    copy: "We meet you, inspect your property, agree your fee and set up your listing — onboarding takes one to two weeks.",
-  },
-  {
-    number: "02",
-    title: "We manage",
-    copy: "Guests welcomed, upkeep handled, statements prepared — one team runs the whole operation.",
-  },
-  {
-    number: "03",
-    title: "You watch it grow",
-    copy: "Occupancy, revenue and maintenance, live on your owner dashboard — from Paris, London or the beach house next door.",
-  },
-];
+  { id: "onboard", number: "01" },
+  { id: "manage", number: "02" },
+  { id: "grow", number: "03" },
+] as const;
 
 /** Three-step horizontal timeline; stacks vertically on mobile. */
 export function HowItWorks() {
+  const t = useTranslations("home.howItWorks");
   return (
     <section className="py-24 lg:py-32">
       <Container>
         <SectionHeading
-          eyebrow="How it works"
-          title="Three steps to an effortless property"
+          eyebrow={t("eyebrow")}
+          title={t("title")}
           align="center"
         />
         <RevealStagger className="mt-16 grid gap-12 md:grid-cols-3 md:gap-8">
@@ -45,9 +36,9 @@ export function HowItWorks() {
                   />
                 ) : null}
               </div>
-              <h3 className="mt-5">{step.title}</h3>
+              <h3 className="mt-5">{t(`steps.${step.id}.title`)}</h3>
               <p className="mt-3 max-w-sm text-sm leading-relaxed text-ink-500">
-                {step.copy}
+                {t(`steps.${step.id}.copy`)}
               </p>
             </RevealItem>
           ))}

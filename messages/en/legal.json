@@ -1,0 +1,159 @@
+{
+  "shared": {
+    "eyebrow": "Legal",
+    "lastUpdated": "Last updated: {date}",
+    "registration": "Company number {number}, incorporated in Mauritius on {date} as a {companyType}.",
+    "registeredAddress": "Registered address: {address}",
+    "reviewNotice": "This page is a template and should be reviewed by a qualified legal adviser before launch."
+  },
+  "privacy": {
+    "meta": {
+      "title": "Privacy policy",
+      "description": "How {legalName} collects, uses and protects personal data, and the cookies this website sets."
+    },
+    "title": "Privacy policy",
+    "intro": "How we collect, use and protect your personal data when you use this website and the owner portal.",
+    "whoWeAre": {
+      "heading": "1. Who we are",
+      "operator": "This website is operated by {legalName}, trading as {tradingName} (“{company}”, “we”, “us”). {legalName} is the data controller for the personal data described in this policy.",
+      "contact": "Contact for privacy matters: <link>{email}</link>"
+    },
+    "laws": {
+      "heading": "2. The laws that apply",
+      "body": "We process personal data in accordance with the Mauritius <strong>Data Protection Act 2017</strong>, which is overseen by the <strong>Data Protection Office</strong> of Mauritius. Where the EU General Data Protection Regulation (<strong>GDPR</strong>) applies to our processing of your data, we also comply with it."
+    },
+    "collection": {
+      "heading": "3. What we collect",
+      "contactForm": {
+        "heading": "Contact form",
+        "items": {
+          "details": "Your name, email address, optional phone number, property type, number of properties and your message.",
+          "consent": "A consent record: that you ticked “I agree to be contacted about my enquiry”, the date and time, and a shortened, one-way hash of your IP address (not the address itself)."
+        }
+      },
+      "ownerPortal": {
+        "heading": "Owner portal",
+        "items": {
+          "account": "Account details: your name, email address, phone number and login credentials.",
+          "property": "Property and financial information needed to manage your property: bookings, maintenance records, documents, statements and payout details."
+        }
+      },
+      "technical": {
+        "heading": "Technical data",
+        "items": {
+          "serverLogs": "Server logs kept by our hosting provider (such as IP address, browser type and pages requested), used for security and to keep the site running."
+        }
+      }
+    },
+    "purposes": {
+      "heading": "4. Why we use it, and our legal basis",
+      "items": {
+        "enquiry": "<strong>Answering your enquiry</strong> — based on your consent and on steps taken at your request before entering into a contract.",
+        "portal": "<strong>Running the owner portal and managing your property</strong> — necessary to perform our management agreement with you.",
+        "records": "<strong>Keeping accounting and tax records</strong> — to comply with our legal obligations in Mauritius.",
+        "security": "<strong>Protecting the site against abuse</strong> (for example rate limiting and spam filtering) — our legitimate interest in keeping the service secure."
+      }
+    },
+    "retention": {
+      "heading": "5. How long we keep it",
+      "items": {
+        "enquiries": "Contact enquiries that do not lead to an agreement: up to 12 months after our last exchange.",
+        "ownerRecords": "Owner-account and property records: for the duration of the management agreement, then for as long as Mauritian accounting and tax law requires (typically 7 years).",
+        "consent": "Consent records: for as long as the related data is kept."
+      }
+    },
+    "sharing": {
+      "heading": "6. Who we share it with",
+      "processors": "We <strong>never sell</strong> your personal data. We share it only with service providers (“processors”) that help us run the business, under contracts that require them to protect it — for example our website hosting provider and our email provider — and with professional advisers or authorities where the law requires it.",
+      "transfers": "Some of these providers may store data outside Mauritius or the EU. Where that happens we rely on appropriate safeguards, such as adequacy decisions or standard contractual clauses."
+    },
+    "rights": {
+      "heading": "7. Your rights",
+      "intro": "Under the Data Protection Act 2017 and, where it applies, the GDPR, you have the right to:",
+      "items": {
+        "access": "access the personal data we hold about you;",
+        "rectification": "have inaccurate data corrected;",
+        "erasure": "have your data erased where we no longer need it;",
+        "restriction": "restrict or object to certain processing;",
+        "portability": "receive your data in a portable format (data portability);",
+        "withdrawConsent": "withdraw your consent at any time, without affecting processing carried out before you withdrew it."
+      },
+      "exercise": "To exercise any of these rights, email <link>{email}</link>. We may ask you to confirm your identity, and we will reply within one month. You also have the right to complain to the Data Protection Office of Mauritius or, if you live in the EU, to the data protection authority in your country."
+    },
+    "cookies": {
+      "heading": "8. Cookies",
+      "intro": "This website sets at most four cookies:",
+      "items": {
+        "session": "<code>{name}</code> — <strong>strictly necessary</strong>. Keeps you signed in to the owner portal. It is httpOnly (not readable by scripts) and is only set when you log in.",
+        "currency": "<code>{name}</code> — <strong>preference</strong>. Remembers whether you chose to view prices in MUR or EUR. It is set only when you make that choice and lasts 1 year.",
+        "language": "<code>{name}</code> — <strong>preference</strong>. Remembers whether you chose to read the site in English or French. It is set only when you use the language switch and lasts 1 year.",
+        "viewAs": "<code>{name}</code> — <strong>strictly necessary</strong>, {company} staff only. Remembers which owner’s portal an administrator is viewing. It is httpOnly and ends with the browser session."
+      },
+      "noTracking": "We do <strong>not</strong> use analytics, advertising or tracking cookies, and no third-party cookies are set. Because every cookie is either strictly necessary or set at your request, we do not show a cookie-consent banner. You can delete cookies at any time in your browser settings; deleting <code>{sessionCookie}</code> signs you out."
+    },
+    "security": {
+      "heading": "9. Security",
+      "body": "We use encrypted connections (HTTPS) and restrict access to personal data to the people who need it to do their job. No method of transmission or storage is completely secure, but we take reasonable steps to protect your data."
+    },
+    "changes": {
+      "heading": "10. Changes to this policy",
+      "body": "We may update this policy from time to time. The date at the top shows when it last changed. See also our <link>terms of use</link>."
+    }
+  },
+  "terms": {
+    "meta": {
+      "title": "Terms of use",
+      "description": "Terms of use for the {company} website and owner portal."
+    },
+    "title": "Terms of use",
+    "intro": "The rules for using this website and the {company} owner portal.",
+    "about": {
+      "heading": "1. About these terms",
+      "operator": "This website and the owner portal are operated by {legalName}, trading as {tradingName}.",
+      "contact": "Contact: <link>{email}</link>",
+      "agreement": "By using the website you agree to these terms. If you do not agree, please do not use the site. The management of your property is governed separately by your written management agreement with us; where that agreement and these terms differ, the management agreement prevails."
+    },
+    "information": {
+      "heading": "2. Information on this website",
+      "body": "We take care to keep the information on this website accurate and up to date, but it is provided for general information only."
+    },
+    "portal": {
+      "heading": "3. The owner portal",
+      "items": {
+        "access": "The owner portal is for authorised property owners (and people they have authorised in writing) only. Access is granted by us.",
+        "credentials": "You are responsible for keeping your login details confidential and for activity under your account. Tell us immediately at <link>{email}</link> if you suspect unauthorised access.",
+        "otherOwners": "You must not attempt to access another owner’s data, or to interfere with the security or operation of the portal.",
+        "figures": "Figures shown in the portal are provided for convenience. Your formal monthly statement is the authoritative record.",
+        "suspension": "We may suspend or withdraw access if these terms are breached, or when the management agreement ends."
+      }
+    },
+    "currencies": {
+      "heading": "4. Currencies",
+      "body": "Prices and figures may be displayed in Mauritian rupees (MUR) or euros (EUR). Conversions between the two are shown for information only, using indicative exchange rates that may differ from the rate applied by banks on the day of payment. The binding amounts and currency are those set out in your management agreement and statements."
+    },
+    "intellectualProperty": {
+      "heading": "5. Intellectual property",
+      "body": "The content of this website — text, design, logos and images — belongs to {legalName} or its licensors. You may view and print it for personal use, but may not reproduce it for commercial purposes without our written permission."
+    },
+    "externalLinks": {
+      "heading": "6. Links to other sites",
+      "body": "The website may link to third-party sites. We are not responsible for their content or their privacy practices."
+    },
+    "liability": {
+      "heading": "7. Limitation of liability",
+      "body": "The website is provided “as is”. To the fullest extent permitted by law, {legalName} is not liable for any loss arising from reliance on information on the website, from the website being unavailable, or from viruses or other harmful material, and is not liable for any indirect or consequential loss. Nothing in these terms limits liability that cannot be limited by law, such as liability for fraud. Our liability for the management of your property is governed by your management agreement."
+    },
+    "privacy": {
+      "heading": "8. Privacy",
+      "body": "How we handle personal data and cookies is explained in our <link>privacy policy</link>."
+    },
+    "changes": {
+      "heading": "9. Changes",
+      "body": "We may update these terms from time to time. The date at the top shows when they last changed; continuing to use the website after a change means you accept the updated terms."
+    },
+    "governingLaw": {
+      "heading": "10. Governing law",
+      "body": "These terms are governed by the laws of the Republic of Mauritius, and the courts of Mauritius have exclusive jurisdiction over any dispute arising from them."
+    }
+  }
+}

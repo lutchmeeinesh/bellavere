@@ -10,10 +10,12 @@ import {
   useSyncExternalStore,
 } from "react";
 import { useRouter } from "next/navigation";
+import type { AppLocale } from "@/i18n/routing";
 import {
   CURRENCY_COOKIE,
   DEFAULT_CURRENCY,
   convertFromEur,
+  currencyAffixes,
   currencySymbol,
   formatMoney,
   formatMoneyCompact,
@@ -67,6 +69,7 @@ function subscribe(onChange: () => void) {
 interface CurrencyContextValue {
   currency: Currency;
   setCurrency: (next: Currency) => void;
+  locale: AppLocale;
 }
 
 const CurrencyContext = createContext<CurrencyContextValue | null>(null);
@@ -84,15 +87,23 @@ const CurrencyContext = createContext<CurrencyContextValue | null>(null);
  *   choice moves away from what the server rendered (a switch here, in
  *   another tab, or on the public site), they refresh their server
  *   components, which format some amounts on the server.
+ * - `locale` sets the number format of useMoney(): the public pages pass the
+ *   page's language; the English-only portal leaves the default ("en").
+ *   Nested providers inherit it.
  */
 export function CurrencyProvider({
   initialCurrency,
+  locale,
   children,
 }: {
   /** The cookie value read on the server; set by per-request layouts only. */
   initialCurrency?: Currency;
+  /** Language of the amounts; defaults to the enclosing provider's, or "en". */
+  locale?: AppLocale;
   children: React.ReactNode;
 }) {
+  const parent = useContext(CurrencyContext);
+  const resolvedLocale = locale ?? parent?.locale ?? "en";
   const router = useRouter();
   const currency = useSyncExternalStore(
     subscribe,
@@ -115,7 +126,10 @@ export function CurrencyProvider({
     writeCurrencyCookie(next);
   }, []);
 
-  const value = useMemo(() => ({ currency, setCurrency }), [currency, setCurrency]);
+  const value = useMemo(
+    () => ({ currency, setCurrency, locale: resolvedLocale }),
+    [currency, setCurrency, resolvedLocale]
+  );
 
   return (
     <CurrencyContext.Provider value={value}>{children}</CurrencyContext.Provider>
@@ -126,21 +140,26 @@ export function CurrencyProvider({
 export function useMoney() {
   const ctx = useContext(CurrencyContext);
   if (!ctx) throw new Error("useMoney must be used inside <CurrencyProvider>");
-  const { currency, setCurrency } = ctx;
+  const { currency, setCurrency, locale } = ctx;
 
   return useMemo(
     () => ({
       currency,
       setCurrency,
-      /** "€480" / "Rs 24,960" */
-      format: (eur: number) => formatMoney(eur, currency),
+      /** Language the amounts are formatted in. */
+      locale,
+      /** "€480" / "Rs 24,960" (French: "480 €" / "Rs 24 960") */
+      format: (eur: number) => formatMoney(eur, currency, locale),
       /** "€480.00" / "Rs 24,960.00" */
-      formatPrecise: (eur: number) => formatMoneyPrecise(eur, currency),
+      formatPrecise: (eur: number) => formatMoneyPrecise(eur, currency, locale),
       /** "€12k" / "Rs 624k" */
-      formatCompact: (eur: number) => formatMoneyCompact(eur, currency),
+      formatCompact: (eur: number) => formatMoneyCompact(eur, currency, locale),
       convert: (eur: number) => convertFromEur(eur, currency),
+      /** "€" / "Rs " — English prefix; use `affixes` where French matters. */
       symbol: currencySymbol(currency),
+      /** Text before / after a bare number: { prefix: "€", suffix: "" }, French euros { "", " €" }. */
+      affixes: currencyAffixes(currency, locale),
     }),
-    [currency, setCurrency]
+    [currency, setCurrency, locale]
   );
 }

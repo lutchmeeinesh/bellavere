@@ -1,65 +1,17 @@
-import type { Metadata, Viewport } from "next";
-import { Cormorant_Garamond, Inter } from "next/font/google";
-import { MotionProvider } from "@/components/motion/MotionProvider";
-import { CurrencyProvider } from "@/components/currency/CurrencyProvider";
-import { OPEN_GRAPH_BASE } from "@/lib/seo";
-import "./globals.css";
-
-const cormorant = Cormorant_Garamond({
-  variable: "--font-cormorant",
-  subsets: ["latin"],
-  weight: ["500", "600"],
-  display: "swap",
-});
-
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
-  ),
-  title: {
-    default: "Bellavere — Property Management & Syndic Services in Mauritius",
-    template: "%s · Bellavere",
-  },
-  description:
-    "Bellavere looks after villas, apartments and residences across Mauritius: rentals, maintenance, syndic services, client care, concierge and a live owner dashboard.",
-  // "./" resolves against metadataBase and each page's own path, so every
-  // page gets its own absolute canonical URL and og:url.
-  alternates: { canonical: "./" },
-  openGraph: { ...OPEN_GRAPH_BASE, url: "./" },
-  twitter: { card: "summary_large_image" },
-  // Keep the site out of search results until launch (see app/robots.ts).
-  ...(process.env.SITE_INDEXABLE === "true"
-    ? {}
-    : { robots: { index: false, follow: false } }),
-};
-
-export const viewport: Viewport = {
-  themeColor: "#faf7f2",
-};
-
+/**
+ * The app has two root documents, each with its own <html>:
+ *
+ *   app/[locale]/layout.tsx   the public site, in English (/) or French (/fr)
+ *   app/(portal)/layout.tsx   the owner portal and admin area, in English
+ *
+ * This file only passes children through. It exists so that
+ * app/not-found.tsx (which renders its own document) can catch URLs that
+ * neither root matches, and so app/global-error.tsx has a root to replace.
+ */
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
-  // Nothing here reads cookies or headers, so the public pages are
-  // prerendered and served from Vercel's edge cache. The owner and admin
-  // portals read what they need per request in their own layouts.
-  return (
-    // The font variables sit on <html> because the theme tokens that use
-    // them (--font-serif, --font-sans) are defined on :root.
-    <html lang="en" className={`${cormorant.variable} ${inter.variable}`}>
-      <body className="antialiased">
-        <MotionProvider>
-          <CurrencyProvider>{children}</CurrencyProvider>
-        </MotionProvider>
-      </body>
-    </html>
-  );
+}) {
+  return children;
 }

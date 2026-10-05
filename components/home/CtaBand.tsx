@@ -1,18 +1,21 @@
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
-import { siteImages } from "@/data/siteImages";
+import { useSiteImages } from "@/lib/i18n/images";
 import { cn } from "@/lib/utils";
 
 /**
  * Full-width navy call-to-action band. `withImage` layers the lagoon photo
  * at low opacity beneath a navy overlay; `small` tightens the padding for
- * reuse on inner pages (About uses it).
+ * reuse on inner pages (About uses it). The default title and sub-line and
+ * the button text are in messages (`home.ctaBand.*`); callers that pass
+ * `title` / `sub` pass them already translated.
  */
 export function CtaBand({
-  title = "Let your island home work beautifully",
-  sub = "Tell us about your property and we'll show you, openly, what it could achieve.",
+  title,
+  sub,
   withImage = false,
   small = false,
 }: {
@@ -21,13 +24,15 @@ export function CtaBand({
   withImage?: boolean;
   small?: boolean;
 }) {
+  const t = useTranslations("home.ctaBand");
+  const images = useSiteImages();
   return (
     <section className="relative overflow-hidden bg-navy-900">
       {withImage ? (
         <>
           <Image
-            src={siteImages.finalCta.src}
-            alt={siteImages.finalCta.alt}
+            src={images.finalCta.src}
+            alt={images.finalCta.alt}
             fill
             sizes="100vw"
             // Drawn at 25% opacity under a navy overlay: low quality is invisible
@@ -44,11 +49,13 @@ export function CtaBand({
         )}
       >
         <Reveal>
-          <h2 className="mx-auto max-w-2xl text-white">{title}</h2>
-          <p className="mx-auto mt-5 max-w-xl text-lg text-white/70">{sub}</p>
+          <h2 className="mx-auto max-w-2xl text-white">{title ?? t("title")}</h2>
+          <p className="mx-auto mt-5 max-w-xl text-lg text-white/70">
+            {sub ?? t("sub")}
+          </p>
           <div className="mt-9">
             <Button href="/contact" variant="primary" size="lg">
-              Start the conversation
+              {t("action")}
             </Button>
           </div>
         </Reveal>

@@ -1,32 +1,39 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
+import { Link, usePathname } from "@/i18n/navigation";
 import { Logo } from "@/components/site/Logo";
+import { LanguageToggle } from "@/components/site/LanguageToggle";
 import { Button } from "@/components/ui/Button";
 import { CurrencyToggle } from "@/components/currency/CurrencyToggle";
 import { cn } from "@/lib/utils";
 
 /**
- * The current path, with "/index" read as "/". When Vercel regenerates the
- * home page (ISR) it renders it as "/index" (vercel/next.js#95648) while the
- * browser sees "/", so without this the header would differ between server
- * and browser and React would throw the server HTML away.
+ * The current path without its locale ("/services" on both /services and
+ * /fr/services; "/" on / and /fr), with "/index" read as "/". When Vercel
+ * regenerated the home page (ISR) it rendered it as "/index"
+ * (vercel/next.js#95648) while the browser saw "/", so the header differed
+ * between server and browser and React threw the server HTML away. Since
+ * Wave 1 the home page is /[locale] ("/en" internally), which the locale-
+ * aware usePathname reads as "/"; the "/index" guard stays as a harmless
+ * safety net.
  */
 function useSitePathname(): string {
   const pathname = usePathname();
   return pathname === "/index" ? "/" : pathname;
 }
 
+// Labels: messages `common.nav.*`. The estimator page arrives in phase 1.
 const NAV_LINKS = [
-  { href: "/", label: "Home" },
-  { href: "/services", label: "Services" },
-  { href: "/about", label: "About" },
-  { href: "/contact", label: "Contact" },
-];
+  { href: "/", label: "home" },
+  { href: "/services", label: "services" },
+  { href: "/estimate", label: "estimate" },
+  { href: "/about", label: "about" },
+  { href: "/contact", label: "contact" },
+] as const;
 
 /**
  * Fixed site header. Transparent over the home hero; frosted sand with a
@@ -36,6 +43,7 @@ const NAV_LINKS = [
  * back to the menu button).
  */
 export function Header() {
+  const t = useTranslations("common");
   const pathname = useSitePathname();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -78,7 +86,7 @@ export function Header() {
       <div className="mx-auto flex h-18 w-full max-w-[1200px] items-center justify-between px-5 sm:px-8">
         <Logo dark={overHero} />
 
-        <nav aria-label="Main navigation" className="hidden lg:block">
+        <nav aria-label={t("nav.label")} className="hidden lg:block">
           <ul className="flex items-center gap-1">
             {NAV_LINKS.map((link) => {
               const active =
@@ -91,18 +99,18 @@ export function Header() {
                     href={link.href}
                     aria-current={active ? "page" : undefined}
                     className={cn(
-                      "relative block px-4 py-2 text-sm font-medium transition-colors duration-200",
+                      "relative block px-3 py-2 text-sm font-medium whitespace-nowrap transition-colors duration-200 xl:px-4",
                       overHero
                         ? "text-white/85 hover:text-white"
                         : "text-ink-900 hover:text-navy-900",
                       active && (overHero ? "text-white" : "text-navy-900"),
                     )}
                   >
-                    {link.label}
+                    {t(`nav.${link.label}`)}
                     {active ? (
                       <motion.span
                         layoutId="nav-underline"
-                        className="absolute inset-x-4 -bottom-0.5 h-0.5 rounded-full bg-gold-500"
+                        className="absolute inset-x-3 -bottom-0.5 h-0.5 rounded-full bg-gold-500 xl:inset-x-4"
                         transition={{ duration: 0.3, ease: "easeOut" }}
                       />
                     ) : null}
@@ -113,20 +121,24 @@ export function Header() {
           </ul>
         </nav>
 
+        {/* From lg to xl the bar is too narrow for everything: the owner
+            login stays in the footer (and the home hero) until xl. */}
         <div className="hidden items-center gap-3 lg:flex">
           <CurrencyToggle
             tone={overHero ? "light" : "default"}
             layoutId="currency-pill-header"
           />
+          <LanguageToggle tone={overHero ? "light" : "default"} />
           <Button
             href="/login"
             variant={overHero ? "light" : "outline"}
             size="sm"
+            className="max-xl:hidden"
           >
-            Owner login
+            {t("actions.ownerLogin")}
           </Button>
           <Button href="/contact" variant="primary" size="sm">
-            List your property
+            {t("actions.listProperty")}
           </Button>
         </div>
 
@@ -134,6 +146,12 @@ export function Header() {
           <CurrencyToggle
             tone={overHero ? "light" : "default"}
             layoutId="currency-pill-header-mobile"
+          />
+          {/* Below 360px it moves into the menu (see the end of the menu). */}
+          <LanguageToggle
+            tone={overHero ? "light" : "default"}
+            compact
+            className="max-[359px]:hidden"
           />
           <button
             ref={menuButtonRef}
@@ -144,7 +162,7 @@ export function Header() {
             )}
             aria-expanded={menuOpen}
             aria-controls={menuOpen ? "mobile-menu" : undefined}
-            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            aria-label={menuOpen ? t("nav.closeMenu") : t("nav.openMenu")}
             onClick={() => setMenuOpen((v) => !v)}
           >
             {menuOpen ? (
@@ -160,7 +178,7 @@ export function Header() {
         {menuOpen ? (
           <motion.nav
             id="mobile-menu"
-            aria-label="Mobile navigation"
+            aria-label={t("nav.mobileLabel")}
             // A link to the page already open leaves the pathname unchanged,
             // so close on the click itself as well.
             onClick={(e) => {
@@ -190,11 +208,14 @@ export function Header() {
                           : "text-ink-900 hover:bg-sand-100",
                       )}
                     >
-                      {link.label}
+                      {t(`nav.${link.label}`)}
                     </Link>
                   </li>
                 );
               })}
+              <li className="px-4 pt-2 min-[360px]:hidden">
+                <LanguageToggle />
+              </li>
               <li className="flex gap-3 px-4 pt-3 pb-1">
                 <Button
                   href="/login"
@@ -202,7 +223,7 @@ export function Header() {
                   size="sm"
                   className="flex-1"
                 >
-                  Owner login
+                  {t("actions.ownerLogin")}
                 </Button>
                 <Button
                   href="/contact"
@@ -210,7 +231,7 @@ export function Header() {
                   size="sm"
                   className="flex-1"
                 >
-                  List your property
+                  {t("actions.listProperty")}
                 </Button>
               </li>
             </ul>
