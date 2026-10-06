@@ -4,8 +4,9 @@ import createIntlMiddleware from "next-intl/middleware";
 import { clients } from "@/data/clients";
 import { admins } from "@/data/admins";
 import { properties } from "@/data/properties";
-import { routing } from "@/i18n/routing";
+import { routing, type AppLocale } from "@/i18n/routing";
 import { LOCALE_COOKIE } from "@/lib/i18n/localeCookie";
+import { localeHref } from "@/lib/i18n/paths";
 import {
   SESSION_COOKIE,
   VIEW_AS_COOKIE,
@@ -26,7 +27,9 @@ const intlMiddleware = createIntlMiddleware(routing);
  *    unprefixed English URLs onto app/[locale] with locale "en". Before
  *    that, the visitor's language choice (NEXT_LOCALE cookie) sends an
  *    unprefixed URL to its French version. Explicit /fr URLs are never
- *    redirected away, and there is no Accept-Language detection.
+ *    redirected away, and there is no Accept-Language detection. A prefix
+ *    typed in capitals (/FR/services, /En) goes to the lower-case address
+ *    (/fr/services, /) in one redirect, before the cookie is looked at.
  *
  * The API, Next.js and Vercel internals and files with an extension
  * (/robots.txt, /sitemap.xml, /icon.svg, /images/...) skip it (see config).
@@ -40,6 +43,12 @@ export async function middleware(request: NextRequest) {
     // The portal has no French version: /fr/login -> /login.
     const rest = pathname.slice(prefix.length + 1) || "/";
     if (isPortalPath(rest)) return redirectTo(request, rest);
+    // /FR/services -> /fr/services, /EN/services -> /services: the address
+    // with the prefix as the site writes it. Otherwise the cookie redirect
+    // below would treat "/FR/..." as unprefixed and send it to /fr/FR/...
+    if (pathname.split("/")[1] !== prefix) {
+      return redirectTo(request, localeHref(prefix, rest));
+    }
   } else {
     // Unprefixed public URL: follow the visitor's language choice.
     const preferred = request.cookies.get(LOCALE_COOKIE)?.value;
@@ -62,10 +71,13 @@ function isPortalPath(pathname: string): boolean {
   return pathname === "/login" || /^\/(dashboard|admin)(\/|$)/.test(pathname);
 }
 
-/** The locale a path starts with ("/fr/services" -> "fr"), if any. */
-function localePrefixOf(pathname: string): string | undefined {
-  const first = pathname.split("/")[1];
-  return hasLocale(routing.locales, first) ? first : undefined;
+/**
+ * The locale a path starts with, in any case ("/fr/services" and
+ * "/FR/services" -> "fr"), if any. next-intl matches prefixes the same way.
+ */
+function localePrefixOf(pathname: string): AppLocale | undefined {
+  const first = pathname.split("/")[1]?.toLowerCase();
+  return routing.locales.find((locale) => locale === first);
 }
 
 /** Temporary redirect to another path, keeping the query string. */
@@ -76,8 +88,8 @@ function redirectTo(request: NextRequest, pathname: string) {
 }
 
 /**
- * The pages that exist under app/dashboard (plus the property detail page
- * below). The admin area has two: /admin and /admin/clients/[id]. Any other
+ * The pages that exist under app/(portal)/dashboard (plus the property
+ * detail page below). The admin area has two: /admin and /admin/clients/[id]. Any other
  * path in either area gets the portal's own 404 (see below), so list new
  * pages here.
  */
@@ -93,9 +105,9 @@ const DASHBOARD_PAGES = new Set([
 const PROPERTY_PAGE = /^\/dashboard\/properties\/([^/]+)$/;
 const ADMIN_CLIENT_PAGE = /^\/admin\/clients\/([^/]+)$/;
 
-/** Caught by app/dashboard/[...missing]/page.tsx: the portal's 404 page. */
+/** Caught by app/(portal)/dashboard/[...missing]/page.tsx: the portal's 404 page. */
 const DASHBOARD_NOT_FOUND = "/dashboard/__missing";
-/** An id no owner has: app/admin/clients/[id] answers with the admin 404. */
+/** An id no owner has: app/(portal)/admin/clients/[id] answers with the admin 404. */
 const ADMIN_NOT_FOUND = "/admin/clients/__missing";
 
 /**

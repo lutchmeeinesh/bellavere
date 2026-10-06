@@ -21,14 +21,26 @@ import { localeHref } from "@/lib/i18n/paths";
  * (app/[locale]/page-not-found, prerendered and edge-cached) and returns its
  * HTML here, at the unknown URL, with status 404. Pages always take
  * precedence over this catch-all, so new public pages need nothing here.
- * If that fetch fails (e.g. a password-protected preview deployment), a
- * plain localized 404 is returned instead.
+ * If that fetch fails or takes longer than FETCH_TIMEOUT_MS (e.g. a
+ * password-protected preview deployment), a plain localized 404 is returned
+ * instead.
+ *
+ * Every method answers 404 (a form posted to an unknown URL included), so an
+ * unknown address never looks like a resource that exists (a 405, or a 204
+ * listing its methods in answer to OPTIONS).
  */
 
 type Params = { params: Promise<{ locale: string; rest: string[] }> };
 
 /** Marks this handler's own request for the 404 page, so it can never loop. */
 const INTERNAL_HEADER = "x-bellavere-not-found";
+
+/**
+ * How long to wait for the static 404 page before answering with the plain
+ * one. It is prerendered and served from the edge cache, so it normally
+ * arrives in a few milliseconds.
+ */
+const FETCH_TIMEOUT_MS = 3000;
 
 // i18n-ignore-start (HTTP header values, not text)
 const HEADERS = {
@@ -65,6 +77,7 @@ async function notFoundPage(request: Request, locale: AppLocale): Promise<string
       },
       cache: "no-store",
       redirect: "manual",
+      signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
     });
     const isHtml = page.headers.get("content-type")?.includes("text/html");
     return page.status === 200 && isHtml ? await page.text() : null;
@@ -92,13 +105,26 @@ async function fallbackPage(locale: AppLocale): Promise<string> {
   ].join("");
 }
 
-export async function GET(request: Request, { params }: Params) {
+/** The localized 404 page, for every method that can carry a page back. */
+async function notFound(request: Request, { params }: Params) {
   const locale = await localeOf(params);
   const html = (await notFoundPage(request, locale)) ?? (await fallbackPage(locale));
   return new Response(html, { status: 404, headers: HEADERS });
 }
 
-export async function HEAD(_request: Request, { params }: Params) {
+export const GET = notFound;
+export const POST = notFound;
+export const PUT = notFound;
+export const PATCH = notFound;
+export const DELETE = notFound;
+
+/** Same status and headers, no body. */
+async function notFoundHead(_request: Request, { params }: Params) {
   await localeOf(params);
   return new Response(null, { status: 404, headers: HEADERS });
 }
+
+export const HEAD = notFoundHead;
+// Without this export Next.js would answer OPTIONS itself (204, with an
+// Allow header), as if the address existed.
+export const OPTIONS = notFoundHead;

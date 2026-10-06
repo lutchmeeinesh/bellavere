@@ -88,7 +88,7 @@
       "marketLong": "Villas, appartements et résidences partout à Maurice – au nord, à l’ouest, à l’est, au sud et sur le plateau central.",
       "country": "Maurice",
       "companyType": "société privée à responsabilité limitée par actions",
-      "hoursInline": "7j/7, 24h/24",
+      "hoursInline": "7j/7, 24h/24",
       "responseTime": "le jour même",
       "mission": "Notre mission est d’offrir le meilleur service, en toute transparence. Aucuns frais cachés – et toujours un interlocuteur humain pour vous répondre.",
       "pricing": {
@@ -102,10 +102,10 @@
         },
         "ankit": {
           "role": "Relation client",
-          "bio": "Votre premier interlocuteur pour vos relevés, vos réservations et toutes vos questions – joignable 7j/7, 24h/24, et jamais un robot."
+          "bio": "Votre premier interlocuteur pour vos relevés, vos réservations et toutes vos questions – joignable 7j/7, 24h/24, et jamais un robot."
         },
         "nihal": {
-          "bio": "Joignable 7j/7, 24h/24, au {phone}."
+          "bio": "Joignable 7j/7, 24h/24, au {phone}."
         }
       },
       "commitments": {
@@ -210,7 +210,7 @@
           "copy": "Voyageurs accueillis, entretien assuré, relevés préparés – une seule équipe s’occupe de tout."
         },
         "grow": {
-          "title": "Vous le voyez grandir",
+          "title": "Vous suivez tout",
           "copy": "Taux d’occupation, revenus et entretien, en direct sur votre tableau de bord propriétaire – depuis Paris, Londres ou la maison de plage d’à côté."
         }
       }
@@ -448,7 +448,7 @@
         },
         "human": {
           "title": "Toujours une vraie personne",
-          "copy": "Appelez-nous ou écrivez-nous quand vous le souhaitez : quelqu’un est joignable 7j/7, 24h/24, et chaque demande reçoit une réponse le jour même. Une vraie personne qui connaît votre bien – jamais un robot."
+          "copy": "Appelez-nous ou écrivez-nous quand vous le souhaitez : quelqu’un est joignable 7j/7, 24h/24, et chaque demande reçoit une réponse le jour même. Une vraie personne qui connaît votre bien – jamais un robot."
         }
       }
     },
@@ -592,7 +592,7 @@
     "shared": {
       "eyebrow": "Informations légales",
       "lastUpdated": "Dernière mise à jour : {date}",
-      "registration": "Constituée à Maurice le {date} sous la forme d’une {companyType}, immatriculée sous le numéro {number}.",
+      "registration": "Société n° {number}, constituée à Maurice le {date} sous la forme d’une {companyType}.",
       "registeredAddress": "Siège social : {address}",
       "reviewNotice": "Cette page est un modèle : elle doit être relue par un conseiller juridique qualifié avant la mise en ligne."
     },
@@ -619,6 +619,13 @@
           "items": {
             "details": "Votre nom, votre adresse e-mail, votre numéro de téléphone (facultatif), le type et le nombre de biens, ainsi que votre message.",
             "consent": "Un enregistrement de votre consentement : le fait que vous avez coché la case « J’accepte que Bellavere me contacte au sujet de ma demande », la date et l’heure, ainsi qu’un hachage tronqué et irréversible de votre adresse IP (et non l’adresse elle-même)."
+          }
+        },
+        "whatsapp": {
+          "heading": "WhatsApp et téléphone",
+          "items": {
+            "received": "Lorsque vous nous écrivez sur WhatsApp ou nous appelez (le bouton WhatsApp ou les numéros indiqués sur la page Contact) : votre numéro de téléphone, votre nom et votre photo de profil WhatsApp (selon vos paramètres WhatsApp) et ce que vous nous transmettez. Le site ne fait qu’ouvrir WhatsApp avec un message suggéré, que vous pouvez modifier : rien n’est envoyé tant que vous ne l’envoyez pas vous-même.",
+            "use": "Nous utilisons ces informations uniquement pour vous répondre et donner suite à votre demande. La conversation reste dans le compte WhatsApp du membre de l’équipe que vous avez contacté, et nous la conservons aussi longtemps que les autres demandes (voir la section 5)."
           }
         },
         "ownerPortal": {
@@ -655,6 +662,7 @@
       "sharing": {
         "heading": "6. Avec qui nous les partageons",
         "processors": "Nous <strong>ne vendons jamais</strong> vos données personnelles. Nous les partageons uniquement avec des prestataires (« sous-traitants ») qui nous aident à faire fonctionner notre activité, dans le cadre de contrats qui les obligent à les protéger (par exemple notre hébergeur web et notre fournisseur de messagerie), ainsi qu’avec des conseillers professionnels ou les autorités lorsque la loi l’exige.",
+        "whatsapp": "Si vous nous contactez sur WhatsApp, vos messages sont acheminés par WhatsApp, un service de Meta, selon les conditions et la politique de confidentialité propres à WhatsApp. WhatsApp n’est pas l’un de nos sous-traitants : nous ne décidons pas de la manière dont il conserve ou utilise les données ; nous vous invitons donc à consulter sa politique de confidentialité avant de l’utiliser. Vous pouvez toujours nous joindre par le formulaire de contact, par e-mail ou par téléphone.",
         "transfers": "Certains de ces prestataires peuvent stocker des données en dehors de Maurice ou de l’Union européenne. Le cas échéant, nous nous appuyons sur des garanties appropriées, telles que des décisions d’adéquation ou des clauses contractuelles types."
       },
       "rights": {
@@ -676,7 +684,7 @@
         "items": {
           "session": "<code>{name}</code> – <strong>strictement nécessaire</strong>. Maintient votre connexion à l’espace propriétaire. Il est marqué httpOnly (inaccessible aux scripts) et n’est déposé que lorsque vous vous connectez.",
           "currency": "<code>{name}</code> – <strong>préférence</strong>. Mémorise si vous avez choisi d’afficher les prix en MUR ou en EUR. Il n’est déposé que lorsque vous faites ce choix, pour une durée d’un an.",
-          "language": "<code>{name}</code> – <strong>préférence</strong>. Mémorise si vous avez choisi de consulter le site en anglais ou en français. Il n’est déposé que lorsque vous utilisez le sélecteur de langue, pour une durée d’un an.",
+          "language": "<code>{name}</code> – <strong>préférence</strong>. Mémorise si vous avez choisi de consulter le site en anglais ou en français. Il n’est déposé que lorsque vous choisissez une langue, avec le sélecteur de langue ou la suggestion de lire le site en français, pour une durée d’un an.",
           "viewAs": "<code>{name}</code> – <strong>strictement nécessaire</strong>, réservé à l’équipe {company}. Mémorise l’espace propriétaire qu’un administrateur est en train de consulter. Il est marqué httpOnly et expire à la fin de la session du navigateur."
         },
         "localStorage": "Si vous fermez la suggestion de lire ce site en français, votre navigateur conserve aussi une petite note dans son stockage local (<code>{name}</code>) afin de ne plus vous la proposer. Elle ne contient aucune donnée personnelle et ne quitte jamais votre appareil.",

@@ -60,8 +60,8 @@ components/
   analytics/Analytics.tsx       (phase 1B: Plausible script)
   estimator/**                  phase 1A
 data/
-  site.ts                       SITE_URL, PUBLIC_EMAIL, WHATSAPP_NUMBERS/PRIMARY, WHATSAPP_DEFAULT_MESSAGE
-  company.ts                    facts (+ ids); English prose fields @deprecated (removed in phase 2)
+  site.ts                       SITE_URL, PUBLIC_EMAIL, WHATSAPP_NUMBERS/PRIMARY, WHATSAPP_DEFAULT_MESSAGE, LEGAL_LAST_UPDATED
+  company.ts                    facts and ids only (its English prose was removed in phase 3)
   siteImages.ts                 photo URLs only; alts in messages
 i18n/
   routing.ts                    defineRouting + AppLocale + TIME_ZONE
@@ -75,7 +75,7 @@ lib/
   i18n/images.ts                getSiteImages() / useSiteImages()
   i18n/localeCookie.ts          LOCALE_COOKIE, writeLocaleCookie()
   format.ts                     every formatter takes an optional locale
-  whatsapp.ts  analytics.ts     stubs with final signatures
+  whatsapp.ts  analytics.ts     wa.me link builder; Plausible switch and track() (does nothing while off)
   estimator.ts                  phase 1A
 messages/en.json  messages/fr.json   one file per locale; top-level keys = namespaces:
                                 common home services about contact legal estimator whatsapp analytics locale
@@ -99,9 +99,10 @@ scripts/i18n-check.mjs  scripts/visual-diff.mjs   (npm run i18n:check / visual:d
 ## 4. Middleware (`middleware.ts`)
 
 1. Portal paths (`/login`, `/dashboard`, `/dashboard/**`, `/admin`, `/admin/**`) → `portalMiddleware()`: the pre-Wave-1 code, unchanged (session check, redirects, `DASHBOARD_PAGES`, 404 rewrites).
-2. `/<locale>/<portal path>` (e.g. `/fr/login`) → 307 to the unprefixed portal path.
-3. Unprefixed public path and `NEXT_LOCALE` is a non-default locale → 307 to `/<locale><path>` (query kept).
-4. Everything else → next-intl (`as-needed` rewrite to `/en/...`, `/en/...` → unprefixed redirect).
+2. `/<locale>/<portal path>` (e.g. `/fr/login`, also `/FR/login`) → 307 to the unprefixed portal path.
+3. A language prefix not in lower case (`/FR/services`, `/Fr`, `/EN/services`) → 307 to the canonical address (`/fr/services`, `/fr`, `/services`) in one step, before the cookie is read (otherwise step 4 would take `/FR/...` for an unprefixed path and send it to `/fr/FR/...`, a 404).
+4. Unprefixed public path and `NEXT_LOCALE` is a non-default locale → 307 to `/<locale><path>` (query kept).
+5. Everything else → next-intl (`as-needed` rewrite to `/en/...`, `/en/...` → unprefixed redirect).
 
 Matcher: the three old portal patterns (so dotted portal paths behave as before) plus `/((?!api|_next|_vercel|.*\..*).*)`. `/opengraph-image` (no extension) goes through next-intl like a page; `/robots.txt`, `/sitemap.xml`, `/icon.svg`, `/favicon.ico`, `/logo.png`, `/images/*` skip it. Edge-safe (next-intl's middleware, Web Crypto sessions).
 
@@ -279,10 +280,12 @@ Each copies its finished `en/<ns>.json` to `fr/<ns>.json`, runs `npm run i18n:ch
 - **Done:** unused keys removed from both locales after checking every dynamic key in the code (template keys, key names kept in data, translators passed as arguments): `common.actions.contactUs`, `common.company.market`, `common.company.hours` (pages use `hoursInline`), `common.company.pricing.short`, `contact.details.call`, `contact.details.callWithHours` (the contact cards replaced them), `estimator.bedrooms.label` (the teaser uses `teaser.bedrooms`, the flow its step title). 570 → 563 keys.
 - **Done:** polish-stage French edits: no-break spaces in "de A à Z" (`estimator.result.approach.items.rental.title`, `home.services.items.rental`, `services.hero.intro`); `home.howItWorks.steps.grow.title` "Vous le voyez prospérer" → "Vous le voyez grandir" (one line from 768 px, like the other two steps; keeps "You watch it grow").
 - **Done:** `npm run i18n:check -- --strict` passes (no hard-coded text, nothing untranslated).
-- **Open:** remove the `@deprecated` prose from `data/company.ts` once nothing public reads it (the portal keeps `hours`, `pricing.maxFeeRate`, facts).
-- **Open:** `scripts/review.mjs` checks the localized 404 (`/fr/no-such-page`), but not yet the French routes (`/fr`, `/fr/services`, …), `lang` and hreflang, or the cookie redirect. REVIEW.md not updated.
+- **Done (phase 3):** the `@deprecated` prose is gone from `data/company.ts` (tagline, coverage, mission, company type, response time, pricing wording, team roles and bios, commitment labels, the country's English name); `tsc` confirms nothing read it. It keeps the facts, `hours` (portal) and `pricing.maxFeeRate`.
+- **Done (phase 3):** `scripts/review.mjs` covers French: every public page in both languages (200, `lang`, no console errors, canonical and hreflang, static caching), the `NEXT_LOCALE` and `/en/...` redirects (upper-case prefixes included), the localized 404s for every method, and the estimator in both languages.
 
 ### Phase 3 — verification and launch
+
+- **Done (6 Oct 2026, review fixes, platform):** upper-case prefixes (`/FR/...`) redirect to the lower-case address instead of a 404 under `NEXT_LOCALE=fr`; the 404 handler answers 404 to every method and stops waiting for the static 404 page after 3 s; the privacy policy covers WhatsApp and says when the language cookie is set, and its "Last updated" date and the sitemap dates of the pages Wave 1 changed are 6 October 2026 (`LEGAL_LAST_UPDATED` in `data/site.ts`, `WAVE_1` in `app/sitemap.ts`); the French JSON-LD names the country "Maurice"; French no-break spaces in "7j/7, 24h/24"; the French registration line names its subject ("Société n° …, constituée à Maurice le …"); the home page's third step reads "Vous suivez tout"; the English default WhatsApp message uses ’.
 
 - `npm run build` (both locales ●), `node scripts/review.mjs http://localhost:3010` (and the admin flow by the user), visual diff of English pages against `screenshots/baseline`, Lighthouse on `/` and `/fr` pages.
 - Client proofreads the French. Deploy; set `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` in Vercel; resubmit the sitemap in Search Console and check hreflang in URL Inspection; flip `HELLO_MAILBOX_LIVE` only when hello@bellaveremu.com receives mail.
@@ -292,7 +295,7 @@ Each copies its finished `en/<ns>.json` to `fr/<ns>.json`, runs `npm run i18n:ch
 ## 8. Known limitations and gotchas
 
 - **Portal is English-only** (`/fr/login` → `/login`).
-- **404s and `notFound()` (Next.js 15.5).** React has no error boundaries on the server, so a `notFound()` thrown while a page renders escapes the server render: `renderToStream` catches it, sets the 404 status and sends an empty `<html id="__next_error__">` document, and the browser draws the nearest `not-found.tsx` from the page data (blank without JavaScript; `next/dist/server/app-render/app-render.js`, `getErrorRSCPayload`). Next.js renders a not-found page on the server only when it knows the route is a 404 before rendering (no route matches → `/_not-found`, a parameter outside `generateStaticParams` with `dynamicParams = false`, or a middleware rewrite with a 404 status) — and those all lead to the one site-wide `app/not-found.tsx` (English), which is also what Vercel serves for a middleware rewrite with a 404 status. So unknown public URLs go to `app/[locale]/[...rest]/route.ts`, which fetches the static `/<locale>/page-not-found` page from the deployment itself (prerendered, served from the edge cache) and returns its HTML with status 404 and `cache-control: private, no-store`; if that fetch fails (e.g. a preview protected by Vercel Authentication) it returns a plain localized 404 page. The fetch goes to the server's own origin: under `next start` `request.url` is built from the server's host and port, on Vercel from the routed domain, never from a visitor's Host header. Not yet checked on Vercel: after the deploy, `curl -sI https://www.bellaveremu.com/fr/no-such-page` must say 404 and the body must read "Vous avez pris le large ?".
+- **404s and `notFound()` (Next.js 15.5).** React has no error boundaries on the server, so a `notFound()` thrown while a page renders escapes the server render: `renderToStream` catches it, sets the 404 status and sends an empty `<html id="__next_error__">` document, and the browser draws the nearest `not-found.tsx` from the page data (blank without JavaScript; `next/dist/server/app-render/app-render.js`, `getErrorRSCPayload`). Next.js renders a not-found page on the server only when it knows the route is a 404 before rendering (no route matches → `/_not-found`, a parameter outside `generateStaticParams` with `dynamicParams = false`, or a middleware rewrite with a 404 status) — and those all lead to the one site-wide `app/not-found.tsx` (English), which is also what Vercel serves for a middleware rewrite with a 404 status. So unknown public URLs go to `app/[locale]/[...rest]/route.ts`, which fetches the static `/<locale>/page-not-found` page from the deployment itself (prerendered, served from the edge cache) and returns its HTML with status 404 and `cache-control: private, no-store`; if that fetch fails or takes more than 3 seconds (e.g. a preview protected by Vercel Authentication) it returns a plain localized 404 page. Every method gets the 404 (POST, PUT, PATCH, DELETE and OPTIONS too, not a 405 or 204). The fetch goes to the server's own origin: under `next start` `request.url` is built from the server's host and port, on Vercel from the routed domain, never from a visitor's Host header. Not yet checked on Vercel: after the deploy, `curl -sI https://www.bellaveremu.com/fr/no-such-page` must say 404 and the body must read "Vous avez pris le large ?".
 - **Messages are precompiled.** `i18n/messages.ts` compiles every message with icu-minify when the server starts, and `next.config.ts` aliases `use-intl/format-message` to next-intl's precompiled-message formatter (what next-intl's `experimental.messages.precompile` does, which needs Next.js 16 for its loader). Consequences: an invalid ICU message fails the build; `t.raw()` is not available; a named number style (`{n, number, percent}`) must be declared in `MESSAGE_FORMATS` (`i18n/routing.ts`), skeletons (`::MMMM`) and plain `{n, number}` work as before. Once on Next.js 16, the alias can be replaced by `experimental.messages.precompile` (with the merged message files).
 - **global-error** stays English (it replaces the whole document and loads before any translation).
 - **Typed keys**: `t("x.y")` is checked against `messages/en.json`; template keys (`` t(`steps.${id}.title`) ``) need `id` typed as a union of literals.

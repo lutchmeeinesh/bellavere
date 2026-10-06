@@ -199,7 +199,8 @@ public/images/coverage-map.webp   the client's coverage map (keep the OSM attrib
 scripts/hash-password.mjs  generate an admin password hash
 scripts/i18n-check.mjs     translations: key parity, placeholders, leftovers in English
 middleware.ts              route protection + property-ownership 404 + language routing (next-intl)
-scripts/review.mjs         Playwright review: routes, isolation, currency switch, 404s, screenshots
+scripts/review.mjs         Playwright review: routes in both languages (status, lang, canonical, hreflang,
+                           cookie and /en redirects), isolation, currency switch, 404s, screenshots
 screenshots/               37 PNGs
 README.md  ASSUMPTIONS.md  REVIEW.md  HANDOFF.md
 ```
@@ -251,7 +252,7 @@ Lighthouse is no longer a dependency (it slowed every Vercel build): run `npx li
 
 ## 8. ⚠️ Non-obvious gotchas (fixed; do not regress)
 
-1. **Streaming kills 404 status codes.** The dashboard has `loading.tsx`, so it streams, and once streaming starts Next.js 15 can't change the HTTP status — not even from `generateMetadata`. An in-page `notFound()` only swaps the UI (you get a 200). **`middleware.ts` therefore decides every portal 404**: unknown paths and other owners' property ids are rewritten, **with status 404**, to `/dashboard/__missing` (rendered inside the portal by `app/dashboard/[...missing]` under `next start`; **on Vercel the platform answers a 404 status with the site-wide "Lost at sea?" page** — verified live, and fine: the status is a real 404 and nothing about the other owner is shown), and unknown admin paths to `/admin/clients/__missing`. **Every new dashboard page must be added to `DASHBOARD_PAGES` in `middleware.ts`, and every new admin route to its admin check**, or it will answer with the portal 404.
+1. **Streaming kills 404 status codes.** The dashboard has `loading.tsx`, so it streams, and once streaming starts Next.js 15 can't change the HTTP status — not even from `generateMetadata`. An in-page `notFound()` only swaps the UI (you get a 200). **`middleware.ts` therefore decides every portal 404**: unknown paths and other owners' property ids are rewritten, **with status 404**, to `/dashboard/__missing` (rendered inside the portal by `app/(portal)/dashboard/[...missing]` under `next start`; **on Vercel the platform answers a 404 status with the site-wide "Lost at sea?" page** — verified live, and fine: the status is a real 404 and nothing about the other owner is shown), and unknown admin paths to `/admin/clients/__missing`. **Every new dashboard page must be added to `DASHBOARD_PAGES` in `middleware.ts`, and every new admin route to its admin check**, or it will answer with the portal 404.
 2. **Streaming also moves `<meta>` into `<body>`.** The portals render per request, and Next.js 15 streams their metadata after `</head>`. `htmlLimitedBots: /.*/` in `next.config.ts` keeps it in `<head>`. **Don't remove it.**
 3. **`Card` hard-codes `bg-white`.** Classes are joined with `cn()` (no tailwind-merge), so passing `bg-navy-900` does NOT override it; the white wins. For dark cards, use a plain element (see the syndic card in `components/home/ServicesOverview.tsx`).
 6. **`data/company.ts` ships to the browser.** Client components (Hero, FaqAccordion) import it, so every value in it is public, even if never rendered — Krit's personal email leaked into the JS bundles this way until round 5. Keep private data in server-only modules (`data/admins.ts`, `.env`). `scripts/review.mjs` now scans the built bundles for secrets.
@@ -282,6 +283,7 @@ Lighthouse is no longer a dependency (it slowed every Vercel build): run `npx li
 - **Every image's alt text must describe what the photo actually shows.** Look at the image; a URL returning 200 proves nothing about its content.
 - No gendered pronouns for the team; use names or roles.
 - Invented company facts get `{/* TODO: confirm with client */}`. **Don't publish track-record claims** (property counts, years, ratings, testimonials) until they are real.
+- When the privacy policy or the terms change, move their date in `LEGAL_LAST_UPDATED` (`data/site.ts`) forward: it is the pages' "Last updated" line and their sitemap date. Other pages' sitemap dates are in `app/sitemap.ts`.
 
 ---
 
@@ -318,7 +320,7 @@ Recreate `data/*.ts` + `lib/metrics.ts` as Supabase tables and queries, keeping 
 - ✅ All fake filler stripped: placeholder contact details hidden, invented metrics/response times/service extras/policies/features removed, public portfolio removed, demo owners reduced to two.
 - ✅ Phone numbers, 24/7 availability, same-day replies, Instagram and Facebook (round 5).
 - ✅ Legal name Bellavere Ltd, Company No. 238321, incorporated 19 Aug 2026 (private company limited by shares); Krit's surname; the 15% wording.
-- ⬜ In `data/company.ts`: **registered address and BRN** (neither is on the certificate), tagline, bios, and a role for Nihal if there is one.
+- ⬜ **Registered address and BRN** (neither is on the certificate; `data/company.ts`), the tagline and bios (messages `common.company.tagline` and `common.company.team.<id>.bio`, in both languages), and a role for Nihal if there is one.
 - ✅ EUR→MUR rate confirmed at €1 = Rs 52 (storing real dual prices per record stays optional).
 - ✅ Testimonials kept as they are by client decision (22 Sep 2026); swap in real quotes if any arrive.
 - ⬜ Real photography.
@@ -349,7 +351,7 @@ Recreate `data/*.ts` + `lib/metrics.ts` as Supabase tables and queries, keeping 
 ## 🟢 F. Legal & compliance
 
 - ✅ `/privacy` (Mauritius DPA 2017 + GDPR) and `/terms` templates; consent checkbox links to the privacy policy.
-- ⬜ **Lawyer review** of both pages; BRN, registered address and retention periods; the real management agreement.
+- ⬜ **Lawyer review** of both pages (including the language cookie and the WhatsApp wording added to the privacy policy in Wave 1); BRN, registered address and retention periods; the real management agreement.
 
 ## 🟢 G. Nice-to-have
 
