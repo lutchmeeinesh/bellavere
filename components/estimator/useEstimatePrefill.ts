@@ -60,6 +60,9 @@ export function useEstimatePrefill(): ContactPrefill | null {
         type: answers.type,
         located: t(`regions.${answers.region}.located`),
         towns: t(`regions.${answers.region}.towns`),
+        // "in the centre or elsewhere on the island" needs no "(… and the
+        // rest of the island)" after it.
+        hasTowns: answers.region === "centre" ? "no" : "yes",
         bedrooms: text.bedrooms(answers.bedrooms),
         hasFeatures: answers.features.length > 0 ? "yes" : "no",
         features: text.features(answers.features),

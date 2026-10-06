@@ -1,6 +1,13 @@
 "use client";
 
-import { useEffect, useId, useMemo, useRef, useState } from "react";
+import {
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowLeft, ArrowRight, BedDouble } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -23,7 +30,12 @@ import {
   type PropertyType,
   type Region,
 } from "@/data/estimator-config";
-import { parseEstimatorParams, type EstimatorAnswers } from "@/lib/estimator";
+import {
+  estimatorPageSearch,
+  isResultStep,
+  parseEstimatorParams,
+  type EstimatorAnswers,
+} from "@/lib/estimator";
 
 /** The questions, in order; their wording is `estimator.steps.<id>`. */
 const STEPS = ["type", "region", "bedrooms", "features", "availability"] as const;
@@ -33,35 +45,57 @@ const RESULT = STEPS.length;
 const AVAILABILITY = ["yearRound", "partYear"] as const;
 type Availability = (typeof AVAILABILITY)[number];
 
-/** The answers while the visitor works through the questions. */
+/**
+ * The answers while the visitor works through the questions. Bedrooms and
+ * features stay unset until the visitor (or the URL) gives them; the
+ * questions show the defaults meanwhile.
+ */
 interface Draft {
   type?: PropertyType;
   region?: Region;
-  bedrooms: number;
-  features: Feature[];
+  bedrooms?: number;
+  features?: Feature[];
   availability?: Availability;
   /** The part-year slider; kept when switching to year-round and back. */
   partYearWeeks: number;
 }
 
 const INITIAL_DRAFT: Draft = {
-  bedrooms: ESTIMATOR_CONFIG.bedrooms.default,
-  features: [],
   partYearWeeks: ESTIMATOR_CONFIG.weeks.default,
 };
 
+const DEFAULT_BEDROOMS = ESTIMATOR_CONFIG.bedrooms.default;
+const NO_FEATURES: Feature[] = [];
+
+/** Weeks for the availability chosen, if any. */
+function draftWeeks(draft: Draft): number | undefined {
+  if (!draft.availability) return undefined;
+  return draft.availability === "yearRound"
+    ? ESTIMATOR_CONFIG.weeks.yearRound
+    : draft.partYearWeeks;
+}
+
 /** Complete answers for the estimate, or null while some are missing. */
 function toAnswers(draft: Draft): EstimatorAnswers | null {
-  if (!draft.type || !draft.region || !draft.availability) return null;
+  const weeks = draftWeeks(draft);
+  if (!draft.type || !draft.region || weeks === undefined) return null;
+  return {
+    type: draft.type,
+    region: draft.region,
+    bedrooms: draft.bedrooms ?? DEFAULT_BEDROOMS,
+    features: draft.features ?? NO_FEATURES,
+    weeks,
+  };
+}
+
+/** The answers given so far, for the page's URL. */
+function givenAnswers(draft: Draft): Partial<EstimatorAnswers> {
   return {
     type: draft.type,
     region: draft.region,
     bedrooms: draft.bedrooms,
     features: draft.features,
-    weeks:
-      draft.availability === "yearRound"
-        ? ESTIMATOR_CONFIG.weeks.yearRound
-        : draft.partYearWeeks,
+    weeks: draftWeeks(draft),
   };
 }
 
@@ -95,6 +129,11 @@ const HEADER_OFFSET = 96;
  * result. The first question is rendered on the server (the page is
  * static); deep links pre-fill answers after hydration. Back keeps every
  * answer; each new screen moves keyboard focus to its heading.
+ *
+ * The answers are mirrored in the page's URL as they are given (with
+ * `step=result` while the result is shown), so the result survives the
+ * EN | FR switch (which keeps the query) and the browser's Back button
+ * from the contact page, and can be reloaded or shared.
  */
 export function EstimatorFlow() {
   const t = useTranslations("estimator");
@@ -106,17 +145,32 @@ export function EstimatorFlow() {
   const [direction, setDirection] = useState(1);
   // False until the visitor first moves: the page load never steals focus.
   const [moved, setMoved] = useState(false);
+  // True once the URL has been read; until then it is not rewritten.
+  const [urlRead, setUrlRead] = useState(false);
+  // The result was reopened from the URL rather than reached by answering.
+  const [reopened, setReopened] = useState(false);
+  // Changes when the result is reopened, so it appears without the
+  // transition from question 1.
+  const [screenSet, setScreenSet] = useState(0);
   const [hoveredRegion, setHoveredRegion] = useState<Region | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const advanceTimer = useRef<number | undefined>(undefined);
 
-  // Deep links, read once in the browser (useSearchParams would make the
-  // whole page render on the client).
-  useEffect(() => {
-    const fromUrl = draftFromUrl(window.location.search);
-    if (Object.keys(fromUrl).length > 0) {
-      setDraft((current) => ({ ...current, ...fromUrl }));
+  // Answers from the URL (deep links, the language switch, Back), read once
+  // in the browser: useSearchParams would make the whole page render on the
+  // client. A layout effect, so a result reopened after a client-side
+  // navigation shows without first painting question 1.
+  useLayoutEffect(() => {
+    const search = window.location.search;
+    const fromUrl = draftFromUrl(search);
+    const restored = { ...INITIAL_DRAFT, ...fromUrl };
+    if (Object.keys(fromUrl).length > 0) setDraft(restored);
+    if (isResultStep(search) && toAnswers(restored)) {
+      setStep(RESULT);
+      setReopened(true);
+      setScreenSet(1);
     }
+    setUrlRead(true);
   }, []);
 
   useEffect(() => () => window.clearTimeout(advanceTimer.current), []);
@@ -124,6 +178,21 @@ export function EstimatorFlow() {
   const answers = useMemo(() => toAnswers(draft), [draft]);
   const showResult = step === RESULT && answers !== null;
   const stepId = STEPS[Math.min(step, STEPS.length - 1)];
+
+  // Mirror the answers in the URL. replaceState (patched by Next.js) keeps
+  // the router in step without a navigation or a new history entry.
+  useEffect(() => {
+    if (!urlRead) return;
+    const { pathname, search, hash } = window.location;
+    const next = estimatorPageSearch(
+      search,
+      showResult && answers ? answers : givenAnswers(draft),
+      showResult,
+    );
+    if (next !== search) {
+      window.history.replaceState(null, "", `${pathname}${next}${hash}`);
+    }
+  }, [urlRead, draft, answers, showResult]);
 
   // The floating WhatsApp button stays out of the way of the questions; the
   // result brings it back with its own message. data-whatsapp-hidden below
@@ -152,6 +221,7 @@ export function EstimatorFlow() {
     setDirection(next >= step ? 1 : -1);
     setStep(next);
     setMoved(true);
+    setReopened(false);
   }
 
   /** After a card is chosen: on to the next question, once the tick shows. */
@@ -195,6 +265,7 @@ export function EstimatorFlow() {
           className="h-1 overflow-hidden rounded-full bg-sand-100"
         >
           <motion.div
+            key={screenSet}
             className="h-full origin-left rounded-full bg-gold-500"
             initial={false}
             animate={{ scaleX: percent / 100 }}
@@ -204,7 +275,12 @@ export function EstimatorFlow() {
 
         {/* The current screen */}
         <div className="mt-8 sm:min-h-[20rem]">
-          <AnimatePresence mode="wait" initial={false} custom={direction}>
+          <AnimatePresence
+            key={screenSet}
+            mode="wait"
+            initial={false}
+            custom={direction}
+          >
             <motion.div
               key={showResult ? "result" : stepId}
               custom={direction}
@@ -224,6 +300,7 @@ export function EstimatorFlow() {
                     answers={answers}
                     headingId={`${baseId}-result`}
                     onChangeAnswers={() => goTo(0)}
+                    trackCompletion={!reopened}
                   />
                 ) : (
                   <>
@@ -287,13 +364,13 @@ export function EstimatorFlow() {
                           <BedDouble className="size-5" aria-hidden />
                         </span>
                         <BedroomStepper
-                          value={draft.bedrooms}
+                          value={draft.bedrooms ?? DEFAULT_BEDROOMS}
                           onChange={(bedrooms) => update({ bedrooms })}
                           labelledBy={titleId}
                           className="mt-5"
                         />
                         <p className="mt-3 text-sm text-ink-500" aria-hidden>
-                          {text.bedrooms(draft.bedrooms)}
+                          {text.bedrooms(draft.bedrooms ?? DEFAULT_BEDROOMS)}
                         </p>
                       </div>
                     ) : null}
@@ -301,7 +378,7 @@ export function EstimatorFlow() {
                     {stepId === "features" ? (
                       <div className="mt-7">
                         <FeatureChips
-                          value={draft.features}
+                          value={draft.features ?? NO_FEATURES}
                           onChange={(features) => update({ features })}
                           labelledBy={titleId}
                           describedBy={hintId}

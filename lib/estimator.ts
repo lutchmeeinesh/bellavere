@@ -267,9 +267,19 @@ function roundTo(value: number, step: number): number {
 }
 
 /**
+ * Rounds down to a multiple of `step`. The small allowance keeps an exact
+ * multiple that floating point lands just below (37,000 × 0.15 =
+ * 5,549.999…) on that multiple.
+ */
+function floorTo(value: number, step: number): number {
+  return Math.floor(value / step + 1e-9) * step;
+}
+
+/**
  * The yearly breakdown as shown to the visitor, in the display currency:
- * gross rounded for display, the maximum fee rounded to the same step, and
- * the net as their difference, so the three lines always add up.
+ * gross rounded for display, the maximum fee rounded down to the same step
+ * (so it is never more than the advertised share of the gross shown next to
+ * it) and the net as their difference, so the three lines always add up.
  * `convert` turns EUR into the display currency.
  */
 export function displayBreakdown(
@@ -278,7 +288,7 @@ export function displayBreakdown(
 ) {
   const line = (eur: number) => {
     const gross = roundForDisplay(convert(eur));
-    const fee = roundTo(gross * estimate.fee.rate, displayStep(gross));
+    const fee = floorTo(gross * estimate.fee.rate, displayStep(gross));
     return { gross, fee, net: gross - fee };
   };
   const low = line(estimate.annual.low);
@@ -361,6 +371,42 @@ export function estimatorSearchParams(
   }
   if (answers.weeks !== undefined) params.set("weeks", String(answers.weeks));
   return params;
+}
+
+/** `step=result` in the estimator's own URL: the result screen is open. */
+export const RESULT_STEP = { param: "step", value: "result" } as const;
+
+/** Query parameters the estimator page writes in its own URL. */
+const PAGE_PARAMS = ["type", "region", "bedrooms", "features", "weeks", RESULT_STEP.param];
+
+/**
+ * The query string ("?…" or "") of the estimator page for the answers given
+ * so far, plus `step=result` while the result is shown (only with complete
+ * answers). Any other parameter of `current` (e.g. utm_source) is kept.
+ * Commas in the feature list stay readable.
+ */
+export function estimatorPageSearch(
+  current: string,
+  answers: Partial<EstimatorAnswers>,
+  showResult: boolean,
+): string {
+  const params = new URLSearchParams(current);
+  for (const key of PAGE_PARAMS) params.delete(key);
+  for (const [key, value] of estimatorSearchParams(answers)) {
+    params.append(key, value);
+  }
+  if (showResult && isCompleteAnswers(answers)) {
+    params.set(RESULT_STEP.param, RESULT_STEP.value);
+  }
+  const query = params.toString().replace(/%2C/gi, ",");
+  return query ? `?${query}` : "";
+}
+
+/** True when an estimator URL asks for the result screen (`step=result`). */
+export function isResultStep(search: string | URLSearchParams): boolean {
+  const params =
+    typeof search === "string" ? new URLSearchParams(search) : search;
+  return params.get(RESULT_STEP.param) === RESULT_STEP.value;
 }
 
 /** Value of `source` that marks a contact enquiry started from the estimator. */

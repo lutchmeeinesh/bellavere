@@ -764,7 +764,7 @@
       "progress": "Progression",
       "back": "Retour",
       "continue": "Continuer",
-      "seeEstimate": "Voir mon estimation"
+      "seeEstimate": "Voir le résultat"
     },
     "steps": {
       "type": {
@@ -805,22 +805,22 @@
     "regions": {
       "north": {
         "name": "Nord",
-        "towns": "Grand Baie, Pereybère",
+        "towns": "Grand Baie, Pereybère",
         "located": "dans le Nord"
       },
       "west": {
         "name": "Ouest",
-        "towns": "Flic en Flac, Tamarin, Rivière Noire",
+        "towns": "Flic en Flac, Tamarin, Rivière Noire",
         "located": "dans l’Ouest"
       },
       "east": {
         "name": "Est",
-        "towns": "Belle Mare, Trou d’Eau Douce",
+        "towns": "Belle Mare, Trou d’Eau Douce",
         "located": "dans l’Est"
       },
       "south": {
         "name": "Sud",
-        "towns": "Bel Ombre",
+        "towns": "Bel Ombre",
         "located": "dans le Sud"
       },
       "centre": {
@@ -830,8 +830,8 @@
       }
     },
     "bedrooms": {
-      "count": "{count, plural, one {# chambre} other {# chambres}}",
-      "countMax": "{count} chambres et plus",
+      "count": "{count, plural, one {# chambre} other {# chambres}}",
+      "countMax": "{count} chambres et plus",
       "fewer": "Une chambre de moins",
       "more": "Une chambre de plus"
     },
@@ -858,20 +858,20 @@
           "inSentence": "ménage inclus"
         }
       },
-      "count": "{count, plural, =0 {Aucune sélection – c’est très bien aussi.} one {# option sélectionnée} other {# options sélectionnées}}"
+      "count": "{count, plural, =0 {Aucune sélection – c’est tout à fait possible.} one {# option sélectionnée} other {# options sélectionnées}}"
     },
     "availability": {
       "yearRound": {
-        "title": "Louer toute l’année",
-        "description": "Ouvert aux voyageurs les {weeks} semaines de l’année"
+        "title": "Je le loue toute l’année",
+        "description": "Ouvert aux voyageurs les {weeks} semaines de l’année"
       },
       "partYear": {
         "title": "J’en profite une partie de l’année",
         "description": "Choisissez le nombre de semaines ouvertes à la réservation"
       },
       "weeksLabel": "Semaines ouvertes à la réservation",
-      "weeks": "{weeks, plural, one {# semaine} other {# semaines}}",
-      "weeksPerYear": "{weeks, plural, one {# semaine} other {# semaines}} par an"
+      "weeks": "{weeks, plural, one {# semaine} other {# semaines}}",
+      "weeksPerYear": "{weeks, plural, one {# semaine} other {# semaines}} par an"
     },
     "result": {
       "eyebrow": "Votre estimation",
@@ -885,16 +885,16 @@
       "gross": "Revenus locatifs bruts estimés",
       "range": "de {low} à {high}",
       "disclaimer": "Estimation indicative fondée sur des moyennes régionales – votre évaluation gratuite vous donnera le chiffre exact.",
-      "occupancy": "{yearRound, select, yes {Sur la base d’un taux d’occupation d’environ {occupancy, number, percent} sur l’année} other {Sur la base d’un taux d’occupation d’environ {occupancy, number, percent} sur les {weeks, plural, one {# semaine} other {# semaines}} où votre bien est disponible}} – {high, number, percent} en haute saison ({highFrom, date, ::MMMM} à {highTo, date, ::MMMM}), {low, number, percent} en basse saison ({lowFrom, date, ::MMMM} à {lowTo, date, ::MMMM}).",
+      "occupancy": "{yearRound, select, yes {Sur la base d’un taux d’occupation d’environ {occupancy, number, percent} sur l’année} other {Sur la base d’un taux d’occupation d’environ {occupancy, number, percent} sur les {weeks, plural, one {# semaine} other {# semaines}} où votre bien est disponible}} – {high, number, percent} en haute saison (de {highFrom, date, ::MMMM} à {highTo, date, ::MMMM}), {low, number, percent} en basse saison (de {lowFrom, date, ::MMMM} à {lowTo, date, ::MMMM}).",
       "breakdown": {
         "title": "Répartition",
         "period": "Par an",
         "gross": "Revenus locatifs bruts estimés",
         "fee": "Frais de gestion Bellavere",
         "feeCap": "{maxFee, number, percent} maximum",
-        "upTo": "jusqu’à",
+        "atMost": "(au plus)",
         "net": "Net estimé pour vous",
-        "atLeast": "au moins",
+        "atLeast": "(au minimum)",
         "note": "Vos frais de gestion sont convenus avec vous après notre premier rendez-vous et ne dépassent jamais {maxFee, number, percent} des revenus locatifs bruts. Aucuns frais cachés : chaque dépense est détaillée sur votre relevé mensuel."
       },
       "approach": {
@@ -905,7 +905,7 @@
             "copy": "Annonce, promotion et tarifs, demandes, réservations et accueil des voyageurs : nous nous occupons de tout."
           },
           "care": {
-            "title": "Prêt à accueillir, toute l’année",
+            "title": "Prêt à accueillir toute l’année",
             "copy": "Entretien préventif, réparations et inspections régulières maintiennent votre bien en bon état toute l’année."
           },
           "reporting": {
@@ -931,7 +931,7 @@
         },
         "occupancy": {
           "title": "Un taux d’occupation saisonnier",
-          "copy": "Nous retenons un taux d’occupation d’environ {high, number, percent} en haute saison ({highFrom, date, ::MMMM} à {highTo, date, ::MMMM}) et de {low, number, percent} en basse saison, réparti sur les semaines où votre bien est disponible."
+          "copy": "Nous retenons un taux d’occupation d’environ {high, number, percent} en haute saison (de {highFrom, date, ::MMMM} à {highTo, date, ::MMMM}) et de {low, number, percent} en basse saison, réparti sur les semaines où votre bien est disponible."
         },
         "fees": {
           "title": "Nos frais, en toute transparence",
@@ -951,10 +951,10 @@
       "action": "Estimer mes revenus",
       "note": "Gratuit, indicatif et sans inscription."
     },
-    "whatsappMessage": "Bonjour Bellavere, je viens d’utiliser votre simulateur de revenus pour {type, select, villa {une villa} apartment {un appartement} other {un penthouse}} de {bedrooms} {located} : il indique de {low} à {high} par an. Pourrions-nous en parler ?",
+    "whatsappMessage": "Bonjour Bellavere, je viens d’utiliser votre simulateur de revenus pour {type, select, villa {une villa} apartment {un appartement} other {un penthouse}} {max, select, yes {d’au moins {bedrooms} chambres} other {{bedrooms, plural, =1 {d’une chambre} other {de # chambres}}}} {located} : il m’indique entre {low} et {high} par an. Pourrions-nous en parler ?",
     "contactSummary": {
-      "full": "J’ai utilisé le simulateur de revenus : {type, select, villa {villa} apartment {appartement} other {penthouse}} {located} ({towns}), {bedrooms}{hasFeatures, select, yes {, {features}} other {}}, {yearRound, select, yes {disponible toute l’année} other {disponible {weeks, plural, one {# semaine} other {# semaines}} par an}}. Estimation : de {low} à {high} par an. Je souhaiterais bénéficier de mon évaluation gratuite.",
-      "short": "J’ai utilisé le simulateur de revenus. Estimation : de {low} à {high} par an. Je souhaiterais bénéficier de mon évaluation gratuite."
+      "full": "J’ai utilisé le simulateur de revenus : {type, select, villa {villa} apartment {appartement} other {penthouse}} {located}{hasTowns, select, yes { ({towns})} other {}}, {bedrooms}{hasFeatures, select, yes {, {features}} other {}}, {yearRound, select, yes {disponible toute l’année} other {disponible {weeks, plural, one {# semaine} other {# semaines}} par an}}. Estimation : de {low} à {high} par an. Je souhaiterais bénéficier d’une évaluation gratuite.",
+      "short": "J’ai utilisé le simulateur de revenus. Estimation : de {low} à {high} par an. Je souhaiterais bénéficier d’une évaluation gratuite."
     }
   },
   "whatsapp": {

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   ESTIMATOR_CONFIG,
+  PROPERTY_TYPES,
   REGIONS,
   type EstimatorConfig,
 } from "@/data/estimator-config";
@@ -9,9 +10,12 @@ import {
   clampBedrooms,
   contactSearchParams,
   displayBreakdown,
+  displayStep,
   estimateIncome,
+  estimatorPageSearch,
   estimatorSearchParams,
   isCompleteAnswers,
+  isResultStep,
   lowSeasonMonths,
   nightlyRate,
   normalizeWeeks,
@@ -269,25 +273,84 @@ describe("display rounding", () => {
   });
 
   it("builds a yearly breakdown that adds up (EUR)", () => {
-    // gross low 37,035.18 → 37,000; fee 37,000 × 0.15 = 5,550 → 5,600 (step 100); net 31,400
+    // The fee is rounded DOWN to the gross's step, so it never shows more
+    // than 15% of the gross shown next to it.
+    // gross low 37,035.18 → 37,000; fee 37,000 × 0.15 = 5,550 → 5,500 (step 100); net 31,500
     // gross high 50,106.42 → 50,100; fee 7,515 → 7,500; net 42,600
     const breakdown = displayBreakdown(estimateIncome(base));
     expect(breakdown).toEqual({
       gross: { low: 37_000, high: 50_100 },
-      fee: { low: 5_600, high: 7_500 },
-      net: { low: 31_400, high: 42_600 },
+      fee: { low: 5_500, high: 7_500 },
+      net: { low: 31_500, high: 42_600 },
     });
   });
 
   it("rounds in the display currency (MUR at 52)", () => {
-    // low 37,035.18 × 52 = 1,925,829.36 → 1,930,000; fee 289,500 → 290,000; net 1,640,000
+    // low 37,035.18 × 52 = 1,925,829.36 → 1,930,000; fee 289,500 → 280,000 (step 10,000); net 1,650,000
     // high 50,106.42 × 52 = 2,605,533.84 → 2,610,000; fee 391,500 → 390,000; net 2,220,000
     const breakdown = displayBreakdown(estimateIncome(base), (eur) => eur * 52);
     expect(breakdown).toEqual({
       gross: { low: 1_930_000, high: 2_610_000 },
-      fee: { low: 290_000, high: 390_000 },
-      net: { low: 1_640_000, high: 2_220_000 },
+      fee: { low: 280_000, high: 390_000 },
+      net: { low: 1_650_000, high: 2_220_000 },
     });
+  });
+
+  it("never shows a fee above 15% of the gross shown (reported case)", () => {
+    // villa, north, 3 bedrooms, pool + sea view, year-round:
+    // EUR gross 63,391.64 → 63,400 · 85,765.16 → 85,800
+    //     fee 9,510 → 9,500 · 12,870 → 12,800 (was 12,900 = 15.03%)
+    // MUR gross 3,296,365 → 3,300,000 · 4,459,788 → 4,460,000
+    //     fee 495,000 → 490,000 (was 500,000 = 15.15%) · 669,000 → 660,000 (was 670,000)
+    const answers: EstimatorAnswers = {
+      ...base,
+      region: "north",
+      bedrooms: 3,
+      features: ["privatePool", "seaView"],
+    };
+    expect(displayBreakdown(estimateIncome(answers))).toEqual({
+      gross: { low: 63_400, high: 85_800 },
+      fee: { low: 9_500, high: 12_800 },
+      net: { low: 53_900, high: 73_000 },
+    });
+    expect(displayBreakdown(estimateIncome(answers), (eur) => eur * 52)).toEqual({
+      gross: { low: 3_300_000, high: 4_460_000 },
+      fee: { low: 490_000, high: 660_000 },
+      net: { low: 2_810_000, high: 3_800_000 },
+    });
+  });
+
+  it("keeps the fee within 15% and the lines adding up for every answer", () => {
+    const featureSets: EstimatorAnswers["features"][] = [
+      [],
+      ["privatePool"],
+      ["privatePool", "seaView"],
+      ["privatePool", "seaView", "beachfront", "airCon", "housekeeping"],
+    ];
+    let checked = 0;
+    for (const type of PROPERTY_TYPES) {
+      for (const region of REGIONS) {
+        for (let bedrooms = 1; bedrooms <= 6; bedrooms++) {
+          for (const features of featureSets) {
+            for (const weeks of [4, 13, 26, 48, 52]) {
+              const estimate = estimateIncome({ type, region, bedrooms, features, weeks });
+              for (const convert of [(eur: number) => eur, (eur: number) => eur * 52]) {
+                const { gross, fee, net } = displayBreakdown(estimate, convert);
+                for (const end of ["low", "high"] as const) {
+                  const step = displayStep(gross[end]);
+                  expect(fee[end]).toBeLessThanOrEqual(gross[end] * 0.15);
+                  expect(fee[end]).toBeGreaterThan(gross[end] * 0.15 - step);
+                  expect(fee[end] % step).toBe(0);
+                  expect(fee[end] + net[end]).toBe(gross[end]);
+                  checked++;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    expect(checked).toBe(3 * 5 * 6 * 4 * 5 * 2 * 2);
   });
 });
 
@@ -381,6 +444,66 @@ describe("URL parameters", () => {
     expect(contactSearchParams(answers, estimateIncome(answers)).toString()).toBe(
       "source=estimate&type=villa&region=north&bedrooms=3&features=privatePool%2CseaView&weeks=52&low=63392&high=85765",
     );
+  });
+});
+
+describe("the estimator page's own URL", () => {
+  const answers: EstimatorAnswers = {
+    type: "penthouse",
+    region: "west",
+    bedrooms: 3,
+    features: ["privatePool", "seaView"],
+    weeks: 52,
+  };
+
+  it("adds step=result while the result is shown, with readable commas", () => {
+    expect(estimatorPageSearch("", answers, true)).toBe(
+      "?type=penthouse&region=west&bedrooms=3&features=privatePool,seaView&weeks=52&step=result",
+    );
+    expect(estimatorPageSearch("", answers, false)).toBe(
+      "?type=penthouse&region=west&bedrooms=3&features=privatePool,seaView&weeks=52",
+    );
+  });
+
+  it("round-trips: the answers and the marker come back from the URL", () => {
+    const search = estimatorPageSearch("", answers, true);
+    expect(parseEstimatorParams(search)).toEqual(answers);
+    expect(isResultStep(search)).toBe(true);
+    // Switching language keeps the query; it is read the same way.
+    expect(isResultStep(new URLSearchParams(search.slice(1)))).toBe(true);
+  });
+
+  it("writes only the answers given so far, and no marker without all of them", () => {
+    expect(estimatorPageSearch("", {}, false)).toBe("");
+    expect(estimatorPageSearch("", { type: "villa" }, false)).toBe("?type=villa");
+    expect(estimatorPageSearch("", { type: "villa", region: "north" }, true)).toBe(
+      "?type=villa&region=north",
+    );
+    expect(estimatorPageSearch("", { ...answers, features: [] }, false)).toBe(
+      "?type=penthouse&region=west&bedrooms=3&features=&weeks=52",
+    );
+  });
+
+  it("replaces its own parameters and keeps any others", () => {
+    expect(
+      estimatorPageSearch(
+        "?utm_source=newsletter&type=villa&step=result&bedrooms=6",
+        { type: "apartment" },
+        false,
+      ),
+    ).toBe("?utm_source=newsletter&type=apartment");
+    // "Change my answers": the marker goes, the answers stay.
+    const shown = estimatorPageSearch("", answers, true);
+    const changing = estimatorPageSearch(shown, answers, false);
+    expect(isResultStep(changing)).toBe(false);
+    expect(parseEstimatorParams(changing)).toEqual(answers);
+  });
+
+  it("reads the marker only as step=result", () => {
+    expect(isResultStep("?step=result")).toBe(true);
+    expect(isResultStep("?step=2")).toBe(false);
+    expect(isResultStep("?type=villa")).toBe(false);
+    expect(isResultStep("")).toBe(false);
   });
 });
 

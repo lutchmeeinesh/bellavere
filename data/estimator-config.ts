@@ -69,7 +69,7 @@ export interface EstimatorConfig {
     highSeasonMonths: readonly number[];
   };
   weeks: {
-    /** "Rent it out year-round". */
+    /** "I rent it out year-round". */
     yearRound: number;
     /** The part-year slider. */
     min: number;
