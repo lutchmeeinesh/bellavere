@@ -8,7 +8,8 @@ const SERVICES = ["rental", "maintenance", "clientCare", "concierge", "syndic"] 
 
 /**
  * Organization structured data, rendered once in the site layout, in the
- * page's language (names, descriptions and slogan; facts are shared).
+ * page's language (names, descriptions, slogan and country name; facts and
+ * schema.org vocabulary such as contactType and dayOfWeek are shared).
  */
 export function JsonLd() {
   const t = useTranslations("common");
@@ -53,7 +54,9 @@ export function JsonLd() {
       addressCountry: "MU",
     },
     // Island-wide coverage, confirmed by the client's own map (22 Sep 2026).
-    areaServed: { "@type": "Country", name: "Mauritius" },
+    // The country's name in the page's language ("Maurice" in French), like
+    // the other names here; the ISO code stays in the address.
+    areaServed: { "@type": "Country", name: t("company.country") },
     // No walk-in office, so no organisation-wide opening hours: the 24/7
     // availability belongs to the contact people (hoursAvailable below).
     contactPoint: company.contacts.map((person) => ({

@@ -4,7 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
 import { company } from "@/data/company";
-import { PUBLIC_EMAIL } from "@/data/site";
+import { LEGAL_LAST_UPDATED, PUBLIC_EMAIL } from "@/data/site";
 import { Link } from "@/i18n/navigation";
 import { formatDateLong } from "@/lib/format";
 import { localizedMetadata } from "@/lib/i18n/metadata";
@@ -14,8 +14,11 @@ import { getPageLocale, type LocaleParams } from "@/lib/i18n/server";
 // privacy policy). Facts — company details, the email address, dates — come
 // from the data files and are interpolated.
 
-/** Shown as "Last updated", formatted in the page's language. */
-const LAST_UPDATED = "2026-09-22";
+/**
+ * Shown as "Last updated", formatted in the page's language (data/site.ts;
+ * app/sitemap.ts uses the same date).
+ */
+const LAST_UPDATED = LEGAL_LAST_UPDATED.terms;
 
 export async function generateMetadata({
   params,

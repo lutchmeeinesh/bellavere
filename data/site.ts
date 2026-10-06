@@ -47,6 +47,20 @@ export const WHATSAPP_PRIMARY = WHATSAPP_NUMBERS.ankit;
  * `whatsapp.contactCards.prefill`). The visitor can edit it before sending.
  */
 export const WHATSAPP_DEFAULT_MESSAGE: Record<AppLocale, string> = {
-  en: "Hello Bellavere, I'd like to know more about your property management services.",
+  en: "Hello Bellavere, I’d like to know more about your property management services.",
   fr: "Bonjour Bellavere, je souhaiterais en savoir plus sur vos services de gestion de propriétés.",
 };
+
+/**
+ * When what the legal pages say last changed (ISO dates): their "Last
+ * updated" line in both languages and their lastmod in app/sitemap.ts.
+ * Move a date forward whenever that page's content changes. With analytics
+ * on, the privacy policy shows the later of its date and
+ * ANALYTICS_POLICY_DATE (lib/analytics.ts), the day its analytics wording
+ * was added.
+ */
+export const LEGAL_LAST_UPDATED = {
+  /** Wave 1: the language cookie, the French suggestion's note and WhatsApp. */
+  privacy: "2026-10-06",
+  terms: "2026-09-22",
+} as const;

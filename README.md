@@ -45,7 +45,7 @@ The login page lists these with one-click "Use" buttons.
 | Area | Path |
 | --- | --- |
 | Design tokens (colors, type, radius, shadows) | `app/globals.css` |
-| Company facts (single source for all placeholder copy) | `data/company.ts` |
+| Company facts: names, numbers, contacts, ids (their wording, in both languages: messages `common.company.*`) | `data/company.ts` |
 | Site-wide settings: public email, WhatsApp numbers, site URL | `data/site.ts` |
 | Income estimator: every figure it uses / the calculation | `data/estimator-config.ts` / `lib/estimator.ts` (tests: `lib/estimator.test.ts`) |
 | WhatsApp button and contact cards | `components/whatsapp/*` (numbers and default messages in `data/site.ts`) |
@@ -70,14 +70,14 @@ The login page lists these with one-click "Use" buttons.
 | Name | Bellavere (trading name: Bellavere Property Care) | `data/company.ts` |
 | Legal entity | **Bellavere Ltd**, Company No. **238321**, incorporated 19 Aug 2026 in Mauritius as a private company limited by shares (Certificate of Incorporation, CB No 82650) | `data/company.ts` |
 | Enquiries | Contact form emails **BellavereLtd@gmail.com** (via Resend) | `app/api/contact/route.ts`, `PUBLIC_EMAIL` in `data/site.ts` |
-| Team | Krit Goburdhan — General Manager & Site Supervisor; Ankit Dookhorun — Client Relations; Nihal Lutchmee | `data/company.ts` |
+| Team | Krit Goburdhan — General Manager & Site Supervisor; Ankit Dookhorun — Client Relations; Nihal Lutchmee | `data/company.ts` (names), messages `common.company.team` (roles, bios) |
 | Contacts | Ankit Dookhorun +230 5531 0734, zoodookhorun@gmail.com · Nihal Lutchmee +230 5817 4529, executive@wwwbellavere.com — both reachable every day, 24/7 | `data/company.ts` (`contacts`) |
-| Response time | Every query answered the same day | `data/company.ts` (`responseTime`) |
+| Response time | Every query answered the same day | messages `common.company.responseTime` |
 | Social | Instagram and Facebook: bellavere.ltd | `data/company.ts` (`social`) |
 | Company email | BellavereLtd@gmail.com (hello@bellaveremu.com once it has a mailbox: flip `HELLO_MAILBOX_LIVE`) | `PUBLIC_EMAIL` in `data/site.ts` |
-| Mission | "Our mission is to provide the best service while maintaining full transparency. No hidden fees — and there will always be a human to answer you." | `data/company.ts` |
+| Mission | "Our mission is to provide the best service while maintaining full transparency. No hidden fees — and there will always be a human to answer you." | messages `common.company.mission` |
 | Currency | MUR and EUR, visitor chooses | `lib/format.ts` |
-| Fees | Negotiated and set after the first meeting; never more than 15% (each owner's agreed rate drives their statements) | `data/company.ts`, `data/clients.ts` |
+| Fees | Negotiated and set after the first meeting; never more than 15% (each owner's agreed rate drives their statements) | `data/company.ts` (`pricing.maxFeeRate`), `data/clients.ts`, messages `common.company.pricing` |
 | Onboarding | One to two weeks | `components/contact/FaqAccordion.tsx` |
 | Coverage | All around Mauritius (the client's own map) | `public/images/coverage-map.webp`, About page |
 | Services incl. syndic | From the client's own prospect-list outreach copy | `app/[locale]/(site)/services/page.tsx` |
@@ -91,8 +91,8 @@ Ankit's and Nihal's emails and both phone numbers are published on the contact p
 | Still needed | Currently | Where |
 | --- | --- | --- |
 | Registered address | not shown (it isn't on the Certificate of Incorporation); legal pages list it once set | `data/company.ts` |
-| Tagline | "Your property, perfectly managed." | `data/company.ts` |
-| Bios | written from the confirmed roles | `data/company.ts` |
+| Tagline | "Your property, perfectly managed." | messages `common.company.tagline` |
+| Bios | written from the confirmed roles | messages `common.company.team.<id>.bio` |
 | Testimonials | **kept by client decision (22 Sep 2026)** — 3 illustrative quotes (Élise M., Deepak R., Nathalie C. — not real people, not the demo owners). Replace with real quotes, with permission, before the site is public | `data/testimonials.ts` |
 | Legal pages | templates for a lawyer to review; retention periods TODO | `app/[locale]/(site)/privacy`, `app/[locale]/(site)/terms` |
 | Imagery | Unsplash stock (marketing pages + the portal demo) | `data/siteImages.ts`, `data/properties.ts` |
@@ -143,9 +143,9 @@ A floating button on every public page (hidden on the estimator's questions, car
 - `app/sitemap.ts`, `app/robots.ts` (dashboard, admin and API blocked from indexing; the login page carries `noindex`), `app/[locale]/opengraph-image.tsx` (one per language), canonical, hreflang and Open Graph URLs, and Organization JSON-LD with a logo (`components/site/JsonLd.tsx`).
 - Public pages are prerendered and cached at the edge; the owner and admin portals render per request. `htmlLimitedBots: /.*/` in `next.config.ts` keeps the portals' `<meta>` tags in `<head>`.
 - Security headers and a Content-Security-Policy are set in `next.config.ts`; `instrumentation.ts` logs missing or malformed environment variables at start-up (`[env]` in Vercel → Logs).
-- `/privacy` (Mauritius Data Protection Act 2017 + GDPR) and `/terms` — templates, to be reviewed by a lawyer. No cookie banner: the site sets only a strictly necessary session cookie and the user-requested currency and language preferences. Add a consent banner as soon as analytics or marketing cookies are introduced.
+- `/privacy` (Mauritius Data Protection Act 2017 + GDPR) and `/terms` — templates, to be reviewed by a lawyer. No cookie banner: the site sets only a strictly necessary session cookie and the user-requested currency and language preferences. Add a consent banner as soon as analytics or marketing cookies are introduced. The privacy policy also covers contact through WhatsApp (messages carried by WhatsApp/Meta under its own terms; kept like other enquiries) — part of the lawyer's review. Their "Last updated" dates, also their sitemap dates, are `LEGAL_LAST_UPDATED` in `data/site.ts`: move a date forward whenever that page's content changes.
 - Contact form: honeypot field + IP rate limit (`lib/rateLimit.ts`; in-memory, so use Upstash Redis on Vercel), consent record logged with timestamp.
-- Unknown URLs answer a real 404 with the "Lost at sea?" page in the URL's language, complete without JavaScript (`app/[locale]/[...rest]/route.ts`, see `UPGRADE-PLAN.md` §8).
+- Unknown URLs answer a real 404 with the "Lost at sea?" page in the URL's language, complete without JavaScript, whatever the HTTP method (`app/[locale]/[...rest]/route.ts`, see `UPGRADE-PLAN.md` §8).
 
 ## Analytics (Plausible)
 
@@ -158,13 +158,13 @@ Off until configured: nothing is loaded and the privacy policy says the site use
    - `Contact Submitted` (sent after an enquiry was delivered).
 3. In Vercel → Settings → Environment Variables (Production), set `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` = `www.bellaveremu.com`, then **redeploy** (the variable is read at build time).
 
-With the variable set, the script loads on the public site only (page views, including client-side navigations), the Content-Security-Policy allows `https://plausible.io` (`next.config.ts`), and the privacy policy gains its analytics paragraph (messages `analytics.privacy.*`, "Last updated" moves to `ANALYTICS_POLICY_DATE` in `lib/analytics.ts`). Events are sent through `track()` in `lib/analytics.ts`.
+With the variable set, the script loads on the public site only (page views, including client-side navigations), the Content-Security-Policy allows `https://plausible.io` (`next.config.ts`), and the privacy policy gains its analytics paragraph (messages `analytics.privacy.*`; "Last updated" shows `ANALYTICS_POLICY_DATE` from `lib/analytics.ts` if it is later than the policy's own date). Events are sent through `track()` in `lib/analytics.ts`.
 
 ## Internationalisation (English / French)
 
 The public site is in **English** (default, British English, unprefixed URLs: `/`, `/services`, …) and **French** (`/fr`, `/fr/services`, …), with [next-intl](https://next-intl.dev). The owner portal (`/login`, `/dashboard`, `/admin`) is English only. The full design is in `UPGRADE-PLAN.md`.
 
-- **Locales and URLs**: `i18n/routing.ts` (`as-needed` prefixes, no browser-language redirects). `middleware.ts` maps unprefixed URLs to English, and sends them to French while the `NEXT_LOCALE` cookie says `fr` — a cookie written only when the visitor picks FR in the header switch.
+- **Locales and URLs**: `i18n/routing.ts` (`as-needed` prefixes, no browser-language redirects). `middleware.ts` maps unprefixed URLs to English, and sends them to French while the `NEXT_LOCALE` cookie says `fr` — a cookie written only when the visitor chooses a language (`en` or `fr`), with the header switch or the French-suggestion card (`writeLocaleCookie()` in `lib/i18n/localeCookie.ts`). `/en/…` and upper-case prefixes (`/FR/…`, `/EN/…`) redirect to the lower-case, canonical address.
 - **Where text lives**: one JSON file per language, `messages/en.json` and `messages/fr.json`, loaded by `i18n/messages.ts`. Each is an object whose top-level keys are the namespaces, in this order: `common` (header, footer, buttons, 404/error pages, company wording, structured data, image alt texts), one per page (`home`, `services`, `about`, `contact`, `legal` — the last holds the privacy policy and the terms), `estimator` (the estimator and the home page's teaser), `whatsapp`, `analytics` (the privacy policy's analytics wording) and `locale` (language switch and suggestion). Both files keep the same keys in the same order, formatted with a 2-space indent (UTF-8, LF line endings, characters such as `é`, `’` and the no-break space written as themselves rather than `\u` escapes). Facts (names, phones, emails, numbers) stay in `data/company.ts` and `data/site.ts` and are inserted with placeholders.
 - **Adding a translation string**, step by step:
   1. Add the key to `messages/en.json`, inside the right namespace and nested by page section (the services page's hero note: `"services": { "hero": { "note": "…" } }`, used as `t("hero.note")` with the `services` namespace). Keys are camelCase; no arrays (lists are objects keyed by id, the order lives in code). Facts (names, phones, emails, figures) stay in `data/*` and go in as placeholders: `"Call {name} on {phone}"`, `"{maxFee, number, percent}"`.
@@ -175,7 +175,7 @@ The public site is in **English** (default, British English, unprefixed URLs: `/
   Messages are compiled ahead of time (see `UPGRADE-PLAN.md` §8): a message must be valid ICU, `t.raw()` is not available, and a named number style other than `percent` must be added to `MESSAGE_FORMATS` in `i18n/routing.ts`.
 - **Links, pages, metadata**: import `Link` from `@/i18n/navigation` (never `next/link` on public pages) and write hrefs without a locale; `<Button href>` does this already. Every page under `app/[locale]` starts with `await getPageLocale(params)` (keeps it static) and builds its metadata with `localizedMetadata()` (canonical, hreflang, Open Graph per language).
 - **Numbers and dates**: `useMoney()` and the helpers in `lib/format.ts` take the page's locale ("24 960 €", "Rs 24 960", "22 septembre 2026" in French; English unchanged).
-- **Check**: `npm run i18n:check` — key parity and ICU placeholders between English and French (must be clean), French values still identical to English, and user-facing text still hard-coded in components (`--strict` makes those fail too).
+- **Check**: `npm run i18n:check` — key parity and ICU placeholders between English and French (must be clean), French values still identical to English, and user-facing text still hard-coded in components (`--strict` makes those fail too). `node scripts/review.mjs <url>` checks both languages on a running build: every page answers 200 with the right `lang` and no console errors, canonical and hreflang links, the `NEXT_LOCALE` and `/en/…` redirects, the localized 404s and the estimator.
 - **Visual check**: `node scripts/visual-snapshot.mjs <url> <dir>` then `npm run visual:diff -- screenshots/baseline <dir> --ignore-top=72`.
 
 ## Security model

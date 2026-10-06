@@ -621,6 +621,13 @@
             "consent": "A consent record: that you ticked “I agree to be contacted about my enquiry”, the date and time, and a shortened, one-way hash of your IP address (not the address itself)."
           }
         },
+        "whatsapp": {
+          "heading": "WhatsApp and phone",
+          "items": {
+            "received": "When you message us on WhatsApp or call us (the WhatsApp button, or the numbers on the contact page): your phone number, your WhatsApp profile name and picture (as your WhatsApp settings allow) and what you tell us. The website only opens WhatsApp with a suggested message, which you can change; nothing is sent until you send it yourself.",
+            "use": "We use this only to answer you and follow up on your enquiry. The conversation stays in the WhatsApp account of the team member you contacted, and we keep it for as long as other enquiries (see section 5)."
+          }
+        },
         "ownerPortal": {
           "heading": "Owner portal",
           "items": {
@@ -655,6 +662,7 @@
       "sharing": {
         "heading": "6. Who we share it with",
         "processors": "We <strong>never sell</strong> your personal data. We share it only with service providers (“processors”) that help us run the business, under contracts that require them to protect it — for example our website hosting provider and our email provider — and with professional advisers or authorities where the law requires it.",
+        "whatsapp": "If you contact us on WhatsApp, your messages are carried by WhatsApp, a Meta service, under WhatsApp’s own terms and privacy policy. WhatsApp is not one of our processors: we do not decide how it stores or uses data, so please read its privacy policy before using it. You can always reach us through the contact form, by email or by phone instead.",
         "transfers": "Some of these providers may store data outside Mauritius or the EU. Where that happens we rely on appropriate safeguards, such as adequacy decisions or standard contractual clauses."
       },
       "rights": {
@@ -676,7 +684,7 @@
         "items": {
           "session": "<code>{name}</code> — <strong>strictly necessary</strong>. Keeps you signed in to the owner portal. It is httpOnly (not readable by scripts) and is only set when you log in.",
           "currency": "<code>{name}</code> — <strong>preference</strong>. Remembers whether you chose to view prices in MUR or EUR. It is set only when you make that choice and lasts 1 year.",
-          "language": "<code>{name}</code> — <strong>preference</strong>. Remembers whether you chose to read the site in English or French. It is set only when you use the language switch and lasts 1 year.",
+          "language": "<code>{name}</code> — <strong>preference</strong>. Remembers whether you chose to read the site in English or French. It is set only when you choose a language, with the language switch or the suggestion to read the site in French, and lasts 1 year.",
           "viewAs": "<code>{name}</code> — <strong>strictly necessary</strong>, {company} staff only. Remembers which owner’s portal an administrator is viewing. It is httpOnly and ends with the browser session."
         },
         "localStorage": "If you close the suggestion to read this site in French, your browser also keeps a small note in its local storage (<code>{name}</code>) so that the suggestion is not shown again. It contains no personal data and never leaves your device.",

@@ -4,7 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
 import { company } from "@/data/company";
-import { PUBLIC_EMAIL } from "@/data/site";
+import { LEGAL_LAST_UPDATED, PUBLIC_EMAIL } from "@/data/site";
 import { Link } from "@/i18n/navigation";
 import { ANALYTICS_ENABLED, ANALYTICS_POLICY_DATE } from "@/lib/analytics";
 import { CURRENCY_COOKIE, formatDateLong } from "@/lib/format";
@@ -18,10 +18,13 @@ import { SESSION_COOKIE, VIEW_AS_COOKIE } from "@/lib/session";
 
 /*
  * Why there is no cookie-consent banner:
- * the site sets only three cookies — `bv_session` (strictly necessary for the
- * owner login), `bv_view_as` (strictly necessary, staff only: which owner an
- * administrator is viewing) and `bv_currency` (a preference the visitor sets
- * themselves by choosing MUR or EUR). Strictly necessary and user-requested
+ * the site sets at most four cookies — `bv_session` (strictly necessary for
+ * the owner login), `bv_view_as` (strictly necessary, staff only: which owner
+ * an administrator is viewing), and two preferences the visitor sets
+ * themselves: `bv_currency` (choosing MUR or EUR) and `NEXT_LOCALE` (choosing
+ * English or French, with the language switch or the French suggestion).
+ * Closing the French suggestion leaves a note in local storage, not a cookie,
+ * which never leaves the browser. Strictly necessary and user-requested
  * preference cookies are exempt from prior consent under GDPR / ePrivacy
  * guidance and the Mauritius Data Protection Act 2017. As soon as cookie-
  * based analytics (e.g. GA4) or marketing/advertising cookies are added, a
@@ -41,11 +44,15 @@ import { SESSION_COOKIE, VIEW_AS_COOKIE } from "@/lib/session";
  */
 
 /**
- * Shown as "Last updated", formatted in the page's language (with analytics
- * on, the date the analytics wording was added). app/sitemap.ts uses the
- * same dates.
+ * Shown as "Last updated", formatted in the page's language: the date in
+ * LEGAL_LAST_UPDATED (data/site.ts), or, with analytics on, the day the
+ * analytics wording was added if that is later. app/sitemap.ts uses the
+ * same date.
  */
-const LAST_UPDATED = ANALYTICS_ENABLED ? ANALYTICS_POLICY_DATE : "2026-09-22";
+const LAST_UPDATED =
+  ANALYTICS_ENABLED && ANALYTICS_POLICY_DATE > LEGAL_LAST_UPDATED.privacy
+    ? ANALYTICS_POLICY_DATE
+    : LEGAL_LAST_UPDATED.privacy;
 
 export async function generateMetadata({
   params,
@@ -162,6 +169,11 @@ export default async function PrivacyPage({
               <li>{t("collection.contactForm.items.details")}</li>
               <li>{t("collection.contactForm.items.consent")}</li>
             </ul>
+            <h3>{t("collection.whatsapp.heading")}</h3>
+            <ul>
+              <li>{t("collection.whatsapp.items.received")}</li>
+              <li>{t("collection.whatsapp.items.use")}</li>
+            </ul>
             <h3>{t("collection.ownerPortal.heading")}</h3>
             <ul>
               <li>{t("collection.ownerPortal.items.account")}</li>
@@ -195,6 +207,7 @@ export default async function PrivacyPage({
 
             <h2>{t("sharing.heading")}</h2>
             <p>{t.rich("sharing.processors", { strong })}</p>
+            <p>{t("sharing.whatsapp")}</p>
             <p>{t("sharing.transfers")}</p>
 
             <h2>{t("rights.heading")}</h2>
