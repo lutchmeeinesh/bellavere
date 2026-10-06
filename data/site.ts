@@ -3,7 +3,7 @@ import type { AppLocale } from "@/i18n/routing";
 /**
  * Site-wide settings that are facts rather than copy: addresses, numbers
  * and switches. Bundled into browser code (the WhatsApp button reads it), so
- * everything here is public. Wording lives in messages/<locale>/*.json.
+ * everything here is public. Wording lives in messages/<locale>.json.
  */
 
 /** Absolute site URL without a trailing slash (metadata, JSON-LD, sitemap). */

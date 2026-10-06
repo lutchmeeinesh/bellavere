@@ -4,7 +4,7 @@ import { createTranslator, hasLocale } from "next-intl";
 import { company } from "@/data/company";
 import { PUBLIC_EMAIL } from "@/data/site";
 import { getAllMessages } from "@/i18n/messages";
-import { routing, type AppLocale } from "@/i18n/routing";
+import { MESSAGE_FORMATS, routing, type AppLocale } from "@/i18n/routing";
 import {
   methodNotAllowed,
   readJsonObject,
@@ -90,6 +90,7 @@ function consentText(locale: AppLocale): string {
   const t = createTranslator({
     locale,
     messages: getAllMessages(locale),
+    formats: MESSAGE_FORMATS,
     namespace: "contact.form",
   });
   return t.markup("consent", { link: (chunks) => chunks });

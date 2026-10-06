@@ -1,7 +1,0 @@
-{
-  "privacy": {
-    "heading": "Website analytics",
-    "body": "To understand how visitors use this website, we use <strong>Plausible Analytics</strong>, a privacy-friendly service based in the European Union. It sets no cookies, does not identify you and does not follow you across other websites. It records the pages viewed, the website you came from, your browser, operating system, type of device and country, and a few anonymous events — such as a click on a WhatsApp button or a sent contact form. Your IP address is used only to work out your country and to count visitors anonymously, day by day; it is never stored. Plausible processes this data on our behalf on servers in the European Union, and we only ever see aggregated statistics.",
-    "noTracking": "We do <strong>not</strong> use advertising or tracking cookies, and no third-party cookies are set: our website analytics (Plausible) works without cookies. Because every cookie is either strictly necessary or set at your request, we do not show a cookie-consent banner. You can delete cookies at any time in your browser settings; deleting <code>{sessionCookie}</code> signs you out."
-  }
-}

@@ -25,7 +25,7 @@ export function HowItWorks() {
           {STEPS.map((step, i) => (
             <RevealItem key={step.number}>
               <div className="flex items-center gap-4">
-                <span className="font-serif text-5xl leading-none text-gold-500">
+                <span className="font-serif text-5xl leading-none text-gold-650">
                   {step.number}
                 </span>
                 {/* Connecting line between steps (desktop only) */}

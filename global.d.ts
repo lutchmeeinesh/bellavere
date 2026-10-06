@@ -3,7 +3,7 @@ import type { Messages } from "@/i18n/messages";
 
 /**
  * Typed next-intl: locales are "en" | "fr", and message keys are checked
- * against the English files (messages/en/*.json), so `t("nav.hom")` is a
+ * against the English messages (messages/en.json), so `t("nav.hom")` is a
  * TypeScript error.
  */
 declare module "next-intl" {

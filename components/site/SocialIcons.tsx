@@ -68,8 +68,6 @@ type SocialProfiles = {
   linkedin: string | null;
 };
 
-export type SocialNetwork = keyof SocialProfiles;
-
 /**
  * Social profiles that actually exist (non-null in data/company.ts), with
  * their icons. Empty until the client provides real links. The accessible

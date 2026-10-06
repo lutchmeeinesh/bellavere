@@ -1,6 +1,6 @@
 # Bellavere website — handoff brief
 
-Paste this whole file into a new chat to bring it fully up to speed. It covers what exists, how it fits together, the conventions to keep, and exactly what remains before the site can go live. **Last updated: 22 September 2026.**
+Paste this whole file into a new chat to bring it fully up to speed. It covers what exists, how it fits together, the conventions to keep, and exactly what remains before the site can go live. **Last updated: 6 October 2026 (Wave 1: French, income estimator, WhatsApp).**
 
 ---
 
@@ -13,6 +13,8 @@ A polished **demo website for Bellavere** (trading as **Bellavere Property Care*
 - **Admin area** (`/admin/*`): three Bellavere staff accounts see every owner, property, arrival, repair and document, and can open any owner's portal (§4c).
 
 Every price and figure displays in **EUR or MUR**, at the visitor's choice (§4e).
+
+**Wave 1 (October 2026)** added: the public site in **French** at `/fr/…` next to English at the unchanged URLs (§4f), a **rental-income estimator** at `/estimate` (five questions → a monthly and yearly range, the fee and the owner's net; it pre-fills the contact form and a WhatsApp message), **WhatsApp** (a floating button on every public page and a card each for Ankit and Nihal on the contact page), and **Plausible analytics**, off until `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` is set. The design is in `UPGRADE-PLAN.md`; the decisions in `ASSUMPTIONS.md` "Update 8".
 
 It is still a **demo** for data: there's no database, and all owners and figures are mock data in `data/*.ts`. Auth, however, is now real in mechanism: HMAC-signed sessions, scrypt-hashed passwords, rate-limited sign-in (§4c). It is feature-complete and visually finished, but **not safe to put in front of real owners yet** (see §11).
 
@@ -61,6 +63,7 @@ Node 20+ required (built and tested on Node 24).
 - **Next.js 15.5.24** (App Router) · **React 19.1** · **TypeScript 5** (strict)
 - **Tailwind CSS v4** (CSS-first config: the tokens live in `app/globals.css` via `@theme inline`; there is **no `tailwind.config.js`**)
 - **Framer Motion 13** · **Recharts 3** · **lucide-react 1.x** · `next/font` (no external font links)
+- **next-intl 4.14** (English/French; with `icu-minify`, its ahead-of-time message compiler) · **Vitest** (`npm test`: the estimator's calculation)
 - Dev-only: **Playwright** + **Lighthouse** for the automated review script
 - Images: `next/image`, with the Unsplash remote pattern whitelisted in `next.config.ts`
 
@@ -80,6 +83,7 @@ Node 20+ required (built and tested on Node 24).
 7. **Round 5 (22 Sep 2026):** real contacts (Ankit Dookhorun, Nihal Lutchmee, 24/7, same-day replies, Instagram/Facebook bellavere.ltd); an independent verification workflow caught a privacy leak (Krit's email in browser bundles), fixed along with the trust bar and count-up SSR values. See REVIEW.md "Round 5".
 6. **Round 4 (22 Sep 2026):** every piece of fake filler stripped (multi-agent audit, 91 findings, three fix/verify rounds), public portfolio and newsletter removed, demo owners reduced to Sophie + Hamilton, testimonials renamed. See REVIEW.md "Round 4".
 5. **Round 3 (22 Sep 2026):** three admin accounts and the `/admin` area, signed sessions + hashed passwords + login rate limit, negotiable fees (≤15%, per-owner rates), island-wide coverage with the client's map, "Visit us" removed, onboarding 1–2 weeks, pre-launch `SITE_INDEXABLE` / `DEMO_MODE` switches. See REVIEW.md "Round 3".
+9. **Wave 1 (5–6 Oct 2026):** phase 0 foundation (next-intl, routing, two root documents, every string moved into messages), then three parallel streams (A estimator, B WhatsApp/analytics/SEO, C French + language switch), then an integration pass (localized 404 in the server HTML, client JavaScript cut back, accessibility fixes, layout sweep in both languages, docs). See `UPGRADE-PLAN.md` and ASSUMPTIONS.md "Update 8".
 
 ---
 
@@ -132,46 +136,70 @@ Type: headings **Cormorant Garamond**, body **Inter**. `h1`–`h4` are styled gl
 - A **payout currency** per owner (`Client.payoutCurrency`) is separate from the display currency.
 - **Never write a currency symbol by hand.**
 
+### f. Internationalisation — English and French (next-intl)
+
+- **URLs**: English unprefixed and unchanged (`/`, `/services`, …), French under `/fr` (`/fr`, `/fr/services`, …), `/en/…` redirects to the unprefixed URL. No browser-language redirect; a one-time card suggests French to French-speaking browsers on English pages. The `NEXT_LOCALE` cookie is written only when the visitor picks a language, and then sends unprefixed URLs to French (`middleware.ts`). The portal stays English at its URLs.
+- **Two root documents** under a pass-through `app/layout.tsx`: `app/[locale]/layout.tsx` (public, `<html lang="en|fr">`) and `app/(portal)/layout.tsx` (English). Both build on `components/document/RootDocument.tsx` (fonts, CSS, client providers); `app/not-found.tsx` uses the bare `HtmlDocument`.
+- **Static in both languages**: every public page/layout starts with `await getPageLocale(params)` (`lib/i18n/server.ts`, which calls `setRequestLocale`) and never reads cookies or headers; metadata comes from `localizedMetadata()` (canonical, hreflang en/fr/x-default, Open Graph per language).
+- **Wording** in `messages/en.json` and `messages/fr.json`, one file per language whose top-level keys are the namespaces (common, home, services, about, contact, legal, estimator, whatsapp, analytics, locale), loaded by `i18n/messages.ts`; keys are typed from `messages/en.json` (`global.d.ts`). Facts stay in `data/*` and go in through placeholders. `npm run i18n:check` checks parity, placeholders and leftovers.
+- **What the browser gets**: only the message keys its client components read: `SITE_CLIENT_MESSAGES` (root document) plus the page's `PAGE_CLIENT_MESSAGES` (`<ClientMessages>` around the page's client components). Messages are compiled ahead of time and formatted by next-intl's small precompiled formatter (no ICU parser in the bundle).
+- **Formatting**: `lib/format.ts` and `useMoney()` take the locale ("24 960 €", "Rs 24 960", "22 septembre 2026"; English unchanged).
+- **Links**: `Link`, `usePathname`, `useRouter`, `getPathname` from `@/i18n/navigation` (hrefs written without a locale; portal paths stay unprefixed and are not prefetched); never `next/link` in public code.
+
 ---
 
 ## 5. File map
 
 ```
 app/
-  layout.tsx                 root: fonts, metadata, MotionProvider, CurrencyProvider (reads bv_currency)
+  layout.tsx                 pass-through (the two root documents are below)
   globals.css                ALL design tokens + keyframes  <- edit tokens here only
-  sitemap.ts robots.ts opengraph-image.tsx   SEO (robots: noindex until SITE_INDEXABLE=true)
-  not-found.tsx  icon.svg
-  (site)/                    marketing: Header + Footer + JsonLd + page transition
-    page.tsx  about/  services/  contact/  privacy/  terms/
-  (auth)/login/page.tsx      standalone login (owners -> /dashboard, admins -> /admin)
-  admin/                     staff area: page.tsx (overview), clients/[id]/, layout, template
-  dashboard/                 protected owner portal (layout, template, loading, not-found)
-    page.tsx  properties/  properties/[id]/  bookings/  maintenance/
-    statements/  documents/  settings/
+  sitemap.ts robots.ts       SEO, both languages (robots: noindex until SITE_INDEXABLE=true)
+  not-found.tsx  global-error.tsx  icon.svg   last-resort pages (English, own document)
+  [locale]/                  PUBLIC SITE, en + fr: layout (root document), error, not-found,
+                             opengraph-image (per language), page-not-found/ (static 404 page),
+                             [...rest]/route.ts (unknown URL -> that page with status 404)
+    (site)/                  Header + Footer + JsonLd + WhatsApp button + page transition
+      page.tsx  about/  services/  contact/  privacy/  terms/  estimate/
+  (portal)/                  OWNER PORTAL, English: layout (root document), error
+    login/page.tsx           standalone login (owners -> /dashboard, admins -> /admin)
+    admin/                   staff area: page.tsx (overview), clients/[id]/, layout, template
+    dashboard/               protected owner portal (layout, template, loading, not-found)
+      page.tsx  properties/  properties/[id]/  bookings/  maintenance/
+      statements/  documents/  settings/
   api/
     auth/login  auth/logout    signed session, failed-attempt rate limit
     admin/view-as/route.ts   admin opens / leaves an owner's portal
-    contact/route.ts         validate + honeypot + rate limit + consent log + Resend email to BellavereLtd@gmail.com
+    contact/route.ts         validate + honeypot + rate limit + consent log + Resend email (PUBLIC_EMAIL), with the enquirer's language
 
 components/
-  ui/        Container Button Badge Card SectionHeading Reveal CountUp
+  ui/        Container Button(+buttonClasses) Badge Card SectionHeading Reveal CountUp
              Input(+Field/Select/Textarea/Checkbox) Toggle Modal Tabs Skeleton
   currency/  CurrencyProvider(useMoney) Money(MoneyCountUp, ConversionNote) CurrencyToggle
-  site/      Header Footer Logo SocialIcons(+publishedSocialLinks) JsonLd
+  site/      Header Footer Logo(+LogoMark) SocialIcons JsonLd LanguageToggle LocaleBanner(+LocaleSuggestion)
+             NotFoundScreen SiteError
+  document/  RootDocument HtmlDocument          i18n/  ClientMessages MergeIntlMessages IntlClientProvider LocaleLink
+  estimator/ EstimatorFlow EstimateResult ChoiceCards BedroomStepper FeatureChips WeeksSlider IslandMap …
+  whatsapp/  WhatsAppProvider WhatsAppButton WhatsAppContactCards WhatsAppLink WhatsAppIcon
+  analytics/ Analytics (Plausible script, only with NEXT_PUBLIC_PLAUSIBLE_DOMAIN)
   admin/     AdminHeader AdminTable ViewAsButton AdminViewBanner
   motion/    MotionProvider PageTransition
   home/ about/ services/ contact/ auth/
   dashboard/ PageHeader ActivityIcon shell/ overview/ properties/ bookings/
              maintenance/ statements/ documents/ settings/(incl. DisplayCurrencySettings)
 
-data/        company clients admins properties bookings maintenance documents testimonials siteImages
+data/        company site(PUBLIC_EMAIL, WhatsApp) estimator-config clients admins properties bookings
+             maintenance documents testimonials siteImages
 lib/         types auth session password currency format metrics dates rng rateLimit utils img constants
+             estimator(+test) whatsapp analytics i18n/(server metadata images localeCookie paths)
+i18n/        routing navigation request messages swc-native-cache.cjs
+messages/    en.json fr.json                every word of the public site; top-level keys = namespaces
 public/images/coverage-map.webp   the client's coverage map (keep the OSM attribution)
 .env.example               every environment variable, documented
 scripts/hash-password.mjs  generate an admin password hash
-middleware.ts              route protection + property-ownership 404
-scripts/review.mjs         Playwright review: routes, isolation, currency switch, screenshots
+scripts/i18n-check.mjs     translations: key parity, placeholders, leftovers in English
+middleware.ts              route protection + property-ownership 404 + language routing (next-intl)
+scripts/review.mjs         Playwright review: routes, isolation, currency switch, 404s, screenshots
 screenshots/               37 PNGs
 README.md  ASSUMPTIONS.md  REVIEW.md  HANDOFF.md
 ```
@@ -199,6 +227,16 @@ Bookings are **generated** by a seeded PRNG (`data/bookings.ts`) relative to `to
 - Statements in MUR reconcile exactly: Rs 847,704 − 152,568 − 31,980 = Rs 663,156.
 - **Every photo has been visually checked against its alt text** (52 alts rewritten in round 2).
 
+**Wave 1 integration (6 Oct 2026):**
+
+- `npx tsc --noEmit`, `npm run lint`, `npm test` (42 estimator tests), `npm run i18n:check` (570 keys, 0 parity / placeholder errors, nothing untranslated or hard-coded) and `npm run build` (every public page ● in `en` and `fr`) all clean.
+- `node scripts/review.mjs`: **0 errors, 0 warnings** (admin flow skipped without credentials), including the new check that `/no-such-page`, `/services/no-such-section` and `/fr/no-such-page` answer 404 with the localized page without JavaScript.
+- **axe-core** (WCAG 2.2 AA + best practices): no violations on any public page in either language at 390 and 1280 px, the estimator's result and the 404 included.
+- **First Load JS** (build output): `/` 204 kB, `/services` and `/about` 197, `/contact` 199, `/estimate` 205, `/privacy` and `/terms` 192 — down from 227–240 kB at the end of phase 1 (184–193 kB before Wave 1).
+- **Lighthouse mobile** (simulated throttling, local `next start`): `/` 89–90, `/fr` 90–91, `/estimate` and `/fr/estimate` 93 in performance; accessibility and best practices 100; SEO 66–69 only because a local build is `noindex` (`SITE_INDEXABLE` unset). Pre-Wave-1 `/` scored 90–91 on the same machine.
+- Estimator end to end in both languages (questions, deep links, keyboard, result, currency switch, contact pre-fill, WhatsApp message), and the French contact form (labels, validation, every server error code, success, and an enquiry through a stand-in for Resend showing "Language: French").
+- **Phase 2 consolidation (6 Oct 2026):** messages merged into `messages/en.json` / `messages/fr.json`, 7 unused keys removed (563 keys). Re-run clean: `npx tsc --noEmit`, `npm run lint`, `npm test` (42), `npm run i18n:check -- --strict`, `npm run build` (same First Load JS as above), `node scripts/review.mjs` (0 errors, 0 warnings), and a Playwright pass over every public page in both languages at 1440 and 390 px (phone menu open, estimator walked to its result, contact form validation, the language suggestion): 0 console errors, no raw message keys or unformatted placeholders.
+
 **Re-run:**
 
 ```bash
@@ -223,6 +261,17 @@ Lighthouse is no longer a dependency (it slowed every Vercel build): run `npx li
 8. **"Today" is the Mauritius date, recomputed on each call** (`today()` in `lib/dates.ts`). Never cache a date at module level (a warm server would go stale); mock data generated relative to today goes through `perDay()`. Parse `yyyy-mm-dd` with `parseISODate`, never `new Date(iso)` (that is UTC midnight: the previous day west of UTC).
 9. **Forms need `method="post"`.** Pages are static, so a visitor can submit before the JavaScript loads; without it the browser would put the fields (including a password) in the URL.
 
+**Wave 1 (English/French, estimator, WhatsApp):**
+
+10. **`notFound()` on a public page sends an empty document.** In Next.js 15.5 a `notFound()` thrown while rendering escapes the server render (React has no error boundaries on the server): the response is a 404 with an empty `<html id="__next_error__">` shell and the not-found UI is drawn in the browser. Unknown public URLs therefore go to `app/[locale]/[...rest]/route.ts`, which returns the static `/<locale>/page-not-found` page's HTML with status 404 (`UPGRADE-PLAN.md` §8). Don't bring back a `[...rest]/page.tsx` (it would also conflict with the route) and don't answer public 404s with a middleware rewrite: Vercel replaces those with the site-wide English 404.
+11. **Never read cookies or headers under `app/[locale]`.** The pages are static in both languages because every page and layout calls `getPageLocale(params)` (`setRequestLocale`) first; `getLocale()`, `cookies()` or `headers()` there make every public page dynamic (the `(site)` layout's `dynamic = "error"` fails the build instead).
+12. **A client component only sees the messages sent to the browser.** `useTranslations` in a `"use client"` file reads `SITE_CLIENT_MESSAGES` plus the page's `PAGE_CLIENT_MESSAGES` (`i18n/messages.ts`, `<ClientMessages>`); anything else shows the key and logs `MISSING_MESSAGE`. Add the key path to the list, or pass the text as a prop. Never import `i18n/messages.ts` from client code (it would ship every message).
+13. **Messages are precompiled.** `next.config.ts` aliases `use-intl/format-message` to next-intl's precompiled formatter and `i18n/messages.ts` compiles every message: `t.raw()` throws, and a named number style (`{n, number, percent}`) must be declared in `MESSAGE_FORMATS` (`i18n/routing.ts`), or it prints "0.15".
+14. **Windows: SWC's native cache path.** next-intl's plugin loads SWC's native addon while `next.config.ts` loads; `i18n/swc-native-cache.cjs` points its cache at `node_modules\.swc` of the main checkout (the default `%LOCALAPPDATA%\swc` is refused on this machine, and a worktree's own `node_modules` would pass 260 characters). Keep it imported first in `next.config.ts`.
+15. **Public links: `@/i18n/navigation`, never `next/link`.** Its `Link` adds `/fr` on French pages, leaves portal paths unprefixed and does not prefetch them. URLs for metadata come from `localizedPath()` / `getPathname()`, never from the route path (English pages are served from `/en/…` internally).
+16. **Hide the WhatsApp button from the server HTML too.** `useWhatsAppOverride({ hidden: true })` only acts after hydration; a page that hides the button from its first paint also renders `data-whatsapp-hidden` (see the estimator; `app/globals.css`).
+17. **French typography in messages:** no-break spaces (U+00A0) before `: ; ! ?` and `%` and inside « », and between words that must stay together ("A à Z"); `npm run i18n:check` checks parity and placeholders, not typography.
+
 ---
 
 ## 9. Conventions to keep
@@ -244,6 +293,8 @@ Lighthouse is no longer a dependency (it slowed every Vercel build): run `npx li
 - Statement "Download PDF" opens a print window, and the document downloads are decorative.
 - Email notifications don't exist yet; the Settings card says so rather than showing fake toggles.
 - Imagery is Unsplash stock. The testimonials are illustrative, not real people.
+- The owner portal, `global-error` and the 404 outside the site's languages are English only.
+- The estimator's figures are demo defaults (`[CONFIRM]` in `data/estimator-config.ts`): an indicative range, not a valuation.
 
 ---
 
@@ -292,7 +343,7 @@ Recreate `data/*.ts` + `lib/metrics.ts` as Supabase tables and queries, keeping 
 - ✅ Ran live on Vercel (GitHub `main` auto-deploys) at wwwbellavere.com; functions in **cpt1**; public pages served from the edge cache; security headers + CSP; `[env]` start-up check (Vercel → Logs).
 - ⬜ **Move to www.bellaveremu.com on a new Vercel account** (30 Sep 2026): steps in README → "Deploying"; `.env.vercel.local` already holds the new address and a fresh `SESSION_SECRET`. ✅ Done 30 Sep 2026: new Vercel project live at www.bellaveremu.com (cpt1), Resend verified on `bellaveremu.com`, contact form delivering (test accepted). ⬜ Add `wwwbellavere.com` + `www.wwwbellavere.com` to the Vercel project as redirects to www.bellaveremu.com (the old address currently shows Vercel's DEPLOYMENT_NOT_FOUND).
 - ✅ **Indexing switched on 30 Sep 2026:** `SITE_INDEXABLE=true`, Google Search Console (Domain property `bellaveremu.com`, verified by DNS TXT), sitemap submitted, home page indexing requested. The three illustrative testimonials are therefore public — replace them with real quotes.
-- ⬜ Replace the Unsplash remote pattern with self-hosted photos; analytics (**requires adding a cookie-consent banner**), Sentry, an uptime monitor (the audit saw a 2–3 minute `DEPLOYMENT_NOT_FOUND` during domain changes); Google Business Profile.
+- ✅ Analytics ready (Wave 1): Plausible, cookieless, so no consent banner; switch it on with `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` and the three goals (README → "Analytics"). ⬜ Replace the Unsplash remote pattern with self-hosted photos; Sentry, an uptime monitor (the audit saw a 2–3 minute `DEPLOYMENT_NOT_FOUND` during domain changes); Google Business Profile.
 - ⬜ Instagram and Facebook: `bellavere.ltd` does not appear to exist publicly on either yet — create/publish them or correct the handles in `data/company.ts`.
 
 ## 🟢 F. Legal & compliance
@@ -302,7 +353,7 @@ Recreate `data/*.ts` + `lib/metrics.ts` as Supabase tables and queries, keeping 
 
 ## 🟢 G. Nice-to-have
 
-Owner date-blocking (the FAQ promises it), a French version, in-dashboard messaging with Ankit, owner document upload, email notifications matching the settings toggles, and syndic-specific portal views (common-area tickets, co-owner statements).
+Owner date-blocking (the FAQ promises it), ✅ a French version (Wave 1; the client should proofread it), in-dashboard messaging with Ankit, owner document upload, email notifications matching the settings toggles, and syndic-specific portal views (common-area tickets, co-owner statements).
 
 ---
 
@@ -310,5 +361,5 @@ Owner date-blocking (the FAQ promises it), a French version, in-dashboard messag
 
 1. **Now, in parallel:** the client supplies the ⬜ facts in C plus photography, **while** a developer builds auth + database (A, B).
 2. **Then:** the staff admin side, channel-manager sync, Resend, and persistence (D).
-3. **Then:** domain, analytics + consent banner, the legal review (E, F).
+3. **Then:** domain, analytics (Plausible, no banner needed), the legal review (E, F).
 4. **Launch:** remove the demo disclaimers and demo accounts, re-run `scripts/review.mjs` + Lighthouse, verify isolation with real accounts.

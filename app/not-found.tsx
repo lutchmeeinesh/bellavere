@@ -1,9 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { getTranslations } from "next-intl/server";
-import { RootDocument } from "@/components/document/RootDocument";
+import { HtmlDocument } from "@/components/document/HtmlDocument";
 import { NotFoundScreen } from "@/components/site/NotFoundScreen";
 import { company } from "@/data/company";
-import { PORTAL_CLIENT_NAMESPACES, pickMessages } from "@/i18n/messages";
 import { SITE_URL } from "@/data/site";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -20,18 +19,17 @@ export const viewport: Viewport = {
 };
 
 /**
- * Last-resort 404 for URLs outside both root documents (unknown public
- * URLs normally get the localized app/[locale]/not-found.tsx). The root
- * layout passes children through, so this renders its own document, in
- * English.
+ * Last-resort 404 for URLs outside both root documents (e.g. /x.y; unknown
+ * public URLs get the localized page through app/[locale]/[...rest]). The
+ * root layout passes children through, so this renders its own document,
+ * in English. Only the bare document (no client providers): the screen has
+ * no client components, so this boundary, which every route carries, adds
+ * no JavaScript to them.
  */
 export default function NotFound() {
   return (
-    <RootDocument
-      locale="en"
-      messages={pickMessages("en", PORTAL_CLIENT_NAMESPACES)}
-    >
-      <NotFoundScreen />
-    </RootDocument>
+    <HtmlDocument locale="en">
+      <NotFoundScreen locale="en" />
+    </HtmlDocument>
   );
 }

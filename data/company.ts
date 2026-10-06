@@ -9,7 +9,7 @@ import { PUBLIC_EMAIL } from "@/data/site";
  * Everything still marked "TODO: confirm with client" is demo copy.
  *
  * Wording vs facts (Wave 1, French/English): the public site takes every
- * sentence from messages/<locale>/common.json (`company.*`: tagline,
+ * sentence from messages/<locale>.json (`common.company.*`: tagline,
  * mission, pricing wording, team roles and bios, commitments, hours) and
  * only the facts from here (names, numbers, phones, links, ids). The English
  * prose fields below marked @deprecated stay for the English-only owner
@@ -36,7 +36,7 @@ export const company = {
   /** @deprecated Public pages: messages `common.company.tagline`. */
   tagline: "Your property, perfectly managed.",
   /** Coverage confirmed by the client's own map (22 Sep 2026): island-wide. */
-  /** @deprecated Public pages: messages `common.company.market`. */
+  /** @deprecated Read by nothing (public coverage wording: messages `common.company.marketLong`). */
   market: "Across Mauritius",
   /** @deprecated Public pages: messages `common.company.marketLong`. */
   marketLong:
@@ -66,8 +66,9 @@ export const company = {
   /** Main line (Ankit) for the footer and structured data. */
   phone: "+230 5531 0734" as string | null,
   /**
-   * English wording for the portal; public pages: `common.company.hours`
-   * (and `hoursInline` mid-sentence). Null hides every "Call us — …" hint.
+   * English wording for the portal; public pages: messages
+   * `common.company.hoursInline` (mid-sentence). Null hides every
+   * "Call us — …" hint.
    */
   hours: "Every day, 24/7" as string | null,
   /** Both contacts are reachable around the clock. */
@@ -101,9 +102,9 @@ export const company = {
   // Wording confirmed by the client as it stands (22 Sep 2026).
   pricing: {
     maxFeeRate: 0.15,
-    // short / model / detail — public pages: messages
-    // `common.company.pricing.*`, with the rate as `{maxFee, number, percent}`.
-    /** @deprecated Short form for badges and lists. */
+    // model / detail — public pages: messages `common.company.pricing.*`,
+    // with the rate as `{maxFee, number, percent}`.
+    /** @deprecated Short form for badges and lists; no page shows it. */
     short: "Negotiable — never more than 15%",
     /** @deprecated Reads naturally after "for" or "is". */
     model: "a fee agreed with you after our first meeting, never more than 15% of gross rental income",

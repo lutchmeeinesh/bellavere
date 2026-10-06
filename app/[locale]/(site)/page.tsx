@@ -8,6 +8,8 @@ import { HowItWorks } from "@/components/home/HowItWorks";
 import { DashboardTeaser } from "@/components/home/DashboardTeaser";
 import { Testimonials } from "@/components/home/Testimonials";
 import { CtaBand } from "@/components/home/CtaBand";
+import { ClientMessages } from "@/components/i18n/ClientMessages";
+import { PAGE_CLIENT_MESSAGES } from "@/i18n/messages";
 import { localizedMetadata } from "@/lib/i18n/metadata";
 import { getPageLocale, type LocaleParams } from "@/lib/i18n/server";
 
@@ -33,9 +35,9 @@ export async function generateMetadata({
 }
 
 export default async function HomePage({ params }: { params: LocaleParams }) {
-  await getPageLocale(params);
+  const locale = await getPageLocale(params);
   return (
-    <>
+    <ClientMessages locale={locale} paths={PAGE_CLIENT_MESSAGES.home}>
       <Hero />
       <TrustBar />
       <ServicesOverview />
@@ -44,6 +46,6 @@ export default async function HomePage({ params }: { params: LocaleParams }) {
       <DashboardTeaser />
       <Testimonials />
       <CtaBand withImage />
-    </>
+    </ClientMessages>
   );
 }

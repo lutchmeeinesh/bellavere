@@ -1,9 +1,9 @@
 /**
  * Checks the translations (npm run i18n:check):
  *
- *  1. Key parity: every key of messages/en/<namespace>.json exists in
- *     messages/fr/<namespace>.json and vice versa (and every namespace file
- *     exists in both).
+ *  1. Key parity: every key of messages/en.json exists in messages/fr.json
+ *     and vice versa (each file is an object whose top-level keys are the
+ *     namespaces: common, home, …; every namespace must exist in both).
  *  2. ICU placeholders: each French message uses the same arguments
  *     ({name}, {count, plural, …}, {maxFee, number, percent}) and the same
  *     rich-text tags (<link>…</link>) as its English original, and every
@@ -93,24 +93,34 @@ function flatten(value, prefix = "", into = new Map()) {
   return into;
 }
 
+/** A locale's namespaces (the top-level keys of messages/<locale>.json). */
 function readNamespaces(locale) {
-  const dir = path.join(MESSAGES, locale);
-  if (!fs.existsSync(dir)) return new Map();
-  return new Map(
-    fs
-      .readdirSync(dir)
-      .filter((file) => file.endsWith(".json"))
-      .map((file) => {
-        const ns = file.replace(/\.json$/, "");
-        try {
-          return [ns, JSON.parse(fs.readFileSync(path.join(dir, file), "utf8"))];
-        } catch (error) {
-          errors++;
-          out(`ERROR  ${locale}/${file}: not valid JSON (${error.message})`);
-          return [ns, {}];
-        }
-      }),
-  );
+  const file = path.join(MESSAGES, `${locale}.json`);
+  // The per-namespace layout (messages/<locale>/<namespace>.json) was merged
+  // into one file per locale; a folder left behind is no longer read.
+  if (fs.existsSync(path.join(MESSAGES, locale))) {
+    errors++;
+    out(`ERROR  messages/${locale}/ is not read any more: move its keys into messages/${locale}.json and delete the folder`);
+  }
+  if (!fs.existsSync(file)) {
+    errors++;
+    out(`ERROR  messages/${locale}.json is missing`);
+    return new Map();
+  }
+  let messages;
+  try {
+    messages = JSON.parse(fs.readFileSync(file, "utf8"));
+  } catch (error) {
+    errors++;
+    out(`ERROR  messages/${locale}.json: not valid JSON (${error.message})`);
+    return new Map();
+  }
+  if (!messages || typeof messages !== "object" || Array.isArray(messages)) {
+    errors++;
+    out(`ERROR  messages/${locale}.json: expected an object of namespaces`);
+    return new Map();
+  }
+  return new Map(Object.entries(messages));
 }
 
 let parseIcu;
@@ -167,13 +177,13 @@ for (const target of TARGETS) {
     if (!source.has(ns)) {
       errors++;
       counts.parity++;
-      out(`ERROR  ${target}/${ns}.json has no ${SOURCE}/${ns}.json`);
+      out(`ERROR  ${target} namespace "${ns}" is not in ${SOURCE}.json`);
       continue;
     }
     if (!translated.has(ns)) {
       errors++;
       counts.parity++;
-      out(`ERROR  ${target}/${ns}.json is missing`);
+      out(`ERROR  ${target} namespace "${ns}" is missing from ${target}.json`);
       continue;
     }
     const en = flatten(source.get(ns));

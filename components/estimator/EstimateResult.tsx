@@ -6,7 +6,6 @@ import {
   ChartLine,
   Info,
   KeyRound,
-  MessageCircle,
   Pencil,
   Wrench,
 } from "lucide-react";
@@ -15,6 +14,7 @@ import { ConversionNote } from "@/components/currency/Money";
 import { useMoney } from "@/components/currency/CurrencyProvider";
 import { Button } from "@/components/ui/Button";
 import { CountUp } from "@/components/ui/CountUp";
+import { WhatsAppIcon } from "@/components/whatsapp/WhatsAppIcon";
 import { useWhatsAppOverride } from "@/components/whatsapp/WhatsAppProvider";
 import { useEstimatorText } from "@/components/estimator/useEstimatorText";
 import { ESTIMATOR_CONFIG } from "@/data/estimator-config";
@@ -256,7 +256,7 @@ export function EstimateResult({
             variant="outline"
             className="text-center"
           >
-            <MessageCircle className="size-4 shrink-0" aria-hidden />
+            <WhatsAppIcon className="size-4 shrink-0" />
             {t("result.cta.whatsapp")}
             <span className="sr-only">{t("result.cta.newTab")}</span>
           </Button>

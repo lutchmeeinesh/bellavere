@@ -9,6 +9,10 @@
   --sand-300: #d9cdb8;
   --gold-500: #c9a45c;
   --gold-600: #b08d45;
+  /* Large gold numerals (24px and up) on the light surfaces: gold-600 a fifth
+     of the way to gold-700, the lightest gold with 3:1 on sand-50 (3.3:1;
+     gold-500 is 2.2:1, gold-600 2.9:1) */
+  --gold-650: #a6843f;
   /* Deeper tones for small text and icons: 4.5:1+ on every light surface */
   --gold-700: #7d6128;
   --sea-500: #3c8dad;
@@ -34,6 +38,7 @@
   --color-sand-300: var(--sand-300);
   --color-gold-500: var(--gold-500);
   --color-gold-600: var(--gold-600);
+  --color-gold-650: var(--gold-650);
   --color-gold-700: var(--gold-700);
   --color-sea-500: var(--sea-500);
   --color-sea-700: var(--sea-700);
@@ -217,6 +222,15 @@
   animation:
     fade-in 0.6s ease-out 1.2s backwards,
     bob 2.4s ease-in-out 1.2s infinite;
+}
+
+/* Pages that hide the floating WhatsApp button (and its strip below the
+   footer) mark that in their server HTML with data-whatsapp-hidden, so it is
+   hidden from the first paint, not only once the page has hydrated: the
+   estimator's question screens (components/estimator/EstimatorFlow.tsx). The
+   result screen drops the mark and the button appears with its message. */
+body:has([data-whatsapp-hidden]) [data-whatsapp-float] {
+  display: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

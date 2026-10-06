@@ -47,9 +47,12 @@ The login page lists these with one-click "Use" buttons.
 | Design tokens (colors, type, radius, shadows) | `app/globals.css` |
 | Company facts (single source for all placeholder copy) | `data/company.ts` |
 | Site-wide settings: public email, WhatsApp numbers, site URL | `data/site.ts` |
+| Income estimator: every figure it uses / the calculation | `data/estimator-config.ts` / `lib/estimator.ts` (tests: `lib/estimator.test.ts`) |
+| WhatsApp button and contact cards | `components/whatsapp/*` (numbers and default messages in `data/site.ts`) |
+| Analytics (Plausible, off until configured) | `lib/analytics.ts`, `components/analytics/Analytics.tsx` |
 | Public site (English `/…`, French `/fr/…`) | `app/[locale]/*` |
 | Owner portal and sign-in (English only) | `app/(portal)/*` |
-| Wording, both languages | `messages/<locale>/<namespace>.json` (see "Internationalisation") |
+| Wording, both languages | `messages/en.json`, `messages/fr.json` (see "Internationalisation") |
 | Mock data (clients, properties, bookings, tickets, documents) | `data/*.ts` |
 | Derived numbers — charts, KPIs, statements all agree | `lib/metrics.ts` |
 | Auth: signed sessions, hashed passwords, admins | `lib/session.ts`, `lib/password.ts`, `lib/auth.ts`, `data/admins.ts`, `app/api/auth/*`, `middleware.ts` |
@@ -102,6 +105,38 @@ Ankit's and Nihal's emails and both phone numbers are published on the contact p
 - Always format money through `formatMoney` / `useMoney()` / `<Money eur={…} />` — never hard-code a symbol.
 - Each owner also has a separate **payout currency** (e.g. the Mauritian owner is paid in MUR), shown in Settings.
 - To use real dual prices instead of conversion later, store both amounts per record and have `formatMoney` pick the matching one.
+- French pages default to EUR like English ones; the visitor's choice applies to both languages.
+
+## Income estimator (`/estimate`)
+
+Five questions (type, region, bedrooms, features, availability), then a monthly and yearly range, the fee and what the owner keeps, with a call to action that pre-fills the contact form and a WhatsApp message carrying the estimate. The home page has a short teaser that deep-links into it (`/estimate?region=north&bedrooms=3`).
+
+**Tuning the figures** — everything the calculation uses is in `data/estimator-config.ts`, in EUR (the site converts to rupees for display); `lib/estimator.ts` holds only the formula:
+
+```
+nightly rate  = baseNightly[type] × regionMultiplier[region]
+                × (1 + perBedroomAbove × max(0, bedrooms − included))
+                × (1 + sum of featureUplift for the chosen features)
+occupancy     = share of high-season months × occupancy.high + the rest × occupancy.low
+gross a year  = nightly rate × available weeks × 7 × occupancy, shown as ± rangeSpread
+fee           = up to maxFeeRate (company.pricing.maxFeeRate, 15%) · net = gross × (1 − fee)
+```
+
+| To change | Edit in `ESTIMATOR_CONFIG` |
+| --- | --- |
+| Nightly rate of a 2-bedroom property in the South | `baseNightly.villa / apartment / penthouse` |
+| How much each region earns compared with the South | `regionMultiplier` (South = 1) |
+| Value of extra bedrooms | `bedrooms.perBedroomAbove` (and `included`, `min`, `max`, `default`) |
+| Value of a pool, sea view, beachfront, air conditioning, housekeeping | `featureUplift` |
+| Occupancy and the high season | `occupancy.high`, `occupancy.low`, `occupancy.highSeasonMonths` (1 = January) |
+| The part-year slider | `weeks` |
+| The width of the range shown | `rangeSpread` (0.15 = ±15%) |
+
+The page's "How the estimate works" section reads the same numbers, so it stays true. The values are marked `[CONFIRM] demo defaults`: replace them with real market knowledge. After a change, `npm test` fails on the hand-worked examples in `lib/estimator.test.ts` (the arithmetic is written out at the top of that file): update the expected values to the new figures. Adding a property type, region or feature (the lists at the top of the file) also needs its wording under `estimator` in `messages/en.json` and `messages/fr.json`, with the same id, plus an icon for a type (`components/estimator/icons.ts`) or a point on the island map for a region (`REGION_POINTS` in `components/estimator/IslandMap.tsx`); TypeScript and `npm run i18n:check` list what is missing.
+
+## WhatsApp
+
+A floating button on every public page (hidden on the estimator's questions, carrying the estimate on its result) opens a chat with Ankit; the contact page has a card each for Ankit and Nihal. Numbers (`WHATSAPP_NUMBERS`, `WHATSAPP_PRIMARY`) and the default pre-filled message per language (`WHATSAPP_DEFAULT_MESSAGE`) are in `data/site.ts`; other wording is under `whatsapp` in `messages/en.json` and `messages/fr.json`.
 
 ## SEO, legal and spam protection
 
@@ -110,18 +145,34 @@ Ankit's and Nihal's emails and both phone numbers are published on the contact p
 - Security headers and a Content-Security-Policy are set in `next.config.ts`; `instrumentation.ts` logs missing or malformed environment variables at start-up (`[env]` in Vercel → Logs).
 - `/privacy` (Mauritius Data Protection Act 2017 + GDPR) and `/terms` — templates, to be reviewed by a lawyer. No cookie banner: the site sets only a strictly necessary session cookie and the user-requested currency and language preferences. Add a consent banner as soon as analytics or marketing cookies are introduced.
 - Contact form: honeypot field + IP rate limit (`lib/rateLimit.ts`; in-memory, so use Upstash Redis on Vercel), consent record logged with timestamp.
+- Unknown URLs answer a real 404 with the "Lost at sea?" page in the URL's language, complete without JavaScript (`app/[locale]/[...rest]/route.ts`, see `UPGRADE-PLAN.md` §8).
+
+## Analytics (Plausible)
+
+Off until configured: nothing is loaded and the privacy policy says the site uses no analytics. Plausible sets no cookies and stores no personal data, so no consent banner is needed.
+
+1. Create the site in Plausible (plausible.io) with the domain `www.bellaveremu.com`.
+2. In Plausible → Site settings → Goals → **Add goal → Custom event**, add the three events the site sends, spelled exactly:
+   - `WhatsApp Clicked` (props: `placement` = `floating`, `contact-card`, `estimator`…, and `locale`),
+   - `Estimator Completed` (sent when the estimator shows a result),
+   - `Contact Submitted` (sent after an enquiry was delivered).
+3. In Vercel → Settings → Environment Variables (Production), set `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` = `www.bellaveremu.com`, then **redeploy** (the variable is read at build time).
+
+With the variable set, the script loads on the public site only (page views, including client-side navigations), the Content-Security-Policy allows `https://plausible.io` (`next.config.ts`), and the privacy policy gains its analytics paragraph (messages `analytics.privacy.*`, "Last updated" moves to `ANALYTICS_POLICY_DATE` in `lib/analytics.ts`). Events are sent through `track()` in `lib/analytics.ts`.
 
 ## Internationalisation (English / French)
 
 The public site is in **English** (default, British English, unprefixed URLs: `/`, `/services`, …) and **French** (`/fr`, `/fr/services`, …), with [next-intl](https://next-intl.dev). The owner portal (`/login`, `/dashboard`, `/admin`) is English only. The full design is in `UPGRADE-PLAN.md`.
 
 - **Locales and URLs**: `i18n/routing.ts` (`as-needed` prefixes, no browser-language redirects). `middleware.ts` maps unprefixed URLs to English, and sends them to French while the `NEXT_LOCALE` cookie says `fr` — a cookie written only when the visitor picks FR in the header switch.
-- **Where text lives**: one JSON file per namespace per locale, `messages/en/<namespace>.json` and `messages/fr/<namespace>.json`: `common` (header, footer, buttons, 404/error pages, company wording, structured data, image alt texts), one per page (`home`, `services`, `about`, `contact`, `legal`), and `estimator`, `whatsapp`, `locale`. Facts (names, phones, emails, numbers) stay in `data/company.ts` and `data/site.ts` and are inserted with placeholders.
-- **Adding a string**: add the key to the English file and the same key to the French file (translated), then use it:
-  - server component: `const t = await getTranslations("services");` (or `useTranslations` in a non-async one) → `t("hero.title")`;
-  - client component: `const t = useTranslations("contact");` — only for namespaces sent to the browser (`CLIENT_NAMESPACES` in `i18n/messages.ts`);
-  - placeholders and rich text: `"Call {name} on {phone}"` → `t("callUs", { name, phone })`; `"See our <link>privacy policy</link>"` → `t.rich("x", { link: (c) => <Link href="/privacy">{c}</Link> })`.
-  Keys are type-checked against the English files, so a typo fails `npx tsc`.
+- **Where text lives**: one JSON file per language, `messages/en.json` and `messages/fr.json`, loaded by `i18n/messages.ts`. Each is an object whose top-level keys are the namespaces, in this order: `common` (header, footer, buttons, 404/error pages, company wording, structured data, image alt texts), one per page (`home`, `services`, `about`, `contact`, `legal` — the last holds the privacy policy and the terms), `estimator` (the estimator and the home page's teaser), `whatsapp`, `analytics` (the privacy policy's analytics wording) and `locale` (language switch and suggestion). Both files keep the same keys in the same order, formatted with a 2-space indent (UTF-8, LF line endings, characters such as `é`, `’` and the no-break space written as themselves rather than `\u` escapes). Facts (names, phones, emails, numbers) stay in `data/company.ts` and `data/site.ts` and are inserted with placeholders.
+- **Adding a translation string**, step by step:
+  1. Add the key to `messages/en.json`, inside the right namespace and nested by page section (the services page's hero note: `"services": { "hero": { "note": "…" } }`, used as `t("hero.note")` with the `services` namespace). Keys are camelCase; no arrays (lists are objects keyed by id, the order lives in code). Facts (names, phones, emails, figures) stay in `data/*` and go in as placeholders: `"Call {name} on {phone}"`, `"{maxFee, number, percent}"`.
+  2. Add the same key at the same place in `messages/fr.json`, translated in the site's French conventions: *vous*, sentence case, a no-break space (U+00A0) before `: ; ! ?` and `%` and inside « », " – " where English has " — ", and the established terms (gestion locative, frais de gestion, espace propriétaire, relevé, taux d'occupation…; check the existing French messages).
+  3. Use it. In a server component: `const t = await getTranslations("services")` (or `useTranslations` in a non-async one) → `t("hero.note")`. Rich text: `"See our <link>privacy policy</link>"` → `t.rich("x", { link: (c) => <Link href="/privacy">{c}</Link> })`. In a client component (`"use client"`): `useTranslations("services")` works only for keys the browser receives — add the key's path to the page's list in `PAGE_CLIENT_MESSAGES` (or to `SITE_CLIENT_MESSAGES` for the shared header, footer and buttons) in `i18n/messages.ts`, otherwise the browser console shows `MISSING_MESSAGE`; or pass the text in as a prop from a server component.
+  4. Check: `npx tsc --noEmit` (keys are typed from `messages/en.json`, so a typo fails) and `npm run i18n:check` (both languages have the key, same placeholders, nothing left in English).
+  To **remove** a string, delete it from both files. TypeScript flags code that still reads it by a literal key, but not keys built at run time (`` t(`steps.${id}.title`) ``, ids or key names kept in data such as the footer links, and the image alt texts, which mirror `data/siteImages.ts`), so search the code for the key's last segment first.
+  Messages are compiled ahead of time (see `UPGRADE-PLAN.md` §8): a message must be valid ICU, `t.raw()` is not available, and a named number style other than `percent` must be added to `MESSAGE_FORMATS` in `i18n/routing.ts`.
 - **Links, pages, metadata**: import `Link` from `@/i18n/navigation` (never `next/link` on public pages) and write hrefs without a locale; `<Button href>` does this already. Every page under `app/[locale]` starts with `await getPageLocale(params)` (keeps it static) and builds its metadata with `localizedMetadata()` (canonical, hreflang, Open Graph per language).
 - **Numbers and dates**: `useMoney()` and the helpers in `lib/format.ts` take the page's locale ("24 960 €", "Rs 24 960", "22 septembre 2026" in French; English unchanged).
 - **Check**: `npm run i18n:check` — key parity and ICU placeholders between English and French (must be clean), French values still identical to English, and user-facing text still hard-coded in components (`--strict` makes those fail too).
@@ -169,6 +220,25 @@ Enquiries are emailed to **BellavereLtd@gmail.com** with *Reply-To* set to the e
 3. Resend → **API Keys** → create a key with sending access → in Vercel set `RESEND_API_KEY` to it (never into chat or the code) and `CONTACT_FROM_EMAIL` to `Bellavere website <website@bellaveremu.com>` → **Redeploy**.
 
 If sending fails, the visitor is shown the company email and both phone numbers, and the reason is logged (Vercel → Logs → search `Delivery failed`; `[env]` lines list missing settings).
+
+Each enquiry email lists the enquirer's language ("Language: French" or "English", from the page the form was sent from), and the logged consent record holds the consent sentence in that language.
+
+### Switching the public address to hello@bellaveremu.com
+
+The site shows one company address everywhere (contact page, error pages, legal pages, structured data, the form's fallbacks) and sends enquiries to it by default: `PUBLIC_EMAIL` in `data/site.ts`. It is BellavereLtd@gmail.com while `HELLO_MAILBOX_LIVE = false`, because bellaveremu.com has no mailbox yet (no MX records, so mail to hello@ would be lost).
+
+1. Create the mailbox (e.g. Google Workspace on bellaveremu.com) and send a test message to hello@bellaveremu.com from another account; it must arrive.
+2. In `data/site.ts`, set `const HELLO_MAILBOX_LIVE = true;`, commit and deploy.
+3. If `CONTACT_TO_EMAIL` is set in Vercel, it still decides where enquiries go: change it to hello@bellaveremu.com (or remove it to use `PUBLIC_EMAIL`), then redeploy.
+
+## Known limitations
+
+- **The owner portal is English only** (`/login`, `/dashboard`, `/admin`; `/fr/login` redirects to `/login`), and so is the last-resort error page (`app/global-error.tsx`) and the 404 for addresses outside the site's languages (e.g. `/x.y`).
+- **The localized 404** is served by a route handler that fetches the static 404 page from the deployment itself (`UPGRADE-PLAN.md` §8): `/page-not-found` and `/fr/page-not-found` exist as pages (noindex, linked nowhere), and a deployment that cannot fetch itself (a preview behind Vercel Authentication) shows a plain, unstyled localized 404 instead.
+- **Messages are precompiled** (`UPGRADE-PLAN.md` §8): `t.raw()` is not available and named number styles must be declared in `MESSAGE_FORMATS`.
+- **Page weight**: the public pages load 192–205 kB of JavaScript (First Load JS in `npm run build`) against 184–193 kB before the French version, the estimator and WhatsApp; the difference is next-intl's client runtime, the language switch, the WhatsApp button and the estimator teaser. Lighthouse (mobile) scores 89–91 on the home pages (90–91 before Wave 1) and 93 on the estimator: the home pages' largest paint is the hero text, which appears after its entrance animation, so all the JavaScript loaded by then counts against it.
+- **Links to the owner portal are not prefetched** on public pages, so the sign-in page loads on click.
+- **Analytics is off** until `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` is set (see "Analytics").
 
 ## Review artifacts
 

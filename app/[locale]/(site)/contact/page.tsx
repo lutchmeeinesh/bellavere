@@ -7,11 +7,13 @@ import { Reveal, RevealItem, RevealStagger } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { SocialLink, publishedSocialLinks } from "@/components/site/SocialIcons";
 import { ContactForm } from "@/components/contact/ContactForm";
+import { ClientMessages } from "@/components/i18n/ClientMessages";
 import { FaqAccordion } from "@/components/contact/FaqAccordion";
 import { WhatsAppContactCards } from "@/components/whatsapp/WhatsAppContactCards";
 import { WhatsAppIcon } from "@/components/whatsapp/WhatsAppIcon";
 import { company } from "@/data/company";
 import { PUBLIC_EMAIL } from "@/data/site";
+import { PAGE_CLIENT_MESSAGES } from "@/i18n/messages";
 import { localizedMetadata } from "@/lib/i18n/metadata";
 import { getPageLocale, type LocaleParams } from "@/lib/i18n/server";
 
@@ -53,12 +55,12 @@ export default async function ContactPage({
 }: {
   params: LocaleParams;
 }) {
-  await getPageLocale(params);
+  const locale = await getPageLocale(params);
   const t = await getTranslations("contact");
   const tc = await getTranslations("common");
   const tw = await getTranslations("whatsapp");
   return (
-    <>
+    <ClientMessages locale={locale} paths={PAGE_CLIENT_MESSAGES.contact}>
       {/* Page header */}
       <div className="pt-32 lg:pt-40">
         <Container>
@@ -168,6 +170,6 @@ export default async function ContactPage({
           </Reveal>
         </Container>
       </section>
-    </>
+    </ClientMessages>
   );
 }

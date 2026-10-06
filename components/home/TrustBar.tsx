@@ -4,6 +4,7 @@ import { CountUp } from "@/components/ui/CountUp";
 import { RevealItem, RevealStagger } from "@/components/ui/Reveal";
 import { company } from "@/data/company";
 import type { AppLocale } from "@/i18n/routing";
+import { cn } from "@/lib/utils";
 
 /** "100%" in English, "100 %" in French (narrow no-break space, as formatPercent). */
 function unitSuffix(suffix: string, locale: AppLocale) {
@@ -25,7 +26,15 @@ export function TrustBar() {
         <RevealStagger className="grid grid-cols-2 gap-x-6 gap-y-12 lg:grid-cols-4">
           {company.commitments.map((item) => (
             <RevealItem key={item.id} className="text-center">
-              <div className="font-serif text-5xl text-navy-900 lg:text-6xl">
+              {/* French: "Le jour même" takes two lines at most widths, and
+                  the type's tight leading let the "j" touch the accent of
+                  "même"; a little more leading there (English unchanged). */}
+              <div
+                className={cn(
+                  "font-serif text-5xl text-navy-900 lg:text-6xl",
+                  locale === "fr" && "leading-[1.1]",
+                )}
+              >
                 {"display" in item ? (
                   t(`${item.id}.display`)
                 ) : (

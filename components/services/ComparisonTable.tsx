@@ -20,7 +20,14 @@ export function ComparisonTable() {
   const t = useTranslations("services.comparison");
   return (
     <div className="overflow-hidden rounded-2xl border border-sand-300 bg-white">
-      <div className="overflow-x-auto">
+      {/* Focusable, so keyboard users can scroll it when it overflows; named
+          after the table. The focus ring is drawn inside the rounded frame. */}
+      <div
+        tabIndex={0}
+        role="region"
+        aria-label={t("caption")}
+        className="overflow-x-auto rounded-2xl focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-gold-500"
+      >
         <table className="w-full min-w-[480px] border-collapse text-left">
           <caption className="sr-only">{t("caption")}</caption>
           <thead>

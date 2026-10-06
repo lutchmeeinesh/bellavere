@@ -6,7 +6,7 @@ import { company } from "@/data/company";
  *
  * Amounts are EUR (the site converts them for display, see lib/format.ts).
  * Wording (property types, region names and example towns, features) lives
- * in messages/<locale>/estimator.json under the same ids.
+ * in messages/<locale>.json (`estimator.*`) under the same ids.
  */
 
 /** Property types, in the order the estimator shows them. */
@@ -69,7 +69,7 @@ export interface EstimatorConfig {
     highSeasonMonths: readonly number[];
   };
   weeks: {
-    /** "Rent it year-round". */
+    /** "Rent it out year-round". */
     yearRound: number;
     /** The part-year slider. */
     min: number;

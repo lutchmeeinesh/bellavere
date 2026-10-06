@@ -51,7 +51,6 @@ export function CurrencyToggle({
             type="button"
             role="radio"
             aria-checked={active}
-            aria-label={t(`names.${code}`)}
             title={t(`names.${code}`)}
             onClick={() => {
               if (!active) setCurrency(code);
@@ -77,8 +76,11 @@ export function CurrencyToggle({
                 transition={{ duration: 0.25, ease: "easeOut" }}
               />
             ) : null}
-            {/* The ISO code itself ("EUR", "MUR") in every language. */}
+            {/* The ISO code itself ("EUR", "MUR") in every language. The
+                accessible name starts with it (label in name) and adds the
+                currency's name: "EUR Euro", "MUR Mauritian rupee". */}
             <span className="relative">{code}</span>
+            <span className="sr-only"> {t(`names.${code}`)}</span>
           </button>
         );
       })}

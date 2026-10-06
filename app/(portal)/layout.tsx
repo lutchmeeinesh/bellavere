@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { RootDocument } from "@/components/document/RootDocument";
 import { SITE_URL } from "@/data/site";
-import { PORTAL_CLIENT_NAMESPACES, pickMessages } from "@/i18n/messages";
+import { PORTAL_CLIENT_MESSAGES, pickMessages } from "@/i18n/messages";
 import { openGraphImagePath } from "@/lib/i18n/metadata";
 import { company } from "@/data/company";
 import { OPEN_GRAPH_BASE } from "@/lib/seo";
@@ -61,7 +61,7 @@ export default function PortalLayout({
   return (
     <RootDocument
       locale="en"
-      messages={pickMessages("en", PORTAL_CLIENT_NAMESPACES)}
+      messages={pickMessages("en", PORTAL_CLIENT_MESSAGES)}
     >
       {children}
     </RootDocument>

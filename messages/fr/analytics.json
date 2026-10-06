@@ -1,7 +1,0 @@
-{
-  "privacy": {
-    "heading": "Mesure d’audience",
-    "body": "Pour comprendre comment les visiteurs utilisent ce site, nous avons recours à <strong>Plausible Analytics</strong>, un service de mesure d’audience respectueux de la vie privée, établi dans l’Union européenne. Il ne dépose aucun cookie, ne vous identifie pas et ne vous suit pas sur d’autres sites. Il enregistre les pages consultées, le site d’où vous venez, votre navigateur, votre système d’exploitation, votre type d’appareil et votre pays, ainsi que quelques événements anonymes – par exemple un clic sur un bouton WhatsApp ou l’envoi du formulaire de contact. Votre adresse IP sert uniquement à déterminer votre pays et à compter les visiteurs de façon anonyme, jour par jour ; elle n’est jamais conservée. Plausible traite ces données pour notre compte, sur des serveurs situés dans l’Union européenne, et nous ne voyons que des statistiques globales.",
-    "noTracking": "Nous n’utilisons <strong>aucun</strong> cookie publicitaire ou de suivi, et aucun cookie tiers n’est déposé : notre outil de mesure d’audience (Plausible) fonctionne sans cookies. Chaque cookie étant soit strictement nécessaire, soit déposé à votre demande, nous n’affichons pas de bannière de consentement. Vous pouvez supprimer les cookies à tout moment dans les réglages de votre navigateur ; supprimer <code>{sessionCookie}</code> vous déconnecte."
-  }
-}

@@ -6,7 +6,7 @@ import { Analytics } from "@/components/analytics/Analytics";
 import { RootDocument } from "@/components/document/RootDocument";
 import { company } from "@/data/company";
 import { SITE_URL } from "@/data/site";
-import { CLIENT_NAMESPACES, pickMessages } from "@/i18n/messages";
+import { SITE_CLIENT_MESSAGES, pickMessages } from "@/i18n/messages";
 import { routing } from "@/i18n/routing";
 import { OPEN_GRAPH_BASE, OPEN_GRAPH_LOCALE } from "@/lib/seo";
 
@@ -15,14 +15,20 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
 
+// Any other first segment is not a language: Next.js answers it with the
+// static English 404 (app/not-found.tsx) before rendering anything. Only
+// URLs that skip the middleware get here with one (paths with a dot, e.g.
+// /x.y; the middleware maps every other unprefixed URL to English).
+export const dynamicParams = false;
+
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const requested = (await params).locale;
-  // An unknown "locale" (e.g. /no-such-file.txt) is answered with a 404 by
-  // the layout below; its title still gets the English template.
+  // Only en and fr get here (dynamicParams = false); the fallback keeps
+  // the types honest.
   const locale = hasLocale(routing.locales, requested)
     ? requested
     : routing.defaultLocale;
@@ -67,7 +73,7 @@ export default async function LocaleLayout({
   setRequestLocale(locale);
 
   return (
-    <RootDocument locale={locale} messages={pickMessages(locale, CLIENT_NAMESPACES)}>
+    <RootDocument locale={locale} messages={pickMessages(locale, SITE_CLIENT_MESSAGES)}>
       {children}
       <Analytics />
     </RootDocument>

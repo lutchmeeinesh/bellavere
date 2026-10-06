@@ -15,6 +15,7 @@ export default defineConfig({
   test: {
     environment: "node",
     include: ["**/*.test.ts"],
-    exclude: ["node_modules/**", ".next/**"],
+    // .claude/**: agent worktrees, full checkouts with their own node_modules.
+    exclude: ["node_modules/**", ".next/**", ".claude/**"],
   },
 });

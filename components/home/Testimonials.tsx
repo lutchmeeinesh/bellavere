@@ -118,7 +118,11 @@ export function Testimonials() {
               >
                 <ChevronLeft className="size-5" aria-hidden />
               </button>
-              <div className="flex items-center gap-2.5">
+              {/* Each dot sits in a 24px-high button with 8px on either
+                  side, so every tap target is at least 24 × 24px (the dots
+                  are 16px apart instead of 10px); the negative margin keeps
+                  the arrows where they were. */}
+              <div className="-mx-2 flex items-center">
                 {testimonials.map((testimonial, i) => (
                   <button
                     key={testimonial.id}
@@ -126,13 +130,18 @@ export function Testimonials() {
                     aria-label={t("carousel.goTo", { index: i + 1, count })}
                     aria-current={i === index ? "true" : undefined}
                     onClick={() => goTo(i)}
-                    className={cn(
-                      "size-2 rounded-full transition-all duration-200",
-                      i === index
-                        ? "w-6 bg-gold-500"
-                        : "bg-sand-300 hover:bg-gold-500/50"
-                    )}
-                  />
+                    className="group flex h-6 items-center rounded-full px-2"
+                  >
+                    <span
+                      aria-hidden
+                      className={cn(
+                        "h-2 rounded-full transition-all duration-200",
+                        i === index
+                          ? "w-6 bg-gold-500"
+                          : "w-2 bg-sand-300 group-hover:bg-gold-500/50"
+                      )}
+                    />
+                  </button>
                 ))}
               </div>
               <button

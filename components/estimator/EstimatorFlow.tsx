@@ -126,7 +126,8 @@ export function EstimatorFlow() {
   const stepId = STEPS[Math.min(step, STEPS.length - 1)];
 
   // The floating WhatsApp button stays out of the way of the questions; the
-  // result brings it back with its own message.
+  // result brings it back with its own message. data-whatsapp-hidden below
+  // hides it from the first paint (app/globals.css), this once hydrated.
   useWhatsAppOverride(showResult ? null : { hidden: true });
 
   // Keep the top of the card in view when the screen changes (e.g. after
@@ -177,7 +178,7 @@ export function EstimatorFlow() {
 
   return (
     <Card className="mx-auto max-w-3xl p-6 sm:p-10">
-      <div ref={cardRef}>
+      <div ref={cardRef} data-whatsapp-hidden={showResult ? undefined : ""}>
         {/* Progress. The step label also describes each question's heading. */}
         {showResult ? null : (
           <p id={stepLabelId} className="eyebrow mb-3" aria-hidden>

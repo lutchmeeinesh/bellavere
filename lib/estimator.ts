@@ -71,10 +71,6 @@ export function isRegion(value: unknown): value is Region {
   return (REGIONS as readonly unknown[]).includes(value);
 }
 
-export function isFeature(value: unknown): value is Feature {
-  return (FEATURES as readonly unknown[]).includes(value);
-}
-
 /** Whole number of bedrooms within the configured bounds (1–6). */
 export function clampBedrooms(
   value: number,

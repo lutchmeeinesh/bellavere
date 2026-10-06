@@ -1,4 +1,3 @@
-import Script from "next/script";
 import { PLAUSIBLE_DOMAIN } from "@/lib/analytics";
 
 /** Plausible's script: page views (also on client-side navigations) and custom events. */
@@ -19,20 +18,18 @@ const QUEUE_STUB =
  * and stores no personal data, so no consent banner is needed; the privacy
  * policy and the Content-Security-Policy (next.config.ts) follow the same
  * variable. Custom events: track() in lib/analytics.ts.
+ *
+ * Plain <script> elements (Plausible's own snippet) rather than next/script:
+ * they are in the server HTML of every page anyway, and next/script would
+ * add its client code to every page even with analytics off.
  */
 export function Analytics() {
   if (!PLAUSIBLE_DOMAIN) return null;
 
   return (
     <>
-      <Script id="plausible-queue" strategy="afterInteractive">
-        {QUEUE_STUB}
-      </Script>
-      <Script
-        src={PLAUSIBLE_SCRIPT}
-        data-domain={PLAUSIBLE_DOMAIN}
-        strategy="afterInteractive"
-      />
+      <script id="plausible-queue" dangerouslySetInnerHTML={{ __html: QUEUE_STUB }} />
+      <script defer src={PLAUSIBLE_SCRIPT} data-domain={PLAUSIBLE_DOMAIN} />
     </>
   );
 }

@@ -2,12 +2,14 @@
 
 import { startTransition, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
-import { Button } from "@/components/ui/Button";
+import { useLocale, useTranslations } from "next-intl";
+import { buttonClasses } from "@/components/ui/buttonClasses";
 import { Container } from "@/components/ui/Container";
-import { Logo } from "@/components/site/Logo";
+import { LOGO_LINK_CLASSES, LogoMark } from "@/components/site/LogoMark";
 import { company } from "@/data/company";
 import { PUBLIC_EMAIL } from "@/data/site";
+import type { AppLocale } from "@/i18n/routing";
+import { localeHref } from "@/lib/i18n/paths";
 
 const LINK =
   "inline-block py-1 font-medium text-navy-900 underline decoration-sand-300 underline-offset-4 transition-colors duration-150 hover:decoration-gold-500";
@@ -19,6 +21,10 @@ const LINK =
  * site chrome, so like the 404 page it carries its own frame, and it always
  * offers a person to call. The error's message is never shown (it can carry
  * internal details); the digest lets us find it in the server logs.
+ *
+ * Its links are plain <a> elements (a full page load is the right way out of
+ * an error anyway): every page loads its error boundary up front, so this
+ * stays free of the client-side link machinery.
  */
 export function SiteError({
   error,
@@ -29,6 +35,8 @@ export function SiteError({
 }) {
   const router = useRouter();
   const t = useTranslations("common");
+  const locale = useLocale() as AppLocale;
+  const home = localeHref(locale, "/");
 
   useEffect(() => {
     console.error(error);
@@ -42,10 +50,19 @@ export function SiteError({
       reset();
     });
 
+  // The whole screen is the page's main landmark: the error boundaries that
+  // render it (app/[locale]/error.tsx, app/(portal)/error.tsx) replace the
+  // layouts that hold the site's own <main>.
   return (
-    <div className="relative flex min-h-svh flex-col justify-center bg-sand-50 py-24 text-center">
+    <main className="relative flex min-h-svh flex-col justify-center bg-sand-50 py-24 text-center">
       <div className="absolute top-6 left-6 sm:top-8 sm:left-8">
-        <Logo />
+        <a
+          href={home}
+          className={LOGO_LINK_CLASSES}
+          aria-label={t("logo.label", { company: company.name })}
+        >
+          <LogoMark />
+        </a>
       </div>
 
       <Container>
@@ -56,15 +73,18 @@ export function SiteError({
         </p>
 
         <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-          <Button type="button" onClick={retry}>
+          <button type="button" onClick={retry} className={buttonClasses()}>
             {t("error.tryAgain")}
-          </Button>
-          <Button href="/" variant="outline">
+          </button>
+          <a href={home} className={buttonClasses({ variant: "outline" })}>
             {t("error.home")}
-          </Button>
-          <Button href="/contact" variant="ghost">
+          </a>
+          <a
+            href={localeHref(locale, "/contact")}
+            className={buttonClasses({ variant: "ghost" })}
+          >
             {t("error.contact")}
-          </Button>
+          </a>
         </div>
 
         <div className="mt-12 text-sm text-ink-500">
@@ -101,6 +121,6 @@ export function SiteError({
           </p>
         ) : null}
       </Container>
-    </div>
+    </main>
   );
 }

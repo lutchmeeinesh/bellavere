@@ -1,7 +1,7 @@
 import { hasLocale } from "next-intl";
 import { getRequestConfig } from "next-intl/server";
 import { getAllMessages } from "@/i18n/messages";
-import { routing, TIME_ZONE } from "@/i18n/routing";
+import { MESSAGE_FORMATS, routing, TIME_ZONE } from "@/i18n/routing";
 
 /**
  * next-intl's request configuration (wired in next.config.ts), used by
@@ -21,6 +21,7 @@ export default getRequestConfig(async ({ locale, requestLocale }) => {
   return {
     locale: resolved,
     messages: getAllMessages(resolved),
+    formats: MESSAGE_FORMATS,
     timeZone: TIME_ZONE,
   };
 });

@@ -2,11 +2,13 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Percent, SunMedium, Tag } from "lucide-react";
 import { EstimatorFlow } from "@/components/estimator/EstimatorFlow";
+import { ClientMessages } from "@/components/i18n/ClientMessages";
 import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Reveal, RevealItem, RevealStagger } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ESTIMATOR_CONFIG } from "@/data/estimator-config";
+import { PAGE_CLIENT_MESSAGES } from "@/i18n/messages";
 import { seasonDates } from "@/lib/estimator";
 import { localizedMetadata } from "@/lib/i18n/metadata";
 import { getPageLocale, type LocaleParams } from "@/lib/i18n/server";
@@ -38,7 +40,7 @@ export default async function EstimatePage({
 }: {
   params: LocaleParams;
 }) {
-  await getPageLocale(params);
+  const locale = await getPageLocale(params);
   const t = await getTranslations("estimator");
   const { occupancy, rangeSpread, maxFeeRate } = ESTIMATOR_CONFIG;
   const values = {
@@ -64,7 +66,9 @@ export default async function EstimatePage({
       {/* The estimator: the first question is in the server HTML */}
       <section aria-label={t("flow.label")} className="pt-12 pb-24 lg:pt-14 lg:pb-32">
         <Container>
-          <EstimatorFlow />
+          <ClientMessages locale={locale} paths={PAGE_CLIENT_MESSAGES.estimate}>
+            <EstimatorFlow />
+          </ClientMessages>
         </Container>
       </section>
 

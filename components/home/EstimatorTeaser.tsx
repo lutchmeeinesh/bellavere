@@ -77,7 +77,11 @@ export function EstimatorTeaser() {
                   </Select>
                 </Field>
 
-                <div className="grid gap-5 sm:grid-cols-[auto_minmax(0,1fr)] sm:items-end">
+                {/* Stepper and button side by side, except between 1024 and
+                    1279px, where the card is too narrow for the button's
+                    label on one line ("Estimate my income", "Estimer mes
+                    revenus"): stacked there, as on phones. */}
+                <div className="grid gap-5 sm:grid-cols-[auto_minmax(0,1fr)] sm:items-end lg:grid-cols-1 xl:grid-cols-[auto_minmax(0,1fr)]">
                   <div className="space-y-1.5">
                     <p id={bedroomsId} className="text-sm font-medium text-navy-900">
                       {t("teaser.bedrooms")}
@@ -87,7 +91,7 @@ export function EstimatorTeaser() {
                       value={bedrooms}
                       onChange={setBedrooms}
                       labelledBy={bedroomsId}
-                      className="sm:w-40"
+                      className="sm:w-40 lg:w-full xl:w-40"
                     />
                   </div>
                   <Button type="submit" className="h-[46px] w-full">

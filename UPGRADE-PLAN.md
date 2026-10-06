@@ -22,7 +22,7 @@ Read README.md, HANDOFF.md (§8 gotchas) and ASSUMPTIONS.md ("Update 8 — Wave 
 | Public email | One constant: `PUBLIC_EMAIL` in `data/site.ts` (`HELLO_MAILBOX_LIVE = false` → `BellavereLtd@gmail.com`; flip to `true` for `hello@bellaveremu.com` once Google Workspace exists — bellaveremu.com has no MX records yet). Contact-form delivery: `CONTACT_TO_EMAIL || PUBLIC_EMAIL`. |
 | WhatsApp | Ankit Dookhorun `23055310734` (primary, floating button), Nihal Lutchmee `23058174529` (`WHATSAPP_NUMBERS` in `data/site.ts`). Default prefill per language in `WHATSAPP_DEFAULT_MESSAGE`. Nihal's mailbox stays executive@wwwbellavere.com. |
 | English copy | Must not change: only moved into messages. English pages look identical to before Wave 1 except the header additions (EN \| FR switch, "Estimate my income") and the floating WhatsApp button. |
-| Messages | One JSON file per namespace per locale (`messages/<locale>/<namespace>.json`) until phase 2 merges them into `messages/en.json` / `messages/fr.json`. |
+| Messages | One JSON file per locale, `messages/en.json` and `messages/fr.json`, each an object whose top-level keys are the namespaces (§5). Phases 0–1 used one file per namespace per locale (`messages/<locale>/<namespace>.json`); phase 2 merged them. |
 
 ---
 
@@ -37,9 +37,10 @@ app/
   api/**                        unchanged (contact uses PUBLIC_EMAIL)
   [locale]/                     PUBLIC SITE, en + fr
     layout.tsx                  root document: <html lang>, fonts, providers, NextIntlClientProvider, <Analytics/>; generateStaticParams; default metadata
-    not-found.tsx               localized 404 ("Lost at sea?")
+    not-found.tsx               localized 404 boundary (for a page that calls notFound(); none does)
     error.tsx                   localized error boundary
-    [...rest]/page.tsx          unknown public URL -> notFound() (404 status)
+    [...rest]/route.ts          unknown public URL -> the static 404 page's HTML, status 404 (§8)
+    page-not-found/page.tsx     the localized 404 page, static (/page-not-found, /fr/page-not-found; noindex)
     opengraph-image.tsx         social image per language (/opengraph-image, /fr/opengraph-image)
     (site)/
       layout.tsx                Header, Footer, JsonLd, WhatsAppProvider, WhatsAppButton, LocaleBanner; dynamic="error"; revalidate 86400
@@ -66,7 +67,7 @@ i18n/
   routing.ts                    defineRouting + AppLocale + TIME_ZONE
   navigation.ts                 Link (portal paths stay unprefixed), usePathname, useRouter, getPathname, redirect
   request.ts                    getRequestConfig (next-intl plugin target)
-  messages.ts                   static loader, Messages type, CLIENT_NAMESPACES, pickMessages
+  messages.ts                   loads messages/en.json + fr.json, Messages type, SITE_/PAGE_/PORTAL_CLIENT_MESSAGES, pickMessages, getAllMessages
   swc-native-cache.cjs          Windows build fix, loaded by next.config.ts
 lib/
   i18n/server.ts                getPageLocale(params), LocaleParams
@@ -76,7 +77,8 @@ lib/
   format.ts                     every formatter takes an optional locale
   whatsapp.ts  analytics.ts     stubs with final signatures
   estimator.ts                  phase 1A
-messages/{en,fr}/{common,home,services,about,contact,legal,estimator,whatsapp,locale}.json
+messages/en.json  messages/fr.json   one file per locale; top-level keys = namespaces:
+                                common home services about contact legal estimator whatsapp analytics locale
 global.d.ts                     next-intl AppConfig: typed locales and message keys
 middleware.ts                   portal logic unchanged + NEXT_LOCALE redirect + next-intl
 scripts/i18n-check.mjs  scripts/visual-diff.mjs   (npm run i18n:check / visual:diff)
@@ -90,9 +92,9 @@ scripts/i18n-check.mjs  scripts/visual-diff.mjs   (npm run i18n:check / visual:d
 - **Static both languages.** `[locale]/layout.tsx` has `generateStaticParams` (en, fr) and validates the locale (`notFound()` otherwise). Every page, layout and `generateMetadata` under `[locale]` starts with `await getPageLocale(params)`. The build lists `/[locale]` with `/en` and `/fr` (●, ISR) for every public page; the portal stays ƒ, `/login` ○.
 - **Internal vs public URLs.** English pages are served from `/en/...` internally (middleware rewrite) and `/` publicly. Never derive URLs from the route path: use `localizedPath()` / `getPathname()` and `usePathname()` from `@/i18n/navigation` (returns the path without the locale).
 - **Metadata.** `[locale]/layout.tsx` sets `metadataBase`, the title template `%s · Bellavere`, the default title/description (`common.meta`), robots (`SITE_INDEXABLE`), the Open Graph base and Twitter card. Each page returns `localizedMetadata({ locale, path, title?, description? })`: explicit canonical (never `"./"`, which would resolve against `/en/...`; this also keeps the vercel/next.js#95648 fix), `alternates.languages` (en, fr, x-default→English), og:url/og:locale/og:locale:alternate and the per-language og:image with a translated alt.
-- **404.** Unknown public URLs hit `app/[locale]/[...rest]` → `notFound()` → `app/[locale]/not-found.tsx` in the URL's language, status 404, title "Page not found · Bellavere". Known Next.js 15 behaviour: for `notFound()` thrown while rendering, the server sends an empty HTML shell and the browser renders the 404 UI from the page data (fine with JavaScript; blank without). URLs outside both roots (e.g. `/x.y`) get `app/not-found.tsx` (English).
+- **404.** Unknown public URLs hit the route handler `app/[locale]/[...rest]/route.ts`, which answers with the HTML of the static page `app/[locale]/page-not-found` in the URL's language and status 404 (title "Page not found · Bellavere", noindex), complete without JavaScript. Pages always win over this catch-all, so a new public page needs nothing here. Why not `notFound()`: see §8. URLs outside both roots, or whose first segment is not a language (`dynamicParams = false` in `app/[locale]/layout.tsx`; e.g. `/x.y`), get `app/not-found.tsx` (English, static).
 - **Errors.** `app/[locale]/error.tsx` (localized) and `app/(portal)/error.tsx` (English) both render `SiteError`; the old `app/error.tsx` is gone (it would have had no `<html>` under a pass-through root). Layout-level failures reach `app/global-error.tsx` (own document, English, uses PUBLIC_EMAIL).
-- **Client messages.** The public document sends only `CLIENT_NAMESPACES` = common, home, contact, estimator, whatsapp, locale to the browser; the portal sends `common` (English). services, about and legal are server-only: a client component on those pages gets its text as props.
+- **Client messages.** The browser gets only the keys its client components read (`i18n/messages.ts`): `SITE_CLIENT_MESSAGES` from the public root document on every page, plus `PAGE_CLIENT_MESSAGES.<page>` wrapped around a page's own client components with `<ClientMessages locale paths>` (home, contact, estimate); the portal gets `PORTAL_CLIENT_MESSAGES` (English). A client component that reads a key outside these lists logs `MISSING_MESSAGE` in the browser console: add the key path to the right list (or pass the text as a prop). Messages are precompiled (§8).
 
 ## 4. Middleware (`middleware.ts`)
 
@@ -111,6 +113,8 @@ Matcher: the three old portal patterns (so dotted portal paths behave as before)
 
 ### Layout and ownership
 
+All wording is in two files, `messages/en.json` and `messages/fr.json`. Each is an object whose top-level keys are the namespaces, in the order of the table below; inside a namespace, keys are nested by page section. Both files have the same keys in the same order and are formatted alike: 2-space indent, UTF-8, LF line endings, a final newline, and characters written as themselves (`é`, `’`, the no-break space U+00A0), not as `\u` escapes — i.e. `JSON.stringify(messages, null, 2) + "\n"`. `i18n/messages.ts` imports both files; the English one defines the types (`global.d.ts`).
+
 | Namespace | Holds | Filled by (en) | French by |
 |---|---|---|---|
 | `common` | nav, header, footer, buttons, currency labels, 404/error, logo, social labels, service names, company prose (`company.*`: tagline, market, mission, pricing, team roles/bios, commitments, hours, response time, country, company type), JSON-LD, Open Graph, `meta`, image alts (`images.*`) | phase 0 (done) | C |
@@ -121,9 +125,10 @@ Matcher: the three old portal patterns (so dotted portal paths behave as before)
 | `legal` | `privacy.*` and `terms.*` + their `meta` | extraction | C |
 | `estimator` | /estimate | A | A (French included) |
 | `whatsapp` | button, contact cards, page-specific prefills | B | B (French included) |
-| `locale` | language switch, French banner | C | C |
+| `analytics` | the privacy policy's Plausible paragraphs (server only) | B | B, polished by C |
+| `locale` | language switch, language-suggestion card | C | C |
 
-Rules: a stream edits only its own namespace files, in **both** locales, in the same change (French may be an English copy only where the owner is C). Keys a stream needs in someone else's namespace (e.g. B's analytics paragraph in `legal`) are added under a clearly named sub-object to both `en` and `fr` (English copy in `fr`) and listed for C. `i18n/messages.ts` already imports every file: **adding keys never requires touching the loader**; adding a new namespace (not planned) would.
+Rules: every change to a message is made in **both** files in the same change (same key, same place). During phase 1 each stream edited only its own namespaces (French could be an English copy only where the owner was C), and keys a stream needed in someone else's namespace went under a clearly named sub-object in both locales and were listed for C. **Adding keys never requires touching the loader**; adding a namespace means adding a top-level key to both files (TypeScript and `npm run i18n:check` pick it up). Removing a key: delete it from both files after checking that no code reads it, including keys built at run time (`` t(`steps.${id}.title`) ``, key names kept in data such as the footer's links, the image alts that mirror `data/siteImages.ts`).
 
 ### Conventions
 
@@ -134,7 +139,7 @@ Rules: a stream edits only its own namespace files, in **both** locales, in the 
 - **Rich text** for links/bold inside sentences: `"…described in the <link>privacy policy</link>"` + `t.rich("consent", { link: (chunks) => <Link href="/privacy">{chunks}</Link> })`; `<strong>` likewise.
 - **Everything user-visible**: text, `aria-label`, `alt`, `title`, `placeholder`, `aria-roledescription`, validation and error messages, `<option>` text, sr-only text, metadata.
 - **Server components**: `const t = await getTranslations("ns")` (async) or `const t = useTranslations("ns")` (non-async). Pages already call `getPageLocale(params)`; keep it first. Need the locale? `const locale = await getPageLocale(params)` in pages, `useLocale()` elsewhere.
-- **Client components**: `useTranslations("ns")` only for `CLIENT_NAMESPACES`; otherwise receive strings as props.
+- **Client components**: `useTranslations("ns")` only for keys listed in `SITE_CLIENT_MESSAGES` or the page's `PAGE_CLIENT_MESSAGES` (`i18n/messages.ts`); otherwise receive strings as props.
 - **Links**: `import { Link } from "@/i18n/navigation"` (never `next/link` in public code); `<Button href="/contact">` is already locale-aware; hrefs are written without a locale; portal paths stay unprefixed automatically.
 - **Money and dates**: `useMoney()` already formats in the page's language; `<Money>` likewise. Server-side: `formatMoney(eur, currency, locale)`, `formatDate(d, locale)` ("22 septembre 2026"), `formatDateLong`, `formatMonthShort`, `formatPercent(v, decimals, locale)`, `formatNumber(n, locale)`, `conversionRateLabel(locale)`. `lib/metrics` month labels are English: on public pages format `MonthPoint.year/month` with `formatMonthShort(new Date(year, month, 1), locale)`.
 - **Images**: `const images = await getSiteImages()` / `useSiteImages()` → `images.services.rental.{src,alt}`; other alts (e.g. the coverage map) go in the page namespace.
@@ -229,6 +234,8 @@ useMoney() → { currency, setCurrency, locale, format, formatPrecise, formatCom
 
 ## 7. File-level changes per phase
 
+Phases 0 and 1 worked in per-namespace files: where they name `messages/<locale>/<ns>.json` (or `en/<ns>.json`), read the `<ns>` namespace of `messages/<locale>.json` today.
+
 ### Phase 0 — foundation (done)
 
 - next-intl 4.14.9; `next.config.ts` wraps the config with `createNextIntlPlugin("./i18n/request.ts")` (headers, CSP, `htmlLimitedBots`, images, `poweredByHeader` unchanged) and first loads `i18n/swc-native-cache.cjs`.
@@ -250,28 +257,30 @@ Each copies its finished `en/<ns>.json` to `fr/<ns>.json`, runs `npm run i18n:ch
 
 ### Phase 1A — estimator
 
-- `app/[locale]/(site)/estimate/page.tsx` (+ `generateMetadata` via `localizedMetadata(path "/estimate")`), `components/estimator/*`, `lib/estimator.ts` (pure calculation, EUR in, uses `EUR_TO_MUR` via `useMoney`), `messages/{en,fr}/estimator.json` (French written by A).
+- `app/[locale]/(site)/estimate/page.tsx` (+ `generateMetadata` via `localizedMetadata(path "/estimate")`), `components/estimator/*`, `lib/estimator.ts` (pure calculation, EUR in, uses `EUR_TO_MUR` via `useMoney`), the `estimator` namespace in both locales (French written by A).
 - On result: `track("Estimator Completed", {...})`; `useWhatsAppOverride({ message: t("whatsappMessage", {...}) })`.
 - Tell B to add `/estimate` to the sitemap. The header link already exists.
 
 ### Phase 1B — WhatsApp, analytics, SEO
 
-- `components/whatsapp/WhatsAppButton.tsx` redesign (WhatsApp glyph as an inline SVG like `SocialIcons`, motion, hide rules), `components/whatsapp/WhatsAppContactCards.tsx` (Ankit + Nihal via `WHATSAPP_NUMBERS`) inserted on the contact page, `messages/{en,fr}/whatsapp.json` (French written by B).
+- `components/whatsapp/WhatsAppButton.tsx` redesign (WhatsApp glyph as an inline SVG like `SocialIcons`, motion, hide rules), `components/whatsapp/WhatsAppContactCards.tsx` (Ankit + Nihal via `WHATSAPP_NUMBERS`) inserted on the contact page, the `whatsapp` namespace in both locales (French written by B).
 - `components/analytics/Analytics.tsx`: Plausible `<Script>` only when `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` is set; `next.config.ts` CSP (`script-src`/`connect-src` for plausible.io); privacy-policy paragraph (legal namespace, see ownership rule) — Plausible is cookieless, so still no consent banner.
 - `app/sitemap.ts`: both locales with `alternates.languages`, add `/estimate`; `app/robots.ts` unchanged apart from the sitemap URL. Optionally `.env.example` (variable already documented).
 
 ### Phase 1C — French and the language switch
 
-- Translate every `messages/fr/*.json` owned by C (common, home, services, about, contact, legal, locale) — natural, polished *vouvoiement*; keep facts as placeholders; `npm run i18n:check` must show 0 untranslated except proper nouns (extend `IDENTICAL_VALUES` in the script when a value is legitimately the same).
+- Translate every French namespace owned by C (common, home, services, about, contact, legal, locale) — natural, polished *vouvoiement*; keep facts as placeholders; `npm run i18n:check` must show 0 untranslated except proper nouns (extend `IDENTICAL_VALUES` in the script when a value is legitimately the same).
 - `components/site/LanguageToggle.tsx` final design; `components/site/LocaleBanner.tsx` (one-time, dismissible, shown when `navigator.languages` prefers French and no `NEXT_LOCALE`; remembers dismissal; never redirects; uses `writeLocaleCookie`).
 - Check French layouts: header at 1024/1280/1440 (labels are longer), buttons, forms, 404/error pages, OG image text. Privacy page: mention the `NEXT_LOCALE` preference cookie.
 
 ### Phase 2 — consolidation
 
-- Merge `messages/<locale>/*.json` into `messages/en.json` / `messages/fr.json` (top-level keys = namespaces); `i18n/messages.ts` imports the two files; `scripts/i18n-check.mjs` reads the merged files; delete the folders.
-- Remove the `@deprecated` prose from `data/company.ts` once nothing public reads it (the portal keeps `hours`, `pricing.maxFeeRate`, facts).
-- `npm run i18n:check -- --strict` passes (no hard-coded text, nothing untranslated).
-- `scripts/review.mjs`: add the French routes (`/fr`, `/fr/services`, …), `lang` and hreflang checks, the cookie redirect, the localized 404. Update README, HANDOFF (file map, gotchas), REVIEW.
+- **Done (6 Oct 2026):** `messages/<locale>/*.json` merged into `messages/en.json` / `messages/fr.json` (top-level keys = namespaces, key order kept, values unchanged apart from the edits below); `i18n/messages.ts` imports the two files; `scripts/i18n-check.mjs` reads them (and reports a leftover `messages/<locale>/` folder as an error); `scripts/review.mjs` reads the 404 heading from them; the folders are deleted. README ("Internationalisation"), HANDOFF and this plan describe the single-file layout.
+- **Done:** unused keys removed from both locales after checking every dynamic key in the code (template keys, key names kept in data, translators passed as arguments): `common.actions.contactUs`, `common.company.market`, `common.company.hours` (pages use `hoursInline`), `common.company.pricing.short`, `contact.details.call`, `contact.details.callWithHours` (the contact cards replaced them), `estimator.bedrooms.label` (the teaser uses `teaser.bedrooms`, the flow its step title). 570 → 563 keys.
+- **Done:** polish-stage French edits: no-break spaces in "de A à Z" (`estimator.result.approach.items.rental.title`, `home.services.items.rental`, `services.hero.intro`); `home.howItWorks.steps.grow.title` "Vous le voyez prospérer" → "Vous le voyez grandir" (one line from 768 px, like the other two steps; keeps "You watch it grow").
+- **Done:** `npm run i18n:check -- --strict` passes (no hard-coded text, nothing untranslated).
+- **Open:** remove the `@deprecated` prose from `data/company.ts` once nothing public reads it (the portal keeps `hours`, `pricing.maxFeeRate`, facts).
+- **Open:** `scripts/review.mjs` checks the localized 404 (`/fr/no-such-page`), but not yet the French routes (`/fr`, `/fr/services`, …), `lang` and hreflang, or the cookie redirect. REVIEW.md not updated.
 
 ### Phase 3 — verification and launch
 
@@ -283,8 +292,10 @@ Each copies its finished `en/<ns>.json` to `fr/<ns>.json`, runs `npm run i18n:ch
 ## 8. Known limitations and gotchas
 
 - **Portal is English-only** (`/fr/login` → `/login`).
-- **404 body is client-rendered** for unknown public URLs (Next.js 15 sends an empty shell with status 404 for `notFound()` thrown while rendering; the page data renders "Lost at sea?" in the right language). Title and status are right without JavaScript.
+- **404s and `notFound()` (Next.js 15.5).** React has no error boundaries on the server, so a `notFound()` thrown while a page renders escapes the server render: `renderToStream` catches it, sets the 404 status and sends an empty `<html id="__next_error__">` document, and the browser draws the nearest `not-found.tsx` from the page data (blank without JavaScript; `next/dist/server/app-render/app-render.js`, `getErrorRSCPayload`). Next.js renders a not-found page on the server only when it knows the route is a 404 before rendering (no route matches → `/_not-found`, a parameter outside `generateStaticParams` with `dynamicParams = false`, or a middleware rewrite with a 404 status) — and those all lead to the one site-wide `app/not-found.tsx` (English), which is also what Vercel serves for a middleware rewrite with a 404 status. So unknown public URLs go to `app/[locale]/[...rest]/route.ts`, which fetches the static `/<locale>/page-not-found` page from the deployment itself (prerendered, served from the edge cache) and returns its HTML with status 404 and `cache-control: private, no-store`; if that fetch fails (e.g. a preview protected by Vercel Authentication) it returns a plain localized 404 page. The fetch goes to the server's own origin: under `next start` `request.url` is built from the server's host and port, on Vercel from the routed domain, never from a visitor's Host header. Not yet checked on Vercel: after the deploy, `curl -sI https://www.bellaveremu.com/fr/no-such-page` must say 404 and the body must read "Vous avez pris le large ?".
+- **Messages are precompiled.** `i18n/messages.ts` compiles every message with icu-minify when the server starts, and `next.config.ts` aliases `use-intl/format-message` to next-intl's precompiled-message formatter (what next-intl's `experimental.messages.precompile` does, which needs Next.js 16 for its loader). Consequences: an invalid ICU message fails the build; `t.raw()` is not available; a named number style (`{n, number, percent}`) must be declared in `MESSAGE_FORMATS` (`i18n/routing.ts`), skeletons (`::MMMM`) and plain `{n, number}` work as before. Once on Next.js 16, the alias can be replaced by `experimental.messages.precompile` (with the merged message files).
 - **global-error** stays English (it replaces the whole document and loads before any translation).
-- **Typed keys**: `t("x.y")` is checked against the English files; template keys (`` t(`steps.${id}.title`) ``) need `id` typed as a union of literals.
-- **Windows builds**: next-intl's plugin loads SWC's native addon; `i18n/swc-native-cache.cjs` keeps its cache in `node_modules/.cache/swc-native` because SWC refuses the default `%LOCALAPPDATA%\swc` on this machine ("Failed to load native binding").
+- **Typed keys**: `t("x.y")` is checked against `messages/en.json`; template keys (`` t(`steps.${id}.title`) ``) need `id` typed as a union of literals.
+- **Windows builds**: next-intl's plugin loads SWC's native addon; `i18n/swc-native-cache.cjs` keeps its cache in `node_modules\.swc` of the main checkout (also for agent worktrees in `.claude\worktrees\<name>`, whose own path would pass 260 characters) because SWC refuses the default `%LOCALAPPDATA%\swc` on this machine ("Failed to load native binding").
+- **Portal links are not prefetched** from public pages (`Link` in `i18n/navigation.ts`), to keep the portal's code off every public page load.
 - **Never** read cookies/headers in `[locale]` layouts/pages; never use `"./"` canonicals; never import `i18n/messages.ts` from client code (it would ship every message).

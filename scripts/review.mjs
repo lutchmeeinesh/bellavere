@@ -298,6 +298,33 @@ const browser = await chromium.launch();
     if (result.hidden) note("ERROR", `no-js ${route}`, `${result.hidden} element(s) rendered with opacity 0 in the server HTML`);
   }
   console.log("OK: public pages are readable without JavaScript");
+
+  // Unknown public URLs: a real 404 status with the localized "Lost at sea?"
+  // page in the server HTML (app/[locale]/[...rest]/route.ts).
+  const notFoundHeading = (lang) => {
+    // messages/<lang>.json: top-level keys are the namespaces.
+    const { common } = JSON.parse(fs.readFileSync(path.join("messages", `${lang}.json`), "utf8"));
+    return common.notFound.heading.replace(/\s+/g, " ").trim();
+  };
+  const NOT_FOUND = [
+    ["/no-such-page", "en"],
+    ["/services/no-such-section", "en"],
+    ["/fr/no-such-page", "fr"],
+  ];
+  let notFoundOk = true;
+  for (const [route, lang] of NOT_FOUND) {
+    const heading = notFoundHeading(lang);
+    const res = await page.goto(BASE + route, { waitUntil: "load" }).catch(() => null);
+    const seen = await page.evaluate(() => ({
+      lang: document.documentElement.lang,
+      h1: document.querySelector("h1")?.textContent?.replace(/\s+/g, " ").trim() ?? "",
+    }));
+    if (res?.status() !== 404 || seen.lang !== lang || seen.h1 !== heading) {
+      notFoundOk = false;
+      note("ERROR", `no-js ${route}`, `expected a ${lang} 404 page reading "${heading}" with status 404, got status ${res?.status()}, lang "${seen.lang}", h1 "${seen.h1}"`);
+    }
+  }
+  if (notFoundOk) console.log("OK: unknown URLs answer 404 with the localized page, without JavaScript");
   await ctx.close();
 }
 

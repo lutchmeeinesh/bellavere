@@ -42,7 +42,7 @@ let pulsePlayed = false;
  * does not move while the label opens, so the measurement cannot flicker.
  */
 function useStepAside(
-  anchor: React.RefObject<HTMLDivElement | null>,
+  anchor: React.RefObject<HTMLElement | null>,
   active: boolean,
 ): boolean {
   const [overForm, setOverForm] = useState(false);
@@ -134,6 +134,9 @@ function useStepAside(
  * "floating").
  *
  * - Hidden entirely while a page asks for it (the estimator's questions).
+ *   Pages that know this from the start also mark it in their server HTML
+ *   (data-whatsapp-hidden, see app/globals.css), so it never flashes before
+ *   hydration.
  * - Steps aside while a form is behind it, and on phones while a text field
  *   has focus, so it never covers a field or a submit button.
  * - Adds a navy strip below the footer (the footer's colour) so, scrolled
@@ -142,6 +145,8 @@ function useStepAside(
  *   movement, with reduced motion.
  * - Boundary: a 2px ring of WhatsApp's teal green (3:1 or more against the
  *   sand, white and navy surfaces); the label is navy on white (16:1).
+ * - In its own landmark (an aside named like the button), so screen-reader
+ *   users find it among the page's regions.
  */
 export function WhatsAppButton() {
   const { hidden, message } = useWhatsAppState();
@@ -149,7 +154,7 @@ export function WhatsAppButton() {
   const t = useTranslations("whatsapp.button");
   const tc = useTranslations("common.social");
   const reduceMotion = useReducedMotion();
-  const anchor = useRef<HTMLDivElement>(null);
+  const anchor = useRef<HTMLElement>(null);
   const [focused, setFocused] = useState(false);
   const [tapped, setTapped] = useState(false);
   const [pulse, setPulse] = useState(false);
@@ -176,14 +181,17 @@ export function WhatsAppButton() {
       {hidden ? null : (
         <div
           aria-hidden
+          data-whatsapp-float
           className="h-[calc(2rem+env(safe-area-inset-bottom))] bg-navy-900"
         />
       )}
       <AnimatePresence initial={false}>
         {hidden ? null : (
-          <motion.div
+          <motion.aside
             key="whatsapp-button"
             ref={anchor}
+            aria-label={label}
+            data-whatsapp-float
             style={WHATSAPP_COLOR_VARS}
             className="fixed right-[max(1rem,env(safe-area-inset-right))] bottom-[calc(1rem+env(safe-area-inset-bottom))] z-30 sm:right-[max(1.5rem,env(safe-area-inset-right))] sm:bottom-[calc(1.5rem+env(safe-area-inset-bottom))]"
             initial={{ opacity: 0, scale: 0.6 }}
@@ -254,7 +262,7 @@ export function WhatsAppButton() {
                 <WhatsAppIcon className="relative size-7" />
               </span>
             </a>
-          </motion.div>
+          </motion.aside>
         )}
       </AnimatePresence>
     </>

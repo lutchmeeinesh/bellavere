@@ -137,10 +137,11 @@ export function ContactForm() {
   /**
    * The visitor's message for an API error code (app/api/contact/route.ts),
    * in the page's language. Delivery problems always list the direct
-   * contacts, so no enquiry is silently lost; an unknown code falls back to
-   * the server's own (English) text.
+   * contacts, so no enquiry is silently lost. Any other answer (an unknown
+   * code, method_not_allowed, a platform error page) reads as a failed send,
+   * never as the server's English text.
    */
-  function submitErrorText(code?: string, serverText?: string): string {
+  function submitErrorText(code?: string): string {
     const directContact = t("errors.directContact", {
       email: PUBLIC_EMAIL,
       people: format.list(
@@ -169,10 +170,8 @@ export function ContactForm() {
         return t("errors.unsupported");
       case "forbidden":
         return t("errors.forbidden");
-      case "delivery_failed":
-        return t("errors.deliveryFailed", { directContact });
       default:
-        return serverText ?? t("errors.deliveryFailed", { directContact });
+        return t("errors.deliveryFailed", { directContact });
     }
   }
 
@@ -208,14 +207,13 @@ export function ContactForm() {
         return;
       }
       if (!response.ok) {
-        // The server says what happened (a code, plus English text); the
-        // visitor reads it in the page's language, with direct contacts.
+        // The server says what happened with a code (its `error` text is
+        // English); the visitor reads it in the page's language.
         const data = (await response.json().catch(() => null)) as {
           code?: string;
-          error?: string;
         } | null;
         setStatus("idle");
-        setSubmitError(submitErrorText(data?.code, data?.error));
+        setSubmitError(submitErrorText(data?.code));
         return;
       }
       setStatus("success");
