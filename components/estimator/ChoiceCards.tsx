@@ -137,7 +137,7 @@ export function ChoiceCards<T extends string>({
             <span className={cn("block", variant === "cards" && "mt-4 pr-6")}>
               <span
                 className={cn(
-                  "block text-navy-900",
+                  "block text-balance text-navy-900",
                   variant === "cards"
                     ? "font-serif text-2xl leading-tight font-semibold"
                     : "font-medium",

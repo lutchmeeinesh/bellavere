@@ -13,8 +13,10 @@ import { useTranslations } from "next-intl";
 import { ConversionNote } from "@/components/currency/Money";
 import { useMoney } from "@/components/currency/CurrencyProvider";
 import { Button } from "@/components/ui/Button";
+import { buttonClasses } from "@/components/ui/buttonClasses";
 import { CountUp } from "@/components/ui/CountUp";
 import { WhatsAppIcon } from "@/components/whatsapp/WhatsAppIcon";
+import { WhatsAppLink } from "@/components/whatsapp/WhatsAppLink";
 import { useWhatsAppOverride } from "@/components/whatsapp/WhatsAppProvider";
 import { useEstimatorText } from "@/components/estimator/useEstimatorText";
 import { ESTIMATOR_CONFIG } from "@/data/estimator-config";
@@ -28,7 +30,12 @@ import {
   type EstimatorAnswers,
 } from "@/lib/estimator";
 import { cn } from "@/lib/utils";
-import { whatsappUrl } from "@/lib/whatsapp";
+
+/**
+ * The contact page's enquiry form (id on its wrapper in
+ * app/[locale]/(site)/contact/page.tsx): the call to action lands on it.
+ */
+const CONTACT_FORM_ANCHOR = "enquiry";
 
 // "How we'd get you there": messages `estimator.result.approach.items.<id>`.
 const APPROACH = [
@@ -47,10 +54,16 @@ export function EstimateResult({
   answers,
   headingId,
   onChangeAnswers,
+  trackCompletion = true,
 }: {
   answers: EstimatorAnswers;
   headingId: string;
   onChangeAnswers: () => void;
+  /**
+   * Record "Estimator Completed". False when the result was reopened from
+   * the URL (Back from the contact page, the language switch, a reload).
+   */
+  trackCompletion?: boolean;
 }) {
   const t = useTranslations("estimator");
   const money = useMoney();
@@ -73,7 +86,9 @@ export function EstimateResult({
   const bedrooms = text.bedrooms(answers.bedrooms);
   const whatsappMessage = t("whatsappMessage", {
     type: answers.type,
-    bedrooms,
+    // A number, so the sentence can say "one bedroom" / "d’une chambre".
+    bedrooms: answers.bedrooms,
+    max: answers.bedrooms >= ESTIMATOR_CONFIG.bedrooms.max ? "yes" : "no",
     located: t(`regions.${answers.region}.located`),
     low: text.amount(annual.low),
     high: text.amount(annual.high),
@@ -81,8 +96,9 @@ export function EstimateResult({
   // The floating button carries the same message while the result is shown.
   useWhatsAppOverride({ message: whatsappMessage });
 
-  // Once per completed estimate (not on re-renders or currency changes).
-  const tracked = useRef(false);
+  // Once per completed estimate (not on re-renders or currency changes, nor
+  // when the result is reopened from the URL).
+  const tracked = useRef(!trackCompletion);
   useEffect(() => {
     if (tracked.current) return;
     tracked.current = true;
@@ -94,7 +110,7 @@ export function EstimateResult({
     });
   }, [answers, estimate.weeks]);
 
-  const contactHref = `/contact?${contactSearchParams(answers, estimate)}`;
+  const contactHref = `/contact?${contactSearchParams(answers, estimate)}#${CONTACT_FORM_ANCHOR}`;
   const maxFee = estimate.fee.rate;
 
   const summary = [
@@ -197,18 +213,25 @@ export function EstimateResult({
             label={
               <>
                 {t("result.breakdown.fee")}{" "}
-                <span className="ml-1 inline-block rounded-full bg-gold-500/15 px-2 py-0.5 align-middle text-xs font-semibold text-gold-700">
-                  {t("result.breakdown.feeCap", { maxFee })}
+                {/* The qualifier and the cap wrap together. */}
+                <span className="whitespace-nowrap">
+                  <Qualifier>{t("result.breakdown.atMost")}</Qualifier>{" "}
+                  <span className="ml-1 inline-block rounded-full bg-gold-500/15 px-2 py-0.5 align-middle text-xs font-semibold text-gold-700">
+                    {t("result.breakdown.feeCap", { maxFee })}
+                  </span>
                 </span>
               </>
             }
-            qualifier={t("result.breakdown.upTo")}
             value={rangeAmounts(breakdown.fee, text.amount)}
           />
           <BreakdownRow
             strong
-            label={t("result.breakdown.net")}
-            qualifier={t("result.breakdown.atLeast")}
+            label={
+              <>
+                {t("result.breakdown.net")}{" "}
+                <Qualifier>{t("result.breakdown.atLeast")}</Qualifier>
+              </>
+            }
             value={rangeAmounts(breakdown.net, text.amount)}
           />
         </dl>
@@ -228,7 +251,7 @@ export function EstimateResult({
               <span className="flex size-10 items-center justify-center rounded-full bg-gold-500/15 text-gold-700">
                 <item.icon className="size-4.5" aria-hidden />
               </span>
-              <p className="mt-3 font-medium text-navy-900">
+              <p className="mt-3 font-medium text-balance text-navy-900">
                 {t(`result.approach.items.${item.id}.title`)}
               </p>
               <p className="mt-1 text-sm leading-relaxed text-ink-500">
@@ -245,22 +268,18 @@ export function EstimateResult({
           {t("result.cta.primary")}
           <ArrowRight className="size-4 shrink-0" aria-hidden />
         </Button>
-        {/* The wrapper records the click; the link itself is the shared Button. */}
-        <span
-          className="contents"
-          onClick={() => track("WhatsApp Clicked", { placement: "estimator" })}
+        {/* The shared WhatsApp link (new tab, rel, "WhatsApp Clicked" with
+            placement and locale) with the outline button's look. */}
+        <WhatsAppLink
+          number={WHATSAPP_PRIMARY}
+          message={whatsappMessage}
+          placement="estimator"
+          className={buttonClasses({ variant: "outline", className: "text-center" })}
         >
-          <Button
-            href={whatsappUrl(WHATSAPP_PRIMARY, whatsappMessage)}
-            target="_blank"
-            variant="outline"
-            className="text-center"
-          >
-            <WhatsAppIcon className="size-4 shrink-0" />
-            {t("result.cta.whatsapp")}
-            <span className="sr-only">{t("result.cta.newTab")}</span>
-          </Button>
-        </span>
+          <WhatsAppIcon className="size-4 shrink-0" />
+          {t("result.cta.whatsapp")}
+          <span className="sr-only">{t("result.cta.newTab")}</span>
+        </WhatsAppLink>
       </div>
     </div>
   );
@@ -280,14 +299,21 @@ function rangeAmounts(
   );
 }
 
+/** "(at most)", "(at least)": muted, after a breakdown line's label. */
+function Qualifier({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="text-xs font-normal whitespace-nowrap text-ink-500">
+      {children}
+    </span>
+  );
+}
+
 function BreakdownRow({
   label,
-  qualifier,
   value,
   strong = false,
 }: {
   label: React.ReactNode;
-  qualifier?: string;
   value: React.ReactNode;
   strong?: boolean;
 }) {
@@ -302,11 +328,6 @@ function BreakdownRow({
           strong ? "text-base font-semibold text-navy-900" : "text-sm font-medium text-navy-900",
         )}
       >
-        {qualifier ? (
-          <>
-            <span className="text-xs font-normal text-ink-500">{qualifier}</span>{" "}
-          </>
-        ) : null}
         {value}
       </dd>
     </div>

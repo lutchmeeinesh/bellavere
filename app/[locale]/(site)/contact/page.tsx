@@ -143,16 +143,19 @@ export default async function ContactPage({
               ) : null}
             </RevealStagger>
 
-            {/* Enquiry form */}
-            <Reveal delay={0.1}>
-              <Card className="p-6 sm:p-10">
-                <h2 className="text-2xl">{t("formCard.title")}</h2>
-                <p className="mt-2 mb-8 text-sm text-ink-500">
-                  {t("formCard.intro")}
-                </p>
-                <ContactForm />
-              </Card>
-            </Reveal>
+            {/* Enquiry form. #enquiry: the estimator's call to action lands
+                here, below the fixed header. */}
+            <div id="enquiry" className="scroll-mt-24">
+              <Reveal delay={0.1}>
+                <Card className="p-6 sm:p-10">
+                  <h2 className="text-2xl">{t("formCard.title")}</h2>
+                  <p className="mt-2 mb-8 text-sm text-ink-500">
+                    {t("formCard.intro")}
+                  </p>
+                  <ContactForm />
+                </Card>
+              </Reveal>
+            </div>
           </div>
         </Container>
       </section>
