@@ -25,6 +25,10 @@ for (const [label, viewport] of [["desktop", { width: 1440, height: 900 }], ["mo
       for (let y = 0; y < document.body.scrollHeight; y += 600) { window.scrollTo(0, y); await new Promise((r) => setTimeout(r, 60)); }
       window.scrollTo(0, 0);
     });
+    // Lazy images below the fold must have finished loading (or failed).
+    await page.evaluate(() =>
+      Promise.all([...document.images].map((img) => (img.complete ? 0 : new Promise((done) => { img.onload = img.onerror = done; })))),
+    );
     await page.waitForTimeout(600);
     const file = path.join(OUT, `${slug(route)}-${label}.png`);
     await page.screenshot({ path: file, fullPage: true });

@@ -899,8 +899,7 @@
         "period": "Per year",
         "gross": "Estimated gross rental income",
         "fee": "Bellavere management fee",
-        "feeCap": "max {maxFee, number, percent}",
-        "atMost": "(at most)",
+        "feeCap": "at most {maxFee, number, percent}",
         "net": "Estimated net to you",
         "atLeast": "(at least)",
         "note": "Your management fee is agreed with you after our first meeting and never exceeds {maxFee, number, percent} of gross rental income. No hidden fees: every cost is itemised on your monthly statement."

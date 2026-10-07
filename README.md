@@ -134,6 +134,13 @@ fee           = up to maxFeeRate (company.pricing.maxFeeRate, 15%) · net = gros
 
 The page's "How the estimate works" section reads the same numbers, so it stays true. The values are marked `[CONFIRM] demo defaults`: replace them with real market knowledge. After a change, `npm test` fails on the hand-worked examples in `lib/estimator.test.ts` (the arithmetic is written out at the top of that file): update the expected values to the new figures. Adding a property type, region or feature (the lists at the top of the file) also needs its wording under `estimator` in `messages/en.json` and `messages/fr.json`, with the same id, plus an icon for a type (`components/estimator/icons.ts`) or a point on the island map for a region (`REGION_POINTS` in `components/estimator/IslandMap.tsx`); TypeScript and `npm run i18n:check` list what is missing.
 
+**How it behaves**
+
+- The answers live in the page's own URL (`?type=…&region=…&bedrooms=…&features=…&weeks=…`, plus `step=result` while the result is shown), written with `history.replaceState` as the visitor answers. So the result survives the EN | FR switch (also when opened in a new tab), the browser's Back button from the contact page and a reload; "Change my answers" drops `step=result` and keeps the answers. A deep link such as `/estimate?region=north&bedrooms=3` pre-fills those answers and starts at question 1.
+- Figures are rounded to three significant figures in the visitor's currency. The fee is rounded **down** to its own three-significant-figure step, so it is never shown above 15% of the gross next to it, and the net is gross − fee, so the lines always add up. The fee row says the cap once ("at most 15%"); the net row says "(at least)".
+- The primary call to action opens `/contact?source=estimate&…#enquiry` in the same language: the form is scrolled into view, with the property type, the count and a readable summary already filled in.
+- "Estimator Completed" is sent once per completed estimate (not again when a result is reopened from the URL); WhatsApp clicks from the result are tracked as `placement: "estimator"` with the locale.
+
 ## WhatsApp
 
 A floating button on every public page (hidden on the estimator's questions, carrying the estimate on its result) opens a chat with Ankit; the contact page has a card each for Ankit and Nihal. Numbers (`WHATSAPP_NUMBERS`, `WHATSAPP_PRIMARY`) and the default pre-filled message per language (`WHATSAPP_DEFAULT_MESSAGE`) are in `data/site.ts`; other wording is under `whatsapp` in `messages/en.json` and `messages/fr.json`.

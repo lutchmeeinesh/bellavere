@@ -37,9 +37,11 @@ function rememberDismissal() {
  * left from 640px, clear of the WhatsApp button (bottom right) and of the
  * page's calls to action. It appears after a short pause, rising and fading
  * in (at once, without either, with reduced motion: MotionConfig's "user"
- * setting only removes the movement). Closing it (button or Escape) is
- * remembered in localStorage; picking a language here or in the header
- * switch writes the cookie, which hides it for good as well.
+ * setting only removes the movement). Closing it (button, or Escape from
+ * anywhere on the page) is remembered in localStorage; picking a language
+ * here or in the header switch writes the cookie, which hides it for good
+ * as well. While it is open, focused elements keep clear of it
+ * (data-locale-suggestion, app/globals.css), so it never hides the focus.
  */
 export function LocaleSuggestion({ target }: { target: AppLocale }) {
   const t = useTranslations("locale.suggestion");
@@ -69,6 +71,19 @@ export function LocaleSuggestion({ target }: { target: AppLocale }) {
     setOpen(false);
   };
 
+  // Escape closes the card wherever focus is, not only inside it. Another
+  // layer that handles Escape first (e.g. the phone menu) prevents default.
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== "Escape" || event.defaultPrevented) return;
+      rememberDismissal();
+      setOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [open]);
+
   return (
     <AnimatePresence>
       {open ? (
@@ -76,9 +91,7 @@ export function LocaleSuggestion({ target }: { target: AppLocale }) {
           key="locale-suggestion"
           aria-label={t("label")}
           lang={target}
-          onKeyDown={(event) => {
-            if (event.key === "Escape") dismiss();
-          }}
+          data-locale-suggestion
           className="fixed inset-x-4 top-21 z-30 sm:inset-x-auto sm:top-auto sm:bottom-5 sm:left-5 sm:w-[26rem]"
           initial={reduceMotion ? false : { opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}

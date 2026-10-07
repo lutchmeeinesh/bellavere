@@ -18,7 +18,7 @@ export default async function LoginPage() {
   const { loginBackdrop } = await getSiteImages("en");
 
   return (
-    <div className="relative flex min-h-svh items-center justify-center overflow-hidden bg-navy-900 px-5 py-28 sm:px-8">
+    <main className="relative flex min-h-svh items-center justify-center overflow-hidden bg-navy-900 px-5 py-28 sm:px-8">
       <Image
         src={loginBackdrop.src}
         alt={loginBackdrop.alt}
@@ -30,14 +30,14 @@ export default async function LoginPage() {
       />
       <div className="absolute inset-0 bg-navy-900/70" aria-hidden />
 
-      <div className="absolute top-6 left-6 z-10 sm:top-8 sm:left-8">
+      <header className="absolute top-6 left-6 z-10 sm:top-8 sm:left-8">
         <Logo dark />
-      </div>
+      </header>
 
       <div className="relative z-10 w-full max-w-md">
         {/* Prerendered: the form reads ?from= in the browser at sign-in. */}
         <LoginForm demoMode={demoMode} />
       </div>
-    </div>
+    </main>
   );
 }

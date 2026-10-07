@@ -277,9 +277,11 @@ function floorTo(value: number, step: number): number {
 
 /**
  * The yearly breakdown as shown to the visitor, in the display currency:
- * gross rounded for display, the maximum fee rounded down to the same step
- * (so it is never more than the advertised share of the gross shown next to
- * it) and the net as their difference, so the three lines always add up.
+ * gross rounded for display, the maximum fee rounded DOWN to its own
+ * three-significant-figure step (so it is never more than the advertised
+ * share of the gross shown next to it, and never understated by more than
+ * one small step) and the net as their difference, so the three lines
+ * always add up.
  * `convert` turns EUR into the display currency.
  */
 export function displayBreakdown(
@@ -288,7 +290,8 @@ export function displayBreakdown(
 ) {
   const line = (eur: number) => {
     const gross = roundForDisplay(convert(eur));
-    const fee = floorTo(gross * estimate.fee.rate, displayStep(gross));
+    const maxFee = gross * estimate.fee.rate;
+    const fee = floorTo(maxFee, displayStep(maxFee));
     return { gross, fee, net: gross - fee };
   };
   const low = line(estimate.annual.low);

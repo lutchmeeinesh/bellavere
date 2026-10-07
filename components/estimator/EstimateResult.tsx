@@ -213,12 +213,9 @@ export function EstimateResult({
             label={
               <>
                 {t("result.breakdown.fee")}{" "}
-                {/* The qualifier and the cap wrap together. */}
-                <span className="whitespace-nowrap">
-                  <Qualifier>{t("result.breakdown.atMost")}</Qualifier>{" "}
-                  <span className="ml-1 inline-block rounded-full bg-gold-500/15 px-2 py-0.5 align-middle text-xs font-semibold text-gold-700">
-                    {t("result.breakdown.feeCap", { maxFee })}
-                  </span>
+                {/* The cap, said once: "at most 15%". */}
+                <span className="ml-1 inline-block whitespace-nowrap rounded-full bg-gold-500/15 px-2 py-0.5 align-middle text-xs font-semibold text-gold-700">
+                  {t("result.breakdown.feeCap", { maxFee })}
                 </span>
               </>
             }

@@ -571,7 +571,7 @@
         },
         "reply": {
           "question": "Sous quel délai me répondrez-vous ?",
-          "answer": "Le jour même – pour chaque demande, sans exception. Vous pouvez joindre {names} 7j/7, 24h/24, aux numéros indiqués sur cette page."
+          "answer": "Le jour même – pour chaque demande, sans exception. Vous pouvez joindre {names} 7j/7, 24h/24, aux numéros indiqués sur cette page."
         },
         "payouts": {
           "question": "Quand recevrai-je mes versements ?",
@@ -899,8 +899,7 @@
         "period": "Par an",
         "gross": "Revenus locatifs bruts estimés",
         "fee": "Frais de gestion Bellavere",
-        "feeCap": "{maxFee, number, percent} maximum",
-        "atMost": "(au plus)",
+        "feeCap": "au plus {maxFee, number, percent}",
         "net": "Net estimé pour vous",
         "atLeast": "(au minimum)",
         "note": "Vos frais de gestion sont convenus avec vous après notre premier rendez-vous et ne dépassent jamais {maxFee, number, percent} des revenus locatifs bruts. Aucuns frais cachés : chaque dépense est détaillée sur votre relevé mensuel."

@@ -167,6 +167,20 @@
   :focus {
     scroll-margin-top: 5rem;
   }
+
+  /* While the French-suggestion card floats over the page, focus keeps clear
+     of it as well: it sits under the header on phones (about 14rem from the
+     top) and bottom left from 640px (about 9rem from the bottom). */
+  html:has([data-locale-suggestion]) :focus {
+    scroll-margin-top: 14rem;
+  }
+
+  @media (width >= 40rem) {
+    html:has([data-locale-suggestion]) :focus {
+      scroll-margin-top: 5rem;
+      scroll-margin-bottom: 9rem;
+    }
+  }
 }
 
 /* Unlayered, so it wins over the focus-visible:outline-gold-500 utilities

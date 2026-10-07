@@ -238,6 +238,14 @@ Bookings are **generated** by a seeded PRNG (`data/bookings.ts`) relative to `to
 - Estimator end to end in both languages (questions, deep links, keyboard, result, currency switch, contact pre-fill, WhatsApp message), and the French contact form (labels, validation, every server error code, success, and an enquiry through a stand-in for Resend showing "Language: French").
 - **Phase 2 consolidation (6 Oct 2026):** messages merged into `messages/en.json` / `messages/fr.json`, 7 unused keys removed (563 keys). Re-run clean: `npx tsc --noEmit`, `npm run lint`, `npm test` (42), `npm run i18n:check -- --strict`, `npm run build` (same First Load JS as above), `node scripts/review.mjs` (0 errors, 0 warnings), and a Playwright pass over every public page in both languages at 1440 and 390 px (phone menu open, estimator walked to its result, contact form validation, the language suggestion): 0 console errors, no raw message keys or unformatted placeholders.
 
+**Wave 1 final (7 Oct 2026, branch `wave-1`):** an independent review (4 reviewers: functional, visual/performance/accessibility, code, French) raised 39 findings (0 blocker, 3 major, 18 minor, 18 nit); all were fixed except the white WhatsApp glyph on brand green (accepted, ASSUMPTIONS.md), and an independent re-verification confirmed them. Final state:
+
+- `npx tsc --noEmit`, `npm run lint`, `npm test` (**49** estimator tests), `npm run i18n:check -- --strict` (**566** keys, 0 errors), `npm run build` (every public page prerendered in `en` and `fr`).
+- `node scripts/review.mjs` (now also covering every French page, hreflang/canonical, the language-cookie and `/en`/upper-case redirects, 404s for every HTTP method and the sitemap): **0 errors, 0 warnings**, admin flow included when credentials are supplied.
+- **axe-core**: 0 violations on every public page in both languages at 390 and 1280, in every header scroll state, with the phone menu, the French-suggestion card, the estimator steps/result and the 404.
+- **Lighthouse mobile** medians (local `next start`, 6–10 runs): `/` **91**, `/estimate` **91.5**, `/fr` 87.5; accessibility 100. Total blocking time varies 60–310 ms between runs on the development laptop.
+- Estimator figures matched hand calculations in every checked combination (672 assertions in review, 24 in re-verification), in EUR and MUR.
+
 **Re-run:**
 
 ```bash

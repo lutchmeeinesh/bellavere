@@ -57,6 +57,18 @@ const NAV_LINKS = [
  *
  * Literal class names, so Tailwind generates them.
  */
+/**
+ * Phone menu: grows open; closes the same way, or at once (custom = true)
+ * when focus has already moved on to the page behind it.
+ */
+const MENU_VARIANTS = {
+  open: { height: "auto", opacity: 1 },
+  closed: (instant: boolean) =>
+    instant
+      ? { height: 0, opacity: 0, transition: { duration: 0 } }
+      : { height: 0, opacity: 0 },
+};
+
 const BAR_CLASSES: Record<
   AppLocale,
   {
@@ -99,6 +111,10 @@ export function Header() {
   const pathname = useSitePathname();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  // Set when the menu closes because focus moved on to the page: it then
+  // closes without its exit animation (which could pull the page back up and
+  // leave the newly focused element off-screen).
+  const [closeInstantly, setCloseInstantly] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -136,7 +152,11 @@ export function Header() {
         // focus leaving the window (relatedTarget null) keeps it open.
         const next = event.relatedTarget;
         if (menuOpen && next && !event.currentTarget.contains(next)) {
+          setCloseInstantly(true);
           setMenuOpen(false);
+          requestAnimationFrame(() => {
+            if (next instanceof HTMLElement) next.scrollIntoView({ block: "nearest" });
+          });
         }
       }}
       className={cn(
@@ -243,7 +263,10 @@ export function Header() {
             aria-expanded={menuOpen}
             aria-controls={menuOpen ? "mobile-menu" : undefined}
             aria-label={menuOpen ? t("nav.closeMenu") : t("nav.openMenu")}
-            onClick={() => setMenuOpen((v) => !v)}
+            onClick={() => {
+              setCloseInstantly(false);
+              setMenuOpen((v) => !v);
+            }}
           >
             {menuOpen ? (
               <X className="size-6" aria-hidden />
@@ -254,7 +277,7 @@ export function Header() {
         </div>
       </div>
 
-      <AnimatePresence>
+      <AnimatePresence custom={closeInstantly}>
         {menuOpen ? (
           <motion.nav
             id="mobile-menu"
@@ -268,9 +291,11 @@ export function Header() {
               "border-t border-sand-300 bg-sand-50/95 backdrop-blur-md",
               bar.compact,
             )}
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
+            custom={closeInstantly}
+            variants={MENU_VARIANTS}
+            initial="closed"
+            animate="open"
+            exit="closed"
             transition={{ duration: 0.25, ease: "easeOut" }}
           >
             <ul className="space-y-1 px-5 py-4">

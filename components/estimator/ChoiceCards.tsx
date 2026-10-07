@@ -148,7 +148,7 @@ export function ChoiceCards<T extends string>({
               {option.description ? (
                 <span
                   className={cn(
-                    "block text-sm text-ink-500",
+                    "block text-sm text-pretty text-ink-500",
                     variant === "cards" ? "mt-1.5 leading-relaxed" : "mt-0.5",
                   )}
                 >

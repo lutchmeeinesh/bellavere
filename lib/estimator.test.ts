@@ -273,35 +273,35 @@ describe("display rounding", () => {
   });
 
   it("builds a yearly breakdown that adds up (EUR)", () => {
-    // The fee is rounded DOWN to the gross's step, so it never shows more
-    // than 15% of the gross shown next to it.
-    // gross low 37,035.18 → 37,000; fee 37,000 × 0.15 = 5,550 → 5,500 (step 100); net 31,500
-    // gross high 50,106.42 → 50,100; fee 7,515 → 7,500; net 42,600
+    // The fee is rounded DOWN to its own step (three significant figures),
+    // so it never shows more than 15% of the gross shown next to it.
+    // gross low 37,035.18 → 37,000; fee 37,000 × 0.15 = 5,550 (step 10) → 5,550; net 31,450
+    // gross high 50,106.42 → 50,100; fee 7,515 → 7,510; net 42,590
     const breakdown = displayBreakdown(estimateIncome(base));
     expect(breakdown).toEqual({
       gross: { low: 37_000, high: 50_100 },
-      fee: { low: 5_500, high: 7_500 },
-      net: { low: 31_500, high: 42_600 },
+      fee: { low: 5_550, high: 7_510 },
+      net: { low: 31_450, high: 42_590 },
     });
   });
 
   it("rounds in the display currency (MUR at 52)", () => {
-    // low 37,035.18 × 52 = 1,925,829.36 → 1,930,000; fee 289,500 → 280,000 (step 10,000); net 1,650,000
-    // high 50,106.42 × 52 = 2,605,533.84 → 2,610,000; fee 391,500 → 390,000; net 2,220,000
+    // low 37,035.18 × 52 = 1,925,829.36 → 1,930,000; fee 289,500 → 289,000 (step 1,000); net 1,641,000
+    // high 50,106.42 × 52 = 2,605,533.84 → 2,610,000; fee 391,500 → 391,000; net 2,219,000
     const breakdown = displayBreakdown(estimateIncome(base), (eur) => eur * 52);
     expect(breakdown).toEqual({
       gross: { low: 1_930_000, high: 2_610_000 },
-      fee: { low: 280_000, high: 390_000 },
-      net: { low: 1_650_000, high: 2_220_000 },
+      fee: { low: 289_000, high: 391_000 },
+      net: { low: 1_641_000, high: 2_219_000 },
     });
   });
 
   it("never shows a fee above 15% of the gross shown (reported case)", () => {
     // villa, north, 3 bedrooms, pool + sea view, year-round:
     // EUR gross 63,391.64 → 63,400 · 85,765.16 → 85,800
-    //     fee 9,510 → 9,500 · 12,870 → 12,800 (was 12,900 = 15.03%)
+    //     fee 9,510 → 9,510 (step 10) · 12,870 → 12,800 (step 100; rounding up once showed 12,900 = 15.03%)
     // MUR gross 3,296,365 → 3,300,000 · 4,459,788 → 4,460,000
-    //     fee 495,000 → 490,000 (was 500,000 = 15.15%) · 669,000 → 660,000 (was 670,000)
+    //     fee 495,000 → 495,000 · 669,000 → 669,000 (once 500,000 = 15.15%)
     const answers: EstimatorAnswers = {
       ...base,
       region: "north",
@@ -310,13 +310,13 @@ describe("display rounding", () => {
     };
     expect(displayBreakdown(estimateIncome(answers))).toEqual({
       gross: { low: 63_400, high: 85_800 },
-      fee: { low: 9_500, high: 12_800 },
-      net: { low: 53_900, high: 73_000 },
+      fee: { low: 9_510, high: 12_800 },
+      net: { low: 53_890, high: 73_000 },
     });
     expect(displayBreakdown(estimateIncome(answers), (eur) => eur * 52)).toEqual({
       gross: { low: 3_300_000, high: 4_460_000 },
-      fee: { low: 490_000, high: 660_000 },
-      net: { low: 2_810_000, high: 3_800_000 },
+      fee: { low: 495_000, high: 669_000 },
+      net: { low: 2_805_000, high: 3_791_000 },
     });
   });
 
@@ -337,9 +337,12 @@ describe("display rounding", () => {
               for (const convert of [(eur: number) => eur, (eur: number) => eur * 52]) {
                 const { gross, fee, net } = displayBreakdown(estimate, convert);
                 for (const end of ["low", "high"] as const) {
-                  const step = displayStep(gross[end]);
-                  expect(fee[end]).toBeLessThanOrEqual(gross[end] * 0.15);
-                  expect(fee[end]).toBeGreaterThan(gross[end] * 0.15 - step);
+                  const maxFee = gross[end] * 0.15;
+                  const step = displayStep(maxFee);
+                  expect(fee[end]).toBeLessThanOrEqual(maxFee);
+                  // Understated by less than one step of the fee itself
+                  // (three significant figures: under 1% of the fee).
+                  expect(fee[end]).toBeGreaterThan(maxFee - step);
                   expect(fee[end] % step).toBe(0);
                   expect(fee[end] + net[end]).toBe(gross[end]);
                   checked++;
