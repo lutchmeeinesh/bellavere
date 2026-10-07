@@ -23,6 +23,14 @@ const PASSWORD_HASH_PATTERN = /^scrypt:[A-Za-z0-9+/]{22}==:[A-Za-z0-9+/]{86}==$/
 /** Values lib/session.ts and app/robots.ts compare against. */
 const BOOLEAN_VALUES = ["true", "false"];
 
+/**
+ * A Plausible site domain as registered there: a bare host name such as
+ * "www.bellaveremu.com" (no scheme, path or port), or several separated by
+ * commas to send the same visits to more than one Plausible site.
+ */
+const PLAUSIBLE_DOMAIN_PATTERN =
+  /^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}(?:,(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,})*$/i;
+
 function isHttpsUrl(value: string): boolean {
   try {
     return new URL(value).protocol === "https:";
@@ -92,6 +100,15 @@ export function checkEnv(env: NodeJS.ProcessEnv = process.env): EnvCheck {
   if (contactTo && !EMAIL_PATTERN.test(contactTo)) {
     warnings.push(
       "CONTACT_TO_EMAIL is not a valid email address, so enquiries may not be delivered."
+    );
+  }
+
+  // Optional: empty means no analytics. Read at build time (script tag,
+  // Content-Security-Policy, privacy policy): redeploy after changing it.
+  const plausibleDomain = env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN?.trim();
+  if (plausibleDomain && !PLAUSIBLE_DOMAIN_PATTERN.test(plausibleDomain)) {
+    warnings.push(
+      "NEXT_PUBLIC_PLAUSIBLE_DOMAIN does not look like a domain name (e.g. www.bellaveremu.com, without https:// or a path), so Plausible will not record any visits."
     );
   }
 

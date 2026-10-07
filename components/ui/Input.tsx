@@ -1,11 +1,17 @@
 import { cloneElement, isValidElement } from "react";
 import { cn } from "@/lib/utils";
 
+/**
+ * Focus draws a 2px gold-700 edge (the 1px border plus a 1px ring): 5.8:1
+ * against the white field and 5.4:1 against sand, a 3.7:1 change from the
+ * resting sand-300 border. An invalid field keeps its danger red, 2px when
+ * focused (the aria-invalid colours come after the focus ones in the CSS).
+ */
 export const fieldClasses = cn(
   "w-full rounded-xl border border-sand-300 bg-white px-4 py-3 text-sm text-ink-900",
   "placeholder:text-ink-500/60 transition-colors duration-150",
-  "focus:border-gold-500 focus:outline-none focus:ring-2 focus:ring-gold-500/25",
-  "aria-[invalid=true]:border-danger aria-[invalid=true]:ring-danger/20"
+  "focus:border-gold-700 focus:outline-none focus:ring-1 focus:ring-gold-700",
+  "aria-[invalid=true]:border-danger aria-[invalid=true]:ring-danger"
 );
 
 /**

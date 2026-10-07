@@ -1,0 +1,1002 @@
+{
+  "common": {
+    "meta": {
+      "defaultTitle": "Bellavere – Gestion de propriétés et services de syndic à Maurice",
+      "description": "Bellavere prend soin de villas, d’appartements et de résidences partout à Maurice : gestion locative, entretien, services de syndic, accompagnement client, conciergerie et tableau de bord propriétaire en temps réel."
+    },
+    "nav": {
+      "label": "Navigation principale",
+      "mobileLabel": "Navigation mobile",
+      "openMenu": "Ouvrir le menu",
+      "closeMenu": "Fermer le menu",
+      "home": "Accueil",
+      "services": "Services",
+      "estimate": "Estimer mes revenus",
+      "about": "À propos",
+      "contact": "Contact"
+    },
+    "actions": {
+      "ownerLogin": "Espace propriétaire",
+      "listProperty": "Confier votre bien"
+    },
+    "logo": {
+      "label": "{company} – accueil"
+    },
+    "currency": {
+      "label": "Devise d’affichage",
+      "names": {
+        "EUR": "Euro (€)",
+        "MUR": "Roupie mauricienne (Rs)"
+      },
+      "conversionNote": "Les montants en roupies sont convertis depuis l’euro au taux de {rate}, à titre indicatif."
+    },
+    "footer": {
+      "blurb": "{tagline} Gestion de propriétés et services de syndic aux quatre coins de l’île Maurice – au nord, au sud, à l’est, à l’ouest et sur le plateau central.",
+      "callUs": "Appelez-nous – {hours}",
+      "columns": {
+        "company": "Entreprise",
+        "services": "Services",
+        "owners": "Propriétaires"
+      },
+      "links": {
+        "about": "Qui sommes-nous ?",
+        "contact": "Contact",
+        "ownerLogin": "Espace propriétaire",
+        "listProperty": "Confier votre bien",
+        "ownerFaq": "FAQ propriétaires"
+      },
+      "copyright": "© {year} {legalName}. Tous droits réservés.",
+      "registration": "Société n° {number} · {country}",
+      "privacy": "Politique de confidentialité",
+      "terms": "Conditions d’utilisation",
+      "demoNote": "La démonstration de l’espace propriétaire utilise des comptes et des chiffres fictifs."
+    },
+    "social": {
+      "instagram": "{company} sur Instagram",
+      "facebook": "{company} sur Facebook",
+      "linkedin": "{company} sur LinkedIn",
+      "newTab": "{label} (s’ouvre dans un nouvel onglet)"
+    },
+    "serviceNames": {
+      "rental": "Gestion locative",
+      "maintenance": "Entretien et maintenance",
+      "clientCare": "Accompagnement client",
+      "concierge": "Conciergerie et services",
+      "syndic": "Syndic et résidences"
+    },
+    "notFound": {
+      "title": "Page introuvable",
+      "heading": "Vous avez pris le large ?",
+      "body": "La page que vous cherchez est partie avec la marée. Heureusement, le rivage est facile à retrouver.",
+      "home": "Retour à la villa",
+      "contact": "Nous contacter"
+    },
+    "error": {
+      "eyebrow": "Un problème est survenu",
+      "heading": "Désolés, cette page n’a pas pu se charger",
+      "body": "Un incident de notre côté a interrompu son chargement. Merci de réessayer – et si le problème persiste, une vraie personne est toujours là pour vous aider.",
+      "tryAgain": "Réessayer",
+      "home": "Retour à l’accueil",
+      "contact": "Nous contacter",
+      "callUs": "Appelez-nous",
+      "callUsHours": "Appelez-nous – {hours}",
+      "writeTo": "ou écrivez-nous à <link>{email}</link>",
+      "reference": "Référence : {digest}"
+    },
+    "company": {
+      "tagline": "Votre bien, parfaitement géré.",
+      "marketLong": "Villas, appartements et résidences partout à Maurice – au nord, à l’ouest, à l’est, au sud et sur le plateau central.",
+      "country": "Maurice",
+      "companyType": "société privée à responsabilité limitée par actions",
+      "hoursInline": "7j/7, 24h/24",
+      "responseTime": "le jour même",
+      "mission": "Notre mission est d’offrir le meilleur service, en toute transparence. Aucuns frais cachés – et toujours un interlocuteur humain pour vous répondre.",
+      "pricing": {
+        "model": "des frais de gestion convenus avec vous après notre premier rendez-vous, jamais plus de {maxFee, number, percent} des revenus locatifs bruts",
+        "detail": "Vos frais de gestion sont négociés avec vous et fixés après notre premier rendez-vous – ils ne dépassent jamais {maxFee, number, percent} des revenus locatifs bruts. Aucuns frais cachés : chaque dépense est détaillée sur votre relevé mensuel."
+      },
+      "team": {
+        "krit": {
+          "role": "Directeur général et superviseur sur site",
+          "bio": "Dirige Bellavere au quotidien et se rend lui-même sur le terrain : il supervise l’entretien, les inspections et chaque prestataire qui intervient sur votre bien."
+        },
+        "ankit": {
+          "role": "Relation client",
+          "bio": "Votre premier interlocuteur pour vos relevés, vos réservations et toutes vos questions – joignable 7j/7, 24h/24, et jamais un robot."
+        },
+        "nihal": {
+          "bio": "Joignable 7j/7, 24h/24, au {phone}."
+        }
+      },
+      "commitments": {
+        "hiddenFees": {
+          "label": "Frais cachés"
+        },
+        "reachable": {
+          "display": "24h/24",
+          "label": "Toujours joignables"
+        },
+        "sameDay": {
+          "display": "Le jour même",
+          "label": "Réponse à chaque demande"
+        },
+        "human": {
+          "label": "Réponses humaines, aucun robot"
+        }
+      }
+    },
+    "jsonLd": {
+      "companyNumber": "Numéro de société (Registrar of Companies, Maurice)",
+      "services": {
+        "rental": {
+          "name": "Gestion locative",
+          "description": "Gestion de locations saisonnières pour villas et appartements : annonces, tarifs, réservations et relation avec les voyageurs."
+        },
+        "maintenance": {
+          "name": "Entretien et maintenance",
+          "description": "Entretien des propriétés, inspections et supervision des prestataires."
+        },
+        "clientCare": {
+          "name": "Accompagnement client",
+          "description": "Un interlocuteur humain dédié pour les propriétaires, avec des relevés mensuels transparents."
+        },
+        "concierge": {
+          "name": "Conciergerie",
+          "description": "Services de conciergerie pour les propriétaires et leurs voyageurs."
+        },
+        "syndic": {
+          "name": "Syndic et gestion de résidences",
+          "description": "Services de syndic et gestion de résidences pour les immeubles et résidences en copropriété."
+        }
+      }
+    },
+    "og": {
+      "alt": "{company} – {tagline}",
+      "line": "Gestion de propriétés et services de syndic · Maurice"
+    },
+    "images": {
+      "homeHero": "Villa blanche contemporaine et sa piscine sous le soleil des tropiques",
+      "loginBackdrop": "Villa contemporaine dotée d’une longue piscine, en plein soleil",
+      "dashboardTeaser": "Maison de plage contemporaine perchée au-dessus des vagues qui déferlent",
+      "finalCta": "Vue aérienne d’une vague qui se brise sur le sable blanc",
+      "services": {
+        "rental": "Villa blanche contemporaine avec une longue piscine",
+        "maintenance": "Piscine à débordement bordée de palmiers, surplombant l’océan",
+        "clientCare": "Séjour moderne ouvert, avec un canapé clair et un mur habillé de bois",
+        "concierge": "Piscine d’un complexe hôtelier où se reflètent des lumières chaudes au crépuscule",
+        "syndic": "Résidence blanche de faible hauteur avec piscine commune et palmiers, au crépuscule"
+      },
+      "about": {
+        "story": "Plage paisible au lever du soleil, bercée de vagues douces",
+        "coast": "Plage de sable blanc avec un palmier et un parasol en paille"
+      }
+    }
+  },
+  "home": {
+    "meta": {
+      "description": "Bellavere gère des villas et des appartements de prestige partout à Maurice : gestion locative, entretien, accompagnement client et conciergerie, avec un tableau de bord en temps réel pour chaque propriétaire."
+    },
+    "hero": {
+      "eyebrow": "Gestion de propriétés et syndic · Maurice",
+      "intro": "Nous prenons soin de villas, d’appartements et de résidences aux quatre coins de l’île Maurice – sans frais cachés, avec toujours une vraie personne pour vous répondre et un tableau de bord en temps réel qui vous montre précisément comment se porte votre bien."
+    },
+    "services": {
+      "eyebrow": "Nos métiers",
+      "title": "Tout ce dont votre bien a besoin, sous un même toit",
+      "sub": "Une seule équipe, aucuns frais cachés et une vraie personne au bout du fil – pour qu’être propriétaire à Maurice reste un plaisir.",
+      "learnMore": "En savoir plus",
+      "items": {
+        "rental": "Annonce, promotion et tarifs, demandes, réservations et accueil des voyageurs : nous gérons votre location de A à Z.",
+        "maintenance": "Entretien préventif, réparations et inspections régulières maintiennent votre bien en bon état toute l’année. Chaque intervention est enregistrée, et vous suivez son avancement sur votre tableau de bord.",
+        "clientCare": "Un interlocuteur unique connaît votre bien, vos préférences et jusqu’au nom de vos voyageurs – et c’est toujours une vraie personne qui vous répond. Des relevés clairs vous parviennent chaque mois.",
+        "concierge": "Transferts aéroport, paniers de bienvenue, ménage et services aux voyageurs – ces petits plus qui rendent un séjour mémorable et améliorent votre rendement locatif."
+      },
+      "syndic": {
+        "eyebrow": "Pour les résidences, domaines et promoteurs",
+        "title": "Syndic et gestion de résidences",
+        "copy": "Parties communes, piscines et jardins, entretien préventif, supervision des prestataires et comptes rendus clairs aux copropriétaires – un interlocuteur unique et fiable pour chacun d’entre eux."
+      }
+    },
+    "howItWorks": {
+      "eyebrow": "Notre démarche",
+      "title": "Trois étapes pour un bien sans contraintes",
+      "steps": {
+        "onboard": {
+          "title": "Mise en place",
+          "copy": "Nous vous rencontrons, visitons votre bien, convenons avec vous des frais de gestion et créons votre annonce – la mise en place prend une à deux semaines."
+        },
+        "manage": {
+          "title": "Nous gérons",
+          "copy": "Voyageurs accueillis, entretien assuré, relevés préparés – une seule équipe s’occupe de tout."
+        },
+        "grow": {
+          "title": "Vous suivez tout",
+          "copy": "Taux d’occupation, revenus et entretien, en direct sur votre tableau de bord propriétaire – depuis Paris, Londres ou la maison de plage d’à côté."
+        }
+      }
+    },
+    "dashboardTeaser": {
+      "eyebrow": "L’espace propriétaire",
+      "title": "Votre patrimoine, en direct",
+      "sub": "Plus besoin d’attendre le coup de fil de fin de saison. Votre tableau de bord reflète les performances de votre bien au moindre changement.",
+      "bullets": {
+        "live": "Taux d’occupation et revenus en temps réel, mis à jour à chaque réservation",
+        "calendar": "Réservations et calendrier des séjours en un coup d’œil",
+        "maintenance": "Suivi des interventions, du premier signalement jusqu’à leur résolution",
+        "statements": "Relevés mensuels détaillés, prêts à télécharger"
+      },
+      "ownFiguresOnly": "Chaque propriétaire ne voit que ses propres biens – vos chiffres n’appartiennent qu’à vous.",
+      "action": "Découvrir l’espace propriétaire"
+    },
+    "dashboardPreview": {
+      "label": "Aperçu du tableau de bord propriétaire Bellavere : revenus, taux d’occupation et réservations en temps réel",
+      "greeting": "Bonjour {name}",
+      "revenue": "Revenus · {month}",
+      "occupancy": "Occupation",
+      "checkIns": "Arrivées · {days} j",
+      "openTickets": "{count, plural, one {# intervention en cours} other {# interventions en cours}}",
+      "revenueTrend": "Revenus – {months} derniers mois",
+      "monthRange": "{from} – {to}",
+      "delta": {
+        "percent": "{delta} % sur un mois",
+        "points": "{delta} pts sur un mois"
+      }
+    },
+    "testimonials": {
+      "eyebrow": "Paroles de propriétaires",
+      "title": "Ce qu’ils en disent",
+      "carousel": {
+        "label": "Témoignages de propriétaires",
+        "roleDescription": "carrousel",
+        "previous": "Témoignage précédent",
+        "next": "Témoignage suivant",
+        "goTo": "Aller au témoignage {index} sur {count}"
+      },
+      "items": {
+        "elise": {
+          "quote": "Je vis à l’étranger et ma villa se trouve sur la côte nord, pourtant je sais toujours précisément comment elle se porte. Et quand j’appelle, c’est une vraie personne qui répond – à chaque fois.",
+          "name": "Élise M.",
+          "role": "Propriétaire d’une villa, vit en France"
+        },
+        "deepak": {
+          "quote": "Pas de frais surprise. Chaque réparation figure sur le relevé, avec une ligne qui l’explique, et nous avons convenu des frais de gestion en face à face avant de commencer.",
+          "name": "Deepak R.",
+          "role": "Propriétaire d’un appartement, côte ouest"
+        },
+        "nathalie": {
+          "quote": "Pour notre résidence, il nous fallait un interlocuteur fiable pour la piscine, les jardins et les prestataires. C’est exactement ce que nous avons trouvé.",
+          "name": "Nathalie C.",
+          "role": "Copropriétaire d’une résidence, côte nord"
+        }
+      }
+    },
+    "ctaBand": {
+      "title": "Que votre maison sur l’île donne le meilleur d’elle-même",
+      "sub": "Parlez-nous de votre bien : nous vous montrerons, en toute transparence, ce qu’il pourrait vous rapporter.",
+      "action": "Parlons-en"
+    }
+  },
+  "services": {
+    "meta": {
+      "title": "Gestion de propriétés et services de syndic",
+      "description": "Gestion locative, entretien, accompagnement client, conciergerie et services de syndic pour villas, appartements et résidences à Maurice – une seule équipe, aucuns frais cachés."
+    },
+    "hero": {
+      "eyebrow": "Services",
+      "title": "Tout ce dont votre bien a besoin",
+      "intro": "Cinq services, une seule équipe, aucuns frais cachés. Partout à Maurice, Bellavere prend en charge de A à Z villas, appartements et résidences entières, moyennant {pricingModel}. Chaque dépense est détaillée sur votre relevé mensuel."
+    },
+    "sections": {
+      "rental": {
+        "eyebrow": "01 – Gestion locative",
+        "title": "Votre maison rapporte pendant que vous dormez",
+        "paragraphs": {
+          "first": "Nous publions et promouvons l’annonce de votre villa ou de votre appartement, répondons à chaque demande, gérons les réservations, les tarifs et le taux d’occupation, et assurons l’accueil comme le départ de chaque voyageur.",
+          "second": "Vous suivez tout depuis votre tableau de bord propriétaire : les réservations dès qu’elles arrivent, le taux d’occupation saison par saison, les revenus mois par mois."
+        },
+        "included": {
+          "listing": "Annonces et promotion",
+          "bookings": "Demandes et réservations",
+          "pricing": "Gestion des tarifs et du taux d’occupation",
+          "guestCommunication": "Échanges avec les voyageurs",
+          "checkInOut": "Accueil et départ des voyageurs",
+          "reporting": "Rapports sur le taux d’occupation"
+        },
+        "detail": "Une réponse le jour même à chaque demande, par une vraie personne"
+      },
+      "maintenance": {
+        "eyebrow": "02 – Entretien et maintenance",
+        "title": "Impeccable, saison après saison",
+        "paragraphs": {
+          "first": "L’air salin, la saison cyclonique et l’enchaînement des séjours mettent une maison sur l’île à rude épreuve. Nous réalisons des inspections régulières, entretenons piscines et jardins, et coordonnons les réparations avant que les petits soucis ne deviennent coûteux.",
+          "second": "Chaque intervention est rattachée à votre bien et détaillée sur votre relevé ; les prestataires sont coordonnés et supervisés sur place – sans frais cachés."
+        },
+        "included": {
+          "repairs": "Entretien courant et réparations",
+          "inspections": "Inspections régulières du bien",
+          "renovation": "Suivi des travaux de rénovation",
+          "poolGarden": "Entretien de la piscine et du jardin",
+          "cleaning": "Ménage et intendance",
+          "emergencies": "Coordination des urgences",
+          "contractors": "Prestataires supervisés, chaque facture détaillée"
+        },
+        "detail": "Travaux supervisés sur place, en personne"
+      },
+      "clientCare": {
+        "eyebrow": "03 – Accompagnement client",
+        "title": "Un interlocuteur qui connaît votre bien par cœur",
+        "paragraphs": {
+          "first": "Votre chargé de relation client est l’interlocuteur unique pour tout ce qui touche à votre bien : relevés, conformité, assurances, abonnements (eau, électricité), questions liées aux locataires et aux voyageurs – et c’est toujours une vraie personne qui vous répond.",
+          "second": "Vous recevez chaque mois un relevé clair, et des réponses directes entre deux relevés – sans avoir à relancer."
+        },
+        "included": {
+          "contact": "Chargé de relation client dédié",
+          "statements": "Relevés mensuels pour le propriétaire",
+          "compliance": "Gestion de la conformité",
+          "insuranceUtilities": "Gestion des assurances et des abonnements",
+          "issues": "Résolution des incidents liés aux voyageurs et aux locataires"
+        },
+        "detail": "Un seul interlocuteur. Toutes les réponses."
+      },
+      "concierge": {
+        "eyebrow": "04 – Conciergerie et services",
+        "title": "Les petits plus qui marquent les voyageurs – et qu’ils paient volontiers",
+        "paragraphs": {
+          "first": "Transferts aéroport, paniers de bienvenue, ménage et services aux voyageurs : nous orchestrons les détails qui font d’un bon séjour celui dont on parle autour de soi.",
+          "second": "Une hospitalité qui rapporte : des services bien menés augmentent le rendement locatif de votre bien."
+        },
+        "included": {
+          "airportTransfers": "Transferts aéroport",
+          "welcomePacks": "Paniers de bienvenue",
+          "guestServices": "Services aux voyageurs",
+          "housekeeping": "Ménage"
+        },
+        "detail": "Des petits plus qui augmentent votre rendement locatif"
+      },
+      "syndic": {
+        "eyebrow": "05 – Syndic et résidences",
+        "title": "Des parties communes soignées, des copropriétaires bien informés",
+        "paragraphs": {
+          "first": "Pour les résidences, les domaines de villas et les ensembles d’appartements, Bellavere assure le rôle de syndic et de coordinateur des services généraux. Nous prenons soin des espaces partagés – piscines, jardins, parties communes et sécurité – pour que chaque copropriétaire en profite sans avoir à s’en occuper.",
+          "second": "Plans d’entretien préventif, prestataires supervisés et comptes rendus clairs aux copropriétaires maintiennent la résidence en bon état, avec un interlocuteur unique et fiable pour l’entretien au quotidien."
+        },
+        "included": {
+          "commonAreas": "Gestion des parties communes et coordination du nettoyage",
+          "preventiveMaintenance": "Plans d’entretien préventif",
+          "poolLandscaping": "Supervision de la piscine et des espaces verts",
+          "contractors": "Coordination des prestataires et supervision sur place",
+          "security": "Coordination de la sécurité et des urgences",
+          "reporting": "Comptes rendus aux copropriétaires et suivi des travaux"
+        },
+        "detail": "Un interlocuteur unique pour chaque copropriétaire."
+      }
+    },
+    "serviceSection": {
+      "included": "Prestations incluses"
+    },
+    "atAGlance": {
+      "eyebrow": "En un coup d’œil",
+      "title": "Ce que Bellavere prend en charge pour vous",
+      "sub": "Les tâches du quotidien dont nous vous libérons."
+    },
+    "comparison": {
+      "caption": "Les responsabilités que Bellavere assume pour vous",
+      "responsibility": "Responsabilité",
+      "handled": "Pris en charge.",
+      "rows": {
+        "bookings": {
+          "area": "Demandes et réservations des voyageurs",
+          "note": "Traitées et confirmées à votre place"
+        },
+        "pricing": {
+          "area": "Tarifs et rendement",
+          "note": "Tarifs et taux d’occupation gérés pour vous"
+        },
+        "cleaning": {
+          "area": "Ménage et intendance",
+          "note": "Ménage et intendance entre deux séjours"
+        },
+        "repairs": {
+          "area": "Réparations et prestataires",
+          "note": "Supervision sur place, chaque facture détaillée"
+        },
+        "statements": {
+          "area": "Relevés et versements",
+          "note": "Un relevé clair chaque mois"
+        },
+        "compliance": {
+          "area": "Conformité et assurances",
+          "note": "Conformité, assurances et abonnements gérés pour vous"
+        }
+      }
+    },
+    "getStarted": {
+      "eyebrow": "Pour commencer",
+      "title": "Un seul tarif. Chaque détail pris en charge."
+    }
+  },
+  "about": {
+    "meta": {
+      "title": "Qui sommes-nous – gestion de propriétés à Maurice",
+      "description": "Découvrez Bellavere : gestion de propriétés et services de syndic partout à Maurice – transparence totale, aucuns frais cachés et toujours une vraie personne pour vous répondre."
+    },
+    "hero": {
+      "eyebrow": "À propos de Bellavere",
+      "title": "Un soin qui se voit, une équipe qui vous répond",
+      "intro": "{marketLong} Un suivi en personne, des comptes rendus en toute transparence et jamais de frais cachés."
+    },
+    "story": {
+      "eyebrow": "Notre histoire",
+      "title": "Tout part de notre mission",
+      "paragraphs": {
+        "first": "Chez {company}, {krit} et {ankit} s’attachent à tenir les promesses de notre mission : une transparence totale, aucuns frais cachés et une vraie personne pour vous répondre dès qu’un souci se présente.",
+        "second": "Concrètement, chaque dépense est détaillée et consultable sur votre tableau de bord. Et chaque fois que vous nous écrivez, c’est une personne qui vous répond – {krit} sur le terrain, {ankit} en premier interlocuteur. De la villa individuelle aux parties communes de résidences entières, c’est ainsi que nous prenons soin de chaque bien."
+      },
+      "quote": "« {mission} »"
+    },
+    "values": {
+      "eyebrow": "Nos valeurs",
+      "title": "Trois promesses que nous faisons à chaque propriétaire",
+      "items": {
+        "transparency": {
+          "title": "Transparence totale",
+          "copy": "Chaque roupie, chaque euro encaissé ou dépensé pour votre bien figure en détail sur votre tableau de bord et sur votre relevé mensuel. Vous voyez exactement ce que nous voyons."
+        },
+        "noHiddenFees": {
+          "title": "Aucuns frais cachés",
+          "copy": "Un seul tarif de gestion, clairement annoncé. Aucun supplément surprise, aucuns frais inventés : toute dépense à votre charge figure sur votre relevé, avec une ligne qui en explique la raison."
+        },
+        "human": {
+          "title": "Toujours une vraie personne",
+          "copy": "Appelez-nous ou écrivez-nous quand vous le souhaitez : quelqu’un est joignable 7j/7, 24h/24, et chaque demande reçoit une réponse le jour même. Une vraie personne qui connaît votre bien – jamais un robot."
+        }
+      }
+    },
+    "team": {
+      "eyebrow": "L’équipe",
+      "title": "Vos principaux interlocuteurs",
+      "sub": "Trois personnes, une même exigence. Une équipe à taille humaine : vous avez toujours affaire à quelqu’un qui connaît votre bien."
+    },
+    "why": {
+      "eyebrow": "Pourquoi nous choisir",
+      "title": "Ce sur quoi vous pouvez compter",
+      "items": {
+        "contact": "Un interlocuteur unique et fiable pour tout",
+        "fee": "Des frais de gestion négociés avec vous après notre premier rendez-vous – jamais plus de {maxFee, number, percent}. Aucuns frais cachés.",
+        "human": "Une vraie personne répond à chaque message – jamais un robot",
+        "supervision": "Des travaux sur votre bien supervisés sur place, en personne",
+        "dashboard": "Un tableau de bord propriétaire en temps réel, jour et nuit, où que vous soyez",
+        "currencies": "Tarifs et relevés en roupies ou en euros – à vous de choisir",
+        "maintenance": "Entretien préventif, inspections et comptes rendus au propriétaire",
+        "syndic": "Services de syndic et gestion des parties communes de résidences entières"
+      }
+    },
+    "coverage": {
+      "eyebrow": "Où nous intervenons",
+      "title": "Sur toute l’île",
+      "sub": "Nous prenons soin de propriétés dans toute l’île Maurice – du nord au sud, de la côte au plateau central – et {krit} supervise travaux et inspections sur place, en personne.",
+      "regions": {
+        "north": "Nord",
+        "west": "Ouest",
+        "centralPlateau": "Plateau central",
+        "east": "Est",
+        "southEast": "Sud-Est",
+        "southWest": "Sud-Ouest"
+      },
+      "mapAlt": "Carte de l’île Maurice indiquant les secteurs où Bellavere gère des propriétés",
+      "mapCaption": "Données cartographiques © les contributeurs d’OpenStreetMap · rendu avec {renderer}"
+    },
+    "cta": {
+      "title": "Apprenons à nous connaître",
+      "sub": "Un bref échange, une visite de votre bien et un avis sincère sur son potentiel."
+    }
+  },
+  "contact": {
+    "meta": {
+      "title": "Nous contacter – gestion de propriétés à Maurice",
+      "description": "Parlez à Bellavere de votre villa ou de votre appartement, partout à Maurice : gestion locative, entretien, accompagnement client et conciergerie, sous un même toit."
+    },
+    "header": {
+      "eyebrow": "Contact",
+      "title": "Parlons de votre bien",
+      "intro": "Parlez-nous de votre villa ou de votre appartement. Une vraie personne vous répondra {responseTime}, et nous vous dirons en toute franchise ce que votre bien pourrait rapporter."
+    },
+    "details": {
+      "write": "Écrivez-nous",
+      "writeNote": "Chaque demande reçoit une réponse {responseTime} – d’une vraie personne, jamais d’un robot."
+    },
+    "formCard": {
+      "title": "Envoyez-nous un message",
+      "intro": "Quelques informations suffisent pour commencer."
+    },
+    "form": {
+      "fields": {
+        "name": "Nom",
+        "email": "E-mail",
+        "phone": "Téléphone",
+        "propertyType": "Type de bien",
+        "propertyCount": "Nombre de biens",
+        "message": "Message"
+      },
+      "messagePlaceholder": "Où se situe votre bien, et en quoi pouvons-nous vous aider ?",
+      "pleaseSelect": "Sélectionnez",
+      "propertyTypes": {
+        "villa": "Villa",
+        "apartment": "Appartement",
+        "several": "Plusieurs biens"
+      },
+      "propertyCounts": {
+        "one": "1",
+        "twoToFive": "2 à 5",
+        "sixPlus": "6 et plus"
+      },
+      "honeypot": "Laissez ce champ vide",
+      "consent": "J’accepte que Bellavere me contacte au sujet de ma demande, comme indiqué dans la <link>politique de confidentialité</link>",
+      "submit": "Envoyer le message",
+      "sending": "Envoi en cours…",
+      "validation": {
+        "nameMissing": "Merci d’indiquer votre nom.",
+        "nameTooLong": "Votre nom ne doit pas dépasser {max, number} caractères.",
+        "emailMissing": "Merci d’indiquer votre adresse e-mail.",
+        "emailInvalid": "Merci d’indiquer une adresse e-mail valide.",
+        "phoneTooLong": "Le numéro de téléphone ne doit pas dépasser {max, number} caractères.",
+        "messageMissing": "Merci de nous en dire un peu plus sur votre bien.",
+        "messageTooLong": "Votre message ne doit pas dépasser {max, number} caractères (il en compte actuellement {length, number}).",
+        "consentMissing": "Merci de confirmer que nous pouvons vous contacter au sujet de votre demande."
+      },
+      "errors": {
+        "directContact": "Écrivez-nous à {email} ou appelez {people} – nous répondons le jour même.",
+        "person": "{name} au {phone}",
+        "deliveryFailed": "Votre message n’a pas pu être envoyé pour le moment. {directContact}",
+        "tooLong": "Une partie de votre message est trop longue : merci de la raccourcir (jusqu’à {max, number} caractères par message). {directContact}",
+        "missingFields": "Merci de remplir les champs obligatoires.",
+        "rateLimited": "Vous avez envoyé plusieurs messages en peu de temps. Merci de patienter quelques minutes avant de réessayer, ou écrivez-nous directement par e-mail.",
+        "invalidRequest": "Contenu de la requête non valide.",
+        "unsupported": "Requête non prise en charge.",
+        "forbidden": "Accès refusé."
+      },
+      "success": {
+        "title": "Message bien reçu",
+        "body": "Merci ! Un membre de notre équipe – une vraie personne – lira votre message et vous répondra le jour même.",
+        "again": "Envoyer un autre message"
+      }
+    },
+    "faq": {
+      "eyebrow": "FAQ",
+      "title": "Les questions des propriétaires",
+      "sub": "L’essentiel en quelques mots – pour tout le reste, nous ne sommes qu’à un message de vous.",
+      "items": {
+        "fees": {
+          "question": "Quels sont les frais de gestion de Bellavere ?"
+        },
+        "reply": {
+          "question": "Sous quel délai me répondrez-vous ?",
+          "answer": "Le jour même – pour chaque demande, sans exception. Vous pouvez joindre {names} 7j/7, 24h/24, aux numéros indiqués sur cette page."
+        },
+        "payouts": {
+          "question": "Quand recevrai-je mes versements ?",
+          "answer": "Chaque mois, vous recevez un relevé complet : revenus bruts, nos frais de gestion et les éventuelles dépenses, ligne par ligne. Le calendrier des versements est précisé dans votre contrat de gestion."
+        },
+        "ownUse": {
+          "question": "Puis-je continuer à profiter de mon bien ?",
+          "answer": "Bien sûr – c’est chez vous. Indiquez les dates souhaitées à votre chargé de relation client ; les modalités de vos séjours sont précisées dans votre contrat de gestion."
+        },
+        "onboarding": {
+          "question": "Combien de temps prend la mise en place ?",
+          "answer": "Comptez une à deux semaines à compter de notre premier rendez-vous. Dans l’intervalle, nous inspectons votre bien, convenons avec vous de vos frais de gestion et créons votre annonce."
+        }
+      }
+    }
+  },
+  "legal": {
+    "shared": {
+      "eyebrow": "Informations légales",
+      "lastUpdated": "Dernière mise à jour : {date}",
+      "registration": "Société n° {number}, constituée à Maurice le {date} sous la forme d’une {companyType}.",
+      "registeredAddress": "Siège social : {address}",
+      "reviewNotice": "Cette page est un modèle : elle doit être relue par un conseiller juridique qualifié avant la mise en ligne."
+    },
+    "privacy": {
+      "meta": {
+        "title": "Politique de confidentialité",
+        "description": "Comment {legalName} collecte, utilise et protège les données personnelles, et quels cookies ce site dépose."
+      },
+      "title": "Politique de confidentialité",
+      "intro": "Comment nous collectons, utilisons et protégeons vos données personnelles lorsque vous utilisez ce site et l’espace propriétaire.",
+      "whoWeAre": {
+        "heading": "1. Qui sommes-nous ?",
+        "operator": "Ce site est exploité par {legalName}, sous le nom commercial {tradingName} (« {company} » ou « nous »). {legalName} est le responsable du traitement des données personnelles décrites dans la présente politique.",
+        "contact": "Contact pour toute question relative à la protection de vos données : <link>{email}</link>"
+      },
+      "laws": {
+        "heading": "2. La législation applicable",
+        "body": "Nous traitons les données personnelles conformément au <strong>Data Protection Act 2017</strong> de Maurice, dont l’application est contrôlée par le <strong>Data Protection Office</strong> mauricien. Lorsque le Règlement général sur la protection des données de l’Union européenne (<strong>RGPD</strong>) s’applique au traitement de vos données, nous le respectons également."
+      },
+      "collection": {
+        "heading": "3. Les données que nous collectons",
+        "contactForm": {
+          "heading": "Formulaire de contact",
+          "items": {
+            "details": "Votre nom, votre adresse e-mail, votre numéro de téléphone (facultatif), le type et le nombre de biens, ainsi que votre message.",
+            "consent": "Un enregistrement de votre consentement : le fait que vous avez coché la case « J’accepte que Bellavere me contacte au sujet de ma demande », la date et l’heure, ainsi qu’un hachage tronqué et irréversible de votre adresse IP (et non l’adresse elle-même)."
+          }
+        },
+        "whatsapp": {
+          "heading": "WhatsApp et téléphone",
+          "items": {
+            "received": "Lorsque vous nous écrivez sur WhatsApp ou nous appelez (le bouton WhatsApp ou les numéros indiqués sur la page Contact) : votre numéro de téléphone, votre nom et votre photo de profil WhatsApp (selon vos paramètres WhatsApp) et ce que vous nous transmettez. Le site ne fait qu’ouvrir WhatsApp avec un message suggéré, que vous pouvez modifier : rien n’est envoyé tant que vous ne l’envoyez pas vous-même.",
+            "use": "Nous utilisons ces informations uniquement pour vous répondre et donner suite à votre demande. La conversation reste dans le compte WhatsApp du membre de l’équipe que vous avez contacté, et nous la conservons aussi longtemps que les autres demandes (voir la section 5)."
+          }
+        },
+        "ownerPortal": {
+          "heading": "Espace propriétaire",
+          "items": {
+            "account": "Informations de compte : votre nom, votre adresse e-mail, votre numéro de téléphone et vos identifiants de connexion.",
+            "property": "Informations sur votre bien et informations financières nécessaires à sa gestion : réservations, historique des interventions d’entretien, documents, relevés et coordonnées de versement."
+          }
+        },
+        "technical": {
+          "heading": "Données techniques",
+          "items": {
+            "serverLogs": "Journaux de serveur conservés par notre hébergeur (tels que l’adresse IP, le type de navigateur et les pages demandées), utilisés à des fins de sécurité et pour assurer le bon fonctionnement du site."
+          }
+        }
+      },
+      "purposes": {
+        "heading": "4. Pourquoi nous les utilisons, et sur quelle base légale",
+        "items": {
+          "enquiry": "<strong>Répondre à votre demande</strong> – sur la base de votre consentement et de mesures précontractuelles prises à votre demande.",
+          "portal": "<strong>Faire fonctionner l’espace propriétaire et gérer votre bien</strong> – nécessaire à l’exécution du contrat de gestion conclu avec vous.",
+          "records": "<strong>Conserver nos documents comptables et fiscaux</strong> – afin de respecter nos obligations légales à Maurice.",
+          "security": "<strong>Protéger le site contre les abus</strong> (par exemple en limitant le nombre de requêtes et en filtrant le spam) – notre intérêt légitime à garantir la sécurité du service."
+        }
+      },
+      "retention": {
+        "heading": "5. Combien de temps nous les conservons",
+        "items": {
+          "enquiries": "Demandes de contact qui n’aboutissent pas à un contrat : jusqu’à 12 mois après notre dernier échange.",
+          "ownerRecords": "Données du compte propriétaire et dossiers relatifs à votre bien : pendant toute la durée du contrat de gestion, puis aussi longtemps que l’exige la législation comptable et fiscale mauricienne (généralement 7 ans).",
+          "consent": "Enregistrements du consentement : aussi longtemps que les données correspondantes sont conservées."
+        }
+      },
+      "sharing": {
+        "heading": "6. Avec qui nous les partageons",
+        "processors": "Nous <strong>ne vendons jamais</strong> vos données personnelles. Nous les partageons uniquement avec des prestataires (« sous-traitants ») qui nous aident à faire fonctionner notre activité, dans le cadre de contrats qui les obligent à les protéger (par exemple notre hébergeur web et notre fournisseur de messagerie), ainsi qu’avec des conseillers professionnels ou les autorités lorsque la loi l’exige.",
+        "whatsapp": "Si vous nous contactez sur WhatsApp, vos messages sont acheminés par WhatsApp, un service de Meta, selon les conditions et la politique de confidentialité propres à WhatsApp. WhatsApp n’est pas l’un de nos sous-traitants : nous ne décidons pas de la manière dont il conserve ou utilise les données ; nous vous invitons donc à consulter sa politique de confidentialité avant de l’utiliser. Vous pouvez toujours nous joindre par le formulaire de contact, par e-mail ou par téléphone.",
+        "transfers": "Certains de ces prestataires peuvent stocker des données en dehors de Maurice ou de l’Union européenne. Le cas échéant, nous nous appuyons sur des garanties appropriées, telles que des décisions d’adéquation ou des clauses contractuelles types."
+      },
+      "rights": {
+        "heading": "7. Vos droits",
+        "intro": "En vertu du « Data Protection Act 2017 » et, lorsqu’il s’applique, du RGPD, vous avez le droit :",
+        "items": {
+          "access": "d’accéder aux données personnelles que nous détenons à votre sujet ;",
+          "rectification": "de faire rectifier les données inexactes ;",
+          "erasure": "de faire effacer vos données lorsque nous n’en avons plus besoin ;",
+          "restriction": "de limiter certains traitements ou de vous y opposer ;",
+          "portability": "de recevoir vos données dans un format portable (portabilité des données) ;",
+          "withdrawConsent": "de retirer votre consentement à tout moment, sans incidence sur les traitements effectués avant ce retrait."
+        },
+        "exercise": "Pour exercer l’un de ces droits, écrivez-nous à <link>{email}</link>. Nous pourrons vous demander de confirmer votre identité, et nous vous répondrons dans un délai d’un mois. Vous avez également le droit d’introduire une réclamation auprès du Data Protection Office de Maurice ou, si vous résidez dans l’Union européenne, auprès de l’autorité de protection des données de votre pays."
+      },
+      "cookies": {
+        "heading": "8. Les cookies",
+        "intro": "Ce site dépose au plus quatre cookies :",
+        "items": {
+          "session": "<code>{name}</code> – <strong>strictement nécessaire</strong>. Maintient votre connexion à l’espace propriétaire. Il est marqué httpOnly (inaccessible aux scripts) et n’est déposé que lorsque vous vous connectez.",
+          "currency": "<code>{name}</code> – <strong>préférence</strong>. Mémorise si vous avez choisi d’afficher les prix en MUR ou en EUR. Il n’est déposé que lorsque vous faites ce choix, pour une durée d’un an.",
+          "language": "<code>{name}</code> – <strong>préférence</strong>. Mémorise si vous avez choisi de consulter le site en anglais ou en français. Il n’est déposé que lorsque vous choisissez une langue, avec le sélecteur de langue ou la suggestion de lire le site en français, pour une durée d’un an.",
+          "viewAs": "<code>{name}</code> – <strong>strictement nécessaire</strong>, réservé à l’équipe {company}. Mémorise l’espace propriétaire qu’un administrateur est en train de consulter. Il est marqué httpOnly et expire à la fin de la session du navigateur."
+        },
+        "localStorage": "Si vous fermez la suggestion de lire ce site en français, votre navigateur conserve aussi une petite note dans son stockage local (<code>{name}</code>) afin de ne plus vous la proposer. Elle ne contient aucune donnée personnelle et ne quitte jamais votre appareil.",
+        "noTracking": "Nous <strong>n’utilisons pas</strong> de cookies de mesure d’audience, publicitaires ou de suivi, et aucun cookie tiers n’est déposé. Chaque cookie étant soit strictement nécessaire, soit déposé à votre demande, nous n’affichons pas de bandeau de consentement aux cookies. Vous pouvez supprimer les cookies à tout moment dans les paramètres de votre navigateur ; supprimer <code>{sessionCookie}</code> vous déconnecte."
+      },
+      "security": {
+        "heading": "9. Sécurité",
+        "body": "Nous utilisons des connexions chiffrées (HTTPS) et limitons l’accès aux données personnelles aux seules personnes qui en ont besoin dans le cadre de leurs fonctions. Aucune méthode de transmission ou de stockage n’est totalement sûre, mais nous prenons des mesures raisonnables pour protéger vos données."
+      },
+      "changes": {
+        "heading": "10. Modifications de la présente politique",
+        "body": "Nous pouvons mettre à jour cette politique de temps à autre. La date indiquée en haut de la page est celle de sa dernière modification. Consultez également nos <link>conditions d’utilisation</link>."
+      }
+    },
+    "terms": {
+      "meta": {
+        "title": "Conditions d’utilisation",
+        "description": "Conditions d’utilisation du site et de l’espace propriétaire {company}."
+      },
+      "title": "Conditions d’utilisation",
+      "intro": "Les règles d’utilisation de ce site et de l’espace propriétaire {company}.",
+      "about": {
+        "heading": "1. À propos des présentes conditions",
+        "operator": "Ce site et l’espace propriétaire sont exploités par {legalName}, sous le nom commercial {tradingName}.",
+        "contact": "Contact : <link>{email}</link>",
+        "agreement": "En utilisant le site, vous acceptez les présentes conditions. Si vous ne les acceptez pas, veuillez ne pas utiliser le site. La gestion de votre bien est régie séparément par le contrat de gestion écrit que vous avez conclu avec nous ; en cas de divergence entre ce contrat et les présentes conditions, le contrat de gestion prévaut."
+      },
+      "information": {
+        "heading": "2. Les informations de ce site",
+        "body": "Nous veillons à ce que les informations de ce site restent exactes et à jour, mais elles sont fournies uniquement à titre d’information générale."
+      },
+      "portal": {
+        "heading": "3. L’espace propriétaire",
+        "items": {
+          "access": "L’espace propriétaire est réservé aux propriétaires autorisés (et aux personnes qu’ils ont autorisées par écrit). L’accès est accordé par nos soins.",
+          "credentials": "Vous êtes responsable de la confidentialité de vos identifiants de connexion et de toute activité effectuée depuis votre compte. Si vous soupçonnez un accès non autorisé, prévenez-nous immédiatement à l’adresse <link>{email}</link>.",
+          "otherOwners": "Vous ne devez ni tenter d’accéder aux données d’un autre propriétaire, ni chercher à porter atteinte à la sécurité ou au fonctionnement de l’espace propriétaire.",
+          "figures": "Les chiffres affichés dans l’espace propriétaire sont fournis pour votre commodité. Seul votre relevé mensuel officiel fait foi.",
+          "suspension": "Nous pouvons suspendre ou retirer l’accès en cas de manquement aux présentes conditions, ou à la fin du contrat de gestion."
+        }
+      },
+      "currencies": {
+        "heading": "4. Devises",
+        "body": "Les prix et les montants peuvent être affichés en roupies mauriciennes (MUR) ou en euros (EUR). Les conversions entre les deux devises sont données à titre d’information uniquement, sur la base de taux de change indicatifs qui peuvent différer du taux appliqué par les banques le jour du paiement. Les montants et la devise qui font foi sont ceux indiqués dans votre contrat de gestion et vos relevés."
+      },
+      "intellectualProperty": {
+        "heading": "5. Propriété intellectuelle",
+        "body": "Le contenu de ce site – textes, conception graphique, logos et images – appartient à {legalName} ou à ses concédants de licence. Vous pouvez le consulter et l’imprimer pour un usage personnel, mais vous ne pouvez pas le reproduire à des fins commerciales sans notre autorisation écrite."
+      },
+      "externalLinks": {
+        "heading": "6. Liens vers d’autres sites",
+        "body": "Le site peut contenir des liens vers des sites tiers. Nous ne sommes responsables ni de leur contenu ni de leurs pratiques en matière de confidentialité."
+      },
+      "liability": {
+        "heading": "7. Limitation de responsabilité",
+        "body": "Le site est fourni « en l’état ». Dans toute la mesure permise par la loi, {legalName} n’est responsable d’aucun préjudice résultant de la confiance accordée aux informations publiées sur le site, de l’indisponibilité du site, ou de virus ou d’autres éléments nuisibles, ni d’aucun préjudice indirect ou consécutif. Aucune disposition des présentes conditions ne limite une responsabilité qui ne peut l’être en vertu de la loi, telle que la responsabilité en cas de fraude. Notre responsabilité au titre de la gestion de votre bien est régie par votre contrat de gestion."
+      },
+      "privacy": {
+        "heading": "8. Confidentialité",
+        "body": "Notre <link>politique de confidentialité</link> explique comment nous traitons les données personnelles et les cookies."
+      },
+      "changes": {
+        "heading": "9. Modifications",
+        "body": "Nous pouvons mettre à jour ces conditions de temps à autre. La date indiquée en haut de la page est celle de leur dernière modification ; continuer à utiliser le site après une modification vaut acceptation des conditions mises à jour."
+      },
+      "governingLaw": {
+        "heading": "10. Droit applicable",
+        "body": "Les présentes conditions sont régies par le droit de la République de Maurice, et les tribunaux de Maurice ont compétence exclusive pour connaître de tout litige qui en découlerait."
+      }
+    }
+  },
+  "estimator": {
+    "meta": {
+      "title": "Simulateur de revenus locatifs à Maurice",
+      "description": "Que rapporterait votre villa, votre appartement ou votre penthouse à Maurice en location saisonnière ? Répondez à cinq questions rapides et obtenez gratuitement une fourchette indicative de revenus mensuels et annuels."
+    },
+    "header": {
+      "eyebrow": "Simulateur de revenus locatifs",
+      "title": "Combien votre bien pourrait-⁠il vous rapporter ?",
+      "intro": "Cinq questions rapides, une trentaine de secondes. Vous obtenez une fourchette indicative de revenus mensuels et annuels pour votre bien, en euros ou en roupies, ainsi que ce qui vous revient après nos frais de gestion."
+    },
+    "flow": {
+      "label": "Simulateur de revenus locatifs",
+      "step": "Étape {current} sur {total}",
+      "progress": "Progression",
+      "back": "Retour",
+      "continue": "Continuer",
+      "seeEstimate": "Voir le résultat"
+    },
+    "steps": {
+      "type": {
+        "title": "De quel type de bien s’agit-⁠il ?",
+        "hint": "Choisissez celui qui correspond le mieux."
+      },
+      "region": {
+        "title": "Où se situe-⁠t-⁠il sur l’île ?",
+        "hint": "Les tarifs de location varient d’une côte à l’autre."
+      },
+      "bedrooms": {
+        "title": "Combien de chambres compte-⁠t-⁠il ?",
+        "hint": "Comptez les chambres où vos voyageurs peuvent dormir."
+      },
+      "features": {
+        "title": "Qu’est-ce qui le distingue ?",
+        "hint": "Sélectionnez tout ce qui correspond – ou rien du tout."
+      },
+      "availability": {
+        "title": "Quand vos voyageurs peuvent-⁠ils séjourner ?",
+        "hint": "Louez-le toute l’année, ou gardez quelques semaines pour vous."
+      }
+    },
+    "types": {
+      "villa": {
+        "name": "Villa",
+        "description": "Une maison individuelle, souvent avec jardin"
+      },
+      "apartment": {
+        "name": "Appartement",
+        "description": "Un logement en résidence ou en immeuble"
+      },
+      "penthouse": {
+        "name": "Penthouse",
+        "description": "Un appartement au dernier étage, souvent avec terrasse"
+      }
+    },
+    "regions": {
+      "north": {
+        "name": "Nord",
+        "towns": "Grand Baie, Pereybère",
+        "located": "dans le Nord"
+      },
+      "west": {
+        "name": "Ouest",
+        "towns": "Flic en Flac, Tamarin, Rivière Noire",
+        "located": "dans l’Ouest"
+      },
+      "east": {
+        "name": "Est",
+        "towns": "Belle Mare, Trou d’Eau Douce",
+        "located": "dans l’Est"
+      },
+      "south": {
+        "name": "Sud",
+        "towns": "Bel Ombre",
+        "located": "dans le Sud"
+      },
+      "centre": {
+        "name": "Centre / autre",
+        "towns": "Moka, Curepipe et le reste de l’île",
+        "located": "dans le centre ou ailleurs sur l’île"
+      }
+    },
+    "bedrooms": {
+      "count": "{count, plural, one {# chambre} other {# chambres}}",
+      "countMax": "{count} chambres et plus",
+      "fewer": "Une chambre de moins",
+      "more": "Une chambre de plus"
+    },
+    "features": {
+      "items": {
+        "privatePool": {
+          "label": "Piscine privée",
+          "inSentence": "piscine privée"
+        },
+        "seaView": {
+          "label": "Vue mer",
+          "inSentence": "vue mer"
+        },
+        "beachfront": {
+          "label": "Pieds dans l’eau",
+          "inSentence": "pieds dans l’eau"
+        },
+        "airCon": {
+          "label": "Climatisation dans toutes les pièces",
+          "inSentence": "climatisation dans toutes les pièces"
+        },
+        "housekeeping": {
+          "label": "Ménage inclus",
+          "inSentence": "ménage inclus"
+        }
+      },
+      "count": "{count, plural, =0 {Aucune sélection – c’est tout à fait possible.} one {# option sélectionnée} other {# options sélectionnées}}"
+    },
+    "availability": {
+      "yearRound": {
+        "title": "Je le loue toute l’année",
+        "description": "Ouvert aux voyageurs les {weeks} semaines de l’année"
+      },
+      "partYear": {
+        "title": "J’en profite une partie de l’année",
+        "description": "Choisissez le nombre de semaines ouvertes à la réservation"
+      },
+      "weeksLabel": "Semaines ouvertes à la réservation",
+      "weeks": "{weeks, plural, one {# semaine} other {# semaines}}",
+      "weeksPerYear": "{weeks, plural, one {# semaine} other {# semaines}} par an"
+    },
+    "result": {
+      "eyebrow": "Votre estimation",
+      "title": "Ce que votre bien pourrait vous rapporter",
+      "change": "Modifier mes réponses",
+      "answersLabel": "Vos réponses",
+      "yearRound": "Toute l’année",
+      "noFeatures": "Aucune option",
+      "perMonth": "Par mois",
+      "perYear": "Par an",
+      "gross": "Revenus locatifs bruts estimés",
+      "range": "de {low} à {high}",
+      "disclaimer": "Estimation indicative fondée sur des moyennes régionales – votre évaluation gratuite vous donnera le chiffre exact.",
+      "occupancy": "{yearRound, select, yes {Sur la base d’un taux d’occupation d’environ {occupancy, number, percent} sur l’année} other {Sur la base d’un taux d’occupation d’environ {occupancy, number, percent} sur les {weeks, plural, one {# semaine} other {# semaines}} où votre bien est disponible}} – {high, number, percent} en haute saison (de {highFrom, date, ::MMMM} à {highTo, date, ::MMMM}), {low, number, percent} en basse saison (de {lowFrom, date, ::MMMM} à {lowTo, date, ::MMMM}).",
+      "breakdown": {
+        "title": "Répartition",
+        "period": "Par an",
+        "gross": "Revenus locatifs bruts estimés",
+        "fee": "Frais de gestion Bellavere",
+        "feeCap": "au plus {maxFee, number, percent}",
+        "net": "Net estimé pour vous",
+        "atLeast": "(au minimum)",
+        "note": "Vos frais de gestion sont convenus avec vous après notre premier rendez-vous et ne dépassent jamais {maxFee, number, percent} des revenus locatifs bruts. Aucuns frais cachés : chaque dépense est détaillée sur votre relevé mensuel."
+      },
+      "approach": {
+        "title": "Notre méthode pour y parvenir",
+        "items": {
+          "rental": {
+            "title": "Votre location, gérée de A à Z",
+            "copy": "Annonce, promotion et tarifs, demandes, réservations et accueil des voyageurs : nous nous occupons de tout."
+          },
+          "care": {
+            "title": "Prêt à accueillir toute l’année",
+            "copy": "Entretien préventif, réparations et inspections régulières maintiennent votre bien en bon état toute l’année."
+          },
+          "reporting": {
+            "title": "Tous vos chiffres sous les yeux",
+            "copy": "Un interlocuteur qui connaît votre bien, des relevés mensuels clairs, et votre taux d’occupation comme vos revenus en direct sur votre tableau de bord propriétaire."
+          }
+        }
+      },
+      "cta": {
+        "primary": "Obtenir le chiffre exact – évaluation gratuite",
+        "whatsapp": "En parler sur WhatsApp",
+        "newTab": "(s’ouvre dans un nouvel onglet)"
+      }
+    },
+    "method": {
+      "eyebrow": "Comment fonctionne l’estimation",
+      "title": "Des hypothèses claires, rien de caché",
+      "sub": "Nous affichons une fourchette de {spread, number, percent} de part et d’autre de notre estimation centrale, car aucun bien ne ressemble à un autre. Votre évaluation gratuite la remplace par le chiffre exact.",
+      "items": {
+        "rates": {
+          "title": "Des tarifs à la nuit par région",
+          "copy": "Nous partons des tarifs à la nuit habituels pour votre type de bien et votre région, puis nous les ajustons selon le nombre de chambres et les atouts du bien, comme une piscine privée ou la vue mer."
+        },
+        "occupancy": {
+          "title": "Un taux d’occupation saisonnier",
+          "copy": "Nous retenons un taux d’occupation d’environ {high, number, percent} en haute saison (de {highFrom, date, ::MMMM} à {highTo, date, ::MMMM}) et de {low, number, percent} en basse saison, réparti sur les semaines où votre bien est disponible."
+        },
+        "fees": {
+          "title": "Nos frais, en toute transparence",
+          "copy": "Vos frais de gestion sont convenus avec vous et ne dépassent jamais {maxFee, number, percent} des revenus locatifs bruts : l’estimation vous montre donc ce qui vous revient."
+        }
+      }
+    },
+    "teaser": {
+      "eyebrow": "Simulateur de revenus locatifs",
+      "title": "Combien votre bien pourrait-⁠il vous rapporter ?",
+      "pitch": "Cinq questions rapides, une trentaine de secondes : une fourchette indicative de revenus mensuels et annuels pour votre villa, votre appartement ou votre penthouse.",
+      "formLabel": "Commencer votre estimation",
+      "region": "Où se situe votre bien ?",
+      "anyRegion": "Choisir une région",
+      "regionOption": "{name} – {towns}",
+      "bedrooms": "Chambres",
+      "action": "Estimer mes revenus",
+      "note": "Gratuit, indicatif et sans inscription."
+    },
+    "whatsappMessage": "Bonjour Bellavere, je viens d’utiliser votre simulateur de revenus pour {type, select, villa {une villa} apartment {un appartement} other {un penthouse}} {max, select, yes {d’au moins {bedrooms} chambres} other {{bedrooms, plural, =1 {d’une chambre} other {de # chambres}}}} {located} : il m’indique entre {low} et {high} par an. Pourrions-nous en parler ?",
+    "contactSummary": {
+      "full": "J’ai utilisé le simulateur de revenus : {type, select, villa {villa} apartment {appartement} other {penthouse}} {located}{hasTowns, select, yes { ({towns})} other {}}, {bedrooms}{hasFeatures, select, yes {, {features}} other {}}, {yearRound, select, yes {disponible toute l’année} other {disponible {weeks, plural, one {# semaine} other {# semaines}} par an}}. Estimation : de {low} à {high} par an. Je souhaiterais bénéficier d’une évaluation gratuite.",
+      "short": "J’ai utilisé le simulateur de revenus. Estimation : de {low} à {high} par an. Je souhaiterais bénéficier d’une évaluation gratuite."
+    }
+  },
+  "whatsapp": {
+    "button": {
+      "label": "Écrivez-nous sur WhatsApp"
+    },
+    "contactCards": {
+      "heading": "Par WhatsApp ou par téléphone<muted> – {hours}</muted>",
+      "headingNoHours": "Par WhatsApp ou par téléphone",
+      "whatsapp": "WhatsApp",
+      "whatsappLabel": "Écrire à {name} sur WhatsApp",
+      "callLabel": "Appeler {name} au {phone}",
+      "prefill": "Bonjour {name}, je souhaiterais en savoir plus sur les services de gestion de propriétés de Bellavere."
+    }
+  },
+  "analytics": {
+    "privacy": {
+      "heading": "Mesure d’audience",
+      "body": "Pour comprendre comment les visiteurs utilisent ce site, nous avons recours à <strong>Plausible Analytics</strong>, un service de mesure d’audience respectueux de la vie privée, établi dans l’Union européenne. Il ne dépose aucun cookie, ne vous identifie pas et ne vous suit pas sur d’autres sites. Il enregistre les pages consultées, le site d’où vous venez, votre navigateur, votre système d’exploitation, votre type d’appareil et votre pays, ainsi que quelques événements anonymes – par exemple un clic sur un bouton WhatsApp ou l’envoi du formulaire de contact. Votre adresse IP sert uniquement à déterminer votre pays et à compter les visiteurs de façon anonyme, jour par jour ; elle n’est jamais conservée. Plausible traite ces données pour notre compte, sur des serveurs situés dans l’Union européenne, et nous ne voyons que des statistiques agrégées.",
+      "noTracking": "Nous <strong>n’utilisons pas</strong> de cookies publicitaires ou de suivi, et aucun cookie tiers n’est déposé : notre outil de mesure d’audience (Plausible) fonctionne sans cookies. Chaque cookie étant soit strictement nécessaire, soit déposé à votre demande, nous n’affichons pas de bandeau de consentement aux cookies. Vous pouvez supprimer les cookies à tout moment dans les paramètres de votre navigateur ; supprimer <code>{sessionCookie}</code> vous déconnecte."
+    }
+  },
+  "locale": {
+    "toggle": {
+      "label": "Langue",
+      "names": {
+        "en": "English",
+        "fr": "Français"
+      }
+    },
+    "suggestion": {
+      "label": "English version available",
+      "message": "This site is also available in English.",
+      "action": "View in English",
+      "dismiss": "Close"
+    }
+  }
+}

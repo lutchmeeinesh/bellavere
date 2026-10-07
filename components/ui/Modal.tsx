@@ -168,7 +168,7 @@ export function Modal({
                   <button
                     type="button"
                     onClick={onClose}
-                    aria-label="Close"
+                    aria-label="Close" // i18n-ignore (used by the English-only owner portal; take a label prop if a public page needs it)
                     className="rounded-full p-1.5 text-ink-500 transition-colors hover:bg-sand-100 hover:text-navy-900"
                   >
                     <X className="size-5" aria-hidden />

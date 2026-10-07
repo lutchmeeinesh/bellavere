@@ -1,0 +1,1002 @@
+{
+  "common": {
+    "meta": {
+      "defaultTitle": "Bellavere — Property Management & Syndic Services in Mauritius",
+      "description": "Bellavere looks after villas, apartments and residences across Mauritius: rentals, maintenance, syndic services, client care, concierge and a live owner dashboard."
+    },
+    "nav": {
+      "label": "Main navigation",
+      "mobileLabel": "Mobile navigation",
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu",
+      "home": "Home",
+      "services": "Services",
+      "estimate": "Estimate my income",
+      "about": "About",
+      "contact": "Contact"
+    },
+    "actions": {
+      "ownerLogin": "Owner login",
+      "listProperty": "List your property"
+    },
+    "logo": {
+      "label": "{company} — home"
+    },
+    "currency": {
+      "label": "Display currency",
+      "names": {
+        "EUR": "Euro (€)",
+        "MUR": "Mauritian rupee (Rs)"
+      },
+      "conversionNote": "Rupee amounts are converted from euros at {rate} for information."
+    },
+    "footer": {
+      "blurb": "{tagline} Property management and syndic services all around Mauritius — north, south, east, west and the central plateau.",
+      "callUs": "Call us — {hours}",
+      "columns": {
+        "company": "Company",
+        "services": "Services",
+        "owners": "Owners"
+      },
+      "links": {
+        "about": "About us",
+        "contact": "Contact",
+        "ownerLogin": "Owner login",
+        "listProperty": "List your property",
+        "ownerFaq": "Owner FAQ"
+      },
+      "copyright": "© {year} {legalName}. All rights reserved.",
+      "registration": "Company No. {number} · {country}",
+      "privacy": "Privacy policy",
+      "terms": "Terms of use",
+      "demoNote": "The owner-portal demo uses sample accounts and figures."
+    },
+    "social": {
+      "instagram": "{company} on Instagram",
+      "facebook": "{company} on Facebook",
+      "linkedin": "{company} on LinkedIn",
+      "newTab": "{label} (opens in a new tab)"
+    },
+    "serviceNames": {
+      "rental": "Rental management",
+      "maintenance": "Maintenance",
+      "clientCare": "Client care",
+      "concierge": "Concierge & services",
+      "syndic": "Syndic & residences"
+    },
+    "notFound": {
+      "title": "Page not found",
+      "heading": "Lost at sea?",
+      "body": "The page you’re looking for has drifted off with the tide. The coast, happily, is easy to find again.",
+      "home": "Back to the beach house",
+      "contact": "Contact us"
+    },
+    "error": {
+      "eyebrow": "Something went wrong",
+      "heading": "Sorry, this page didn’t load",
+      "body": "Something on our side stopped it from loading. Please try again — and if it keeps happening, a real person is always there to help.",
+      "tryAgain": "Try again",
+      "home": "Back to the home page",
+      "contact": "Contact us",
+      "callUs": "Call us",
+      "callUsHours": "Call us — {hours}",
+      "writeTo": "or write to <link>{email}</link>",
+      "reference": "Reference: {digest}"
+    },
+    "company": {
+      "tagline": "Your property, perfectly managed.",
+      "marketLong": "Villas, apartments and residences across Mauritius — north, west, east, south and the central plateau.",
+      "country": "Mauritius",
+      "companyType": "private company limited by shares",
+      "hoursInline": "every day, 24/7",
+      "responseTime": "the same day",
+      "mission": "Our mission is to provide the best service while maintaining full transparency. No hidden fees — and there will always be a human to answer you.",
+      "pricing": {
+        "model": "a fee agreed with you after our first meeting, never more than {maxFee, number, percent} of gross rental income",
+        "detail": "Your management fee is negotiated with you and set after our first meeting — it never exceeds {maxFee, number, percent} of gross rental income. No hidden fees: every cost is itemised on your monthly statement."
+      },
+      "team": {
+        "krit": {
+          "role": "General Manager & Site Supervisor",
+          "bio": "Runs Bellavere day to day and is on site in person — supervising maintenance, inspections and every contractor who works on your property."
+        },
+        "ankit": {
+          "role": "Client Relations",
+          "bio": "Your first point of contact for statements, bookings and questions — reachable every day, 24/7, and never a chatbot."
+        },
+        "nihal": {
+          "bio": "Reachable every day, 24/7, on {phone}."
+        }
+      },
+      "commitments": {
+        "hiddenFees": {
+          "label": "Hidden fees"
+        },
+        "reachable": {
+          "display": "24/7",
+          "label": "Always reachable"
+        },
+        "sameDay": {
+          "display": "Same day",
+          "label": "Every query answered"
+        },
+        "human": {
+          "label": "Human answers, no bots"
+        }
+      }
+    },
+    "jsonLd": {
+      "companyNumber": "Company number (Registrar of Companies, Mauritius)",
+      "services": {
+        "rental": {
+          "name": "Rental management",
+          "description": "Holiday-rental management for villas and apartments: listings, pricing, bookings and guest communication."
+        },
+        "maintenance": {
+          "name": "Maintenance",
+          "description": "Property maintenance, inspections and supervision of contractors."
+        },
+        "clientCare": {
+          "name": "Client care",
+          "description": "A dedicated human point of contact for owners, with transparent monthly statements."
+        },
+        "concierge": {
+          "name": "Concierge",
+          "description": "Concierge services for owners and their guests."
+        },
+        "syndic": {
+          "name": "Syndic & residence management",
+          "description": "Syndic and residence management for co-owned buildings and residences."
+        }
+      }
+    },
+    "og": {
+      "alt": "{company} — {tagline}",
+      "line": "Property management & syndic services · Mauritius"
+    },
+    "images": {
+      "homeHero": "Contemporary white villa and pool in tropical sunshine",
+      "loginBackdrop": "Contemporary villa with a long pool in bright sunshine",
+      "dashboardTeaser": "Contemporary beach house perched above breaking waves",
+      "finalCta": "Aerial view of a wave breaking on white sand",
+      "services": {
+        "rental": "Contemporary white villa with a long swimming pool",
+        "maintenance": "Infinity pool framed by palm trees above the ocean",
+        "clientCare": "Modern open-plan living room with a pale sofa and timber feature wall",
+        "concierge": "Resort pool reflecting warm lights at dusk",
+        "syndic": "Low-rise white residence with a shared pool and palm trees at dusk"
+      },
+      "about": {
+        "story": "Calm beach at sunrise with gentle waves",
+        "coast": "White-sand beach with a palm tree and a thatched parasol"
+      }
+    }
+  },
+  "home": {
+    "meta": {
+      "description": "Bellavere manages luxury villas and apartments across Mauritius — rentals, maintenance, client care and concierge, with a live dashboard for every owner."
+    },
+    "hero": {
+      "eyebrow": "Property management & syndic · Mauritius",
+      "intro": "We look after villas, apartments and residences all around Mauritius — no hidden fees, always a real person to answer you, and a live dashboard that shows exactly how your property is performing."
+    },
+    "services": {
+      "eyebrow": "What we do",
+      "title": "Everything your property needs, under one roof",
+      "sub": "One team, no hidden fees, and a real person at the end of the line — so owning property in Mauritius stays a pleasure.",
+      "learnMore": "Learn more",
+      "items": {
+        "rental": "From listing, marketing and pricing to enquiries, bookings and guest check-ins, we run your rental end to end.",
+        "maintenance": "Preventive care, repairs and regular inspections keep your property in good order year-round. Every job is logged and its status is visible on your dashboard.",
+        "clientCare": "One contact knows your property, your preferences and your guests by name — and a real person always answers. Clear statements arrive monthly.",
+        "concierge": "Airport transfers, welcome packs, housekeeping and guest services — the extras that make a stay memorable and lift your rental yield."
+      },
+      "syndic": {
+        "eyebrow": "For residences, estates & developers",
+        "title": "Syndic & residence management",
+        "copy": "Common areas, pools and gardens, preventive maintenance, contractor supervision and clear owner reporting — one reliable point of contact for every co-owner."
+      }
+    },
+    "howItWorks": {
+      "eyebrow": "How it works",
+      "title": "Three steps to an effortless property",
+      "steps": {
+        "onboard": {
+          "title": "Onboard",
+          "copy": "We meet you, inspect your property, agree your fee and set up your listing — onboarding takes one to two weeks."
+        },
+        "manage": {
+          "title": "We manage",
+          "copy": "Guests welcomed, upkeep handled, statements prepared — one team runs the whole operation."
+        },
+        "grow": {
+          "title": "You watch it grow",
+          "copy": "Occupancy, revenue and maintenance, live on your owner dashboard — from Paris, London or the beach house next door."
+        }
+      }
+    },
+    "dashboardTeaser": {
+      "eyebrow": "The owner portal",
+      "title": "Your portfolio, live",
+      "sub": "No more waiting for the end-of-season phone call. Your dashboard shows how your property is performing, the moment anything changes.",
+      "bullets": {
+        "live": "Real-time occupancy and revenue, updated with every booking",
+        "calendar": "Bookings and the guest calendar at a glance",
+        "maintenance": "Maintenance status, from first report to resolution",
+        "statements": "Monthly statements, itemised and ready to download"
+      },
+      "ownFiguresOnly": "Every owner sees only their own properties — your figures stay yours, and yours alone.",
+      "action": "See the owner portal"
+    },
+    "dashboardPreview": {
+      "label": "Preview of the Bellavere owner dashboard showing live revenue, occupancy and bookings",
+      "greeting": "Good morning, {name}",
+      "revenue": "Revenue · {month}",
+      "occupancy": "Occupancy",
+      "checkIns": "Check-ins · {days}d",
+      "openTickets": "{count, plural, one {# open ticket} other {# open tickets}}",
+      "revenueTrend": "Revenue — last {months} months",
+      "monthRange": "{from} – {to}",
+      "delta": {
+        "percent": "{delta}% vs last month",
+        "points": "{delta} pts vs last month"
+      }
+    },
+    "testimonials": {
+      "eyebrow": "Owners' words",
+      "title": "In their own words",
+      "carousel": {
+        "label": "Owner testimonials",
+        "roleDescription": "carousel",
+        "previous": "Previous testimonial",
+        "next": "Next testimonial",
+        "goTo": "Go to testimonial {index} of {count}"
+      },
+      "items": {
+        "elise": {
+          "quote": "I live abroad and my villa is on the north coast, yet I always know exactly how it is doing. And when I call, a real person answers — every time.",
+          "name": "Élise M.",
+          "role": "Villa owner, living in France"
+        },
+        "deepak": {
+          "quote": "No surprise charges. Every repair is on the statement with a line explaining it, and the fee was agreed face to face before we started.",
+          "name": "Deepak R.",
+          "role": "Apartment owner, west coast"
+        },
+        "nathalie": {
+          "quote": "As a residence we needed one reliable contact for the pool, the gardens and the contractors. That is exactly what we got.",
+          "name": "Nathalie C.",
+          "role": "Residence co-owner, north coast"
+        }
+      }
+    },
+    "ctaBand": {
+      "title": "Let your island home work beautifully",
+      "sub": "Tell us about your property and we'll show you, openly, what it could achieve.",
+      "action": "Start the conversation"
+    }
+  },
+  "services": {
+    "meta": {
+      "title": "Property management & syndic services",
+      "description": "Rental management, maintenance, client care, concierge and syndic services for villas, apartments and residences in Mauritius — one team, no hidden fees."
+    },
+    "hero": {
+      "eyebrow": "Services",
+      "title": "Everything your property needs",
+      "intro": "Five services, one team, no hidden fees. Bellavere looks after villas, apartments and whole residences across Mauritius, end to end, for {pricingModel}. Every cost is itemised on your monthly statement."
+    },
+    "sections": {
+      "rental": {
+        "eyebrow": "01 — Rental management",
+        "title": "Your home, earning while you sleep",
+        "paragraphs": {
+          "first": "We list and market your villa or apartment, answer every enquiry, manage bookings, pricing and occupancy, and handle every guest check-in and check-out.",
+          "second": "You watch it all happen from the owner dashboard: bookings as they land, occupancy against the season, revenue by month."
+        },
+        "included": {
+          "listing": "Listing & marketing",
+          "bookings": "Enquiries & bookings",
+          "pricing": "Pricing & occupancy management",
+          "guestCommunication": "Guest communication",
+          "checkInOut": "Guest check-in & check-out",
+          "reporting": "Occupancy reporting"
+        },
+        "detail": "Every query answered the same day, by a real person"
+      },
+      "maintenance": {
+        "eyebrow": "02 — Maintenance",
+        "title": "Kept immaculate, season after season",
+        "paragraphs": {
+          "first": "Salt air, cyclone season and back-to-back guests are hard on an island home. We run regular inspections, look after pools and gardens, and coordinate repairs before small issues become expensive ones.",
+          "second": "Every job is logged against your property and itemised on your statement, with contractors coordinated and supervised on site — no hidden fees."
+        },
+        "included": {
+          "repairs": "Routine upkeep & repairs",
+          "inspections": "Regular property inspections",
+          "renovation": "Renovation follow-up",
+          "poolGarden": "Pool & garden care",
+          "cleaning": "Cleaning & housekeeping",
+          "emergencies": "Emergency coordination",
+          "contractors": "Supervised contractors, every invoice itemised"
+        },
+        "detail": "Work supervised on site, in person"
+      },
+      "clientCare": {
+        "eyebrow": "03 — Client care",
+        "title": "One person who knows your property by name",
+        "paragraphs": {
+          "first": "Your client-relations contact is the single point of contact for everything that touches your property: statements, compliance, insurance, utility bills, tenant and guest matters — and a real person always answers.",
+          "second": "You receive one clear statement every month and straight answers in between — without chasing."
+        },
+        "included": {
+          "contact": "Dedicated client-relations contact",
+          "statements": "Monthly owner statements",
+          "compliance": "Compliance administration",
+          "insuranceUtilities": "Insurance & utilities administration",
+          "issues": "Guest & tenant issue resolution"
+        },
+        "detail": "One contact. Every answer."
+      },
+      "concierge": {
+        "eyebrow": "04 — Concierge & services",
+        "title": "The extras guests remember — and pay for",
+        "paragraphs": {
+          "first": "Airport transfers, welcome packs, housekeeping and guest services — we arrange the details that turn a good stay into the one guests talk about.",
+          "second": "It is hospitality that earns: well-run extras increase the rental yield of your property."
+        },
+        "included": {
+          "airportTransfers": "Airport transfers",
+          "welcomePacks": "Welcome packs",
+          "guestServices": "Guest services",
+          "housekeeping": "Housekeeping"
+        },
+        "detail": "Extras that increase your rental yield"
+      },
+      "syndic": {
+        "eyebrow": "05 — Syndic & residences",
+        "title": "Common areas cared for, co-owners kept informed",
+        "paragraphs": {
+          "first": "For residences, villa estates and apartment complexes, Bellavere acts as syndic and facilities coordinator. We look after the shared spaces — pools, gardens, common areas and security — so every co-owner can enjoy them without having to manage them.",
+          "second": "Preventive maintenance plans, supervised contractors and clear owner reporting keep the building in good order, with one reliable point of contact for day-to-day property care."
+        },
+        "included": {
+          "commonAreas": "Common-area management & cleaning coordination",
+          "preventiveMaintenance": "Preventive maintenance plans",
+          "poolLandscaping": "Pool & landscaping supervision",
+          "contractors": "Contractor coordination & on-site supervision",
+          "security": "Security & emergency coordination",
+          "reporting": "Owner reporting & renovation follow-up"
+        },
+        "detail": "One point of contact for every co-owner."
+      }
+    },
+    "serviceSection": {
+      "included": "What’s included"
+    },
+    "atAGlance": {
+      "eyebrow": "At a glance",
+      "title": "What Bellavere handles for you",
+      "sub": "The day-to-day work we take off your desk."
+    },
+    "comparison": {
+      "caption": "The responsibilities Bellavere handles for you",
+      "responsibility": "Responsibility",
+      "handled": "Handled.",
+      "rows": {
+        "bookings": {
+          "area": "Guest enquiries & bookings",
+          "note": "Answered and confirmed for you"
+        },
+        "pricing": {
+          "area": "Pricing & yield",
+          "note": "Pricing and occupancy managed for you"
+        },
+        "cleaning": {
+          "area": "Cleaning & housekeeping",
+          "note": "Cleaning and housekeeping between stays"
+        },
+        "repairs": {
+          "area": "Repairs & contractors",
+          "note": "Supervised on site, every invoice itemised"
+        },
+        "statements": {
+          "area": "Statements & payouts",
+          "note": "One clear statement every month"
+        },
+        "compliance": {
+          "area": "Compliance & insurance",
+          "note": "Compliance, insurance and utility bills handled for you"
+        }
+      }
+    },
+    "getStarted": {
+      "eyebrow": "Get started",
+      "title": "One fee. Every detail handled."
+    }
+  },
+  "about": {
+    "meta": {
+      "title": "About us — property care team in Mauritius",
+      "description": "Meet Bellavere: property management and syndic services across Mauritius — full transparency, no hidden fees, and always a human to answer you."
+    },
+    "hero": {
+      "eyebrow": "About Bellavere",
+      "title": "Care you can see, from people you can reach",
+      "intro": "{marketLong} Looked after in person and reported openly, with never a hidden fee."
+    },
+    "story": {
+      "eyebrow": "Our story",
+      "title": "Built around our mission",
+      "paragraphs": {
+        "first": "At {company}, {krit} and {ankit} work to the promises in our mission: full transparency, no hidden fees, and a person who answers whenever something goes wrong.",
+        "second": "In practice, every cost is itemised and visible on your dashboard. And whenever you message us, a person answers — {krit} on the ground, {ankit} as your first point of contact. From single villas to the common areas of whole residences, that is how we look after every property."
+      },
+      "quote": "“{mission}”"
+    },
+    "values": {
+      "eyebrow": "What we stand for",
+      "title": "Three promises we make to every owner",
+      "items": {
+        "transparency": {
+          "title": "Full transparency",
+          "copy": "Every rupee and euro in and out of your property is itemised on your dashboard and your monthly statement. You see exactly what we see."
+        },
+        "noHiddenFees": {
+          "title": "No hidden fees",
+          "copy": "One clearly stated management fee. No surprise charges and no invented extras — if something costs you money, it is on your statement with a line explaining why."
+        },
+        "human": {
+          "title": "Always a human",
+          "copy": "Call or write any time: someone is reachable every day, 24/7, and every query is answered the same day. A real person who knows your property — never a chatbot."
+        }
+      }
+    },
+    "team": {
+      "eyebrow": "The team",
+      "title": "The main people you will speak to",
+      "sub": "Three people, one standard. Small enough that you always deal with someone who knows your property."
+    },
+    "why": {
+      "eyebrow": "Why owners choose us",
+      "title": "What you can count on",
+      "items": {
+        "contact": "One reliable point of contact for everything",
+        "fee": "A fee negotiated with you after our first meeting — never more than {maxFee, number, percent}. No hidden fees.",
+        "human": "A person answers every message — never a bot",
+        "supervision": "Work on your property supervised on site, in person",
+        "dashboard": "A live owner dashboard, day and night, from anywhere",
+        "currencies": "Prices and statements in rupees or euros — your choice",
+        "maintenance": "Preventive maintenance, inspections and owner reporting",
+        "syndic": "Syndic and common-area management for whole residences"
+      }
+    },
+    "coverage": {
+      "eyebrow": "Where we work",
+      "title": "All around the island",
+      "sub": "We look after properties across the whole of Mauritius — north and south, coast and plateau — and {krit} supervises work and inspections on site, in person.",
+      "regions": {
+        "north": "North",
+        "west": "West",
+        "centralPlateau": "Central plateau",
+        "east": "East",
+        "southEast": "South-east",
+        "southWest": "South-west"
+      },
+      "mapAlt": "Map of Mauritius marking the areas across the island where Bellavere looks after properties",
+      "mapCaption": "Map data © OpenStreetMap contributors · rendered with {renderer}"
+    },
+    "cta": {
+      "title": "Get to know us properly",
+      "sub": "A short call, a look at your property, and an honest view of what it could do."
+    }
+  },
+  "contact": {
+    "meta": {
+      "title": "Contact us – property management in Mauritius",
+      "description": "Talk to Bellavere about managing your villa or apartment anywhere in Mauritius — rentals, maintenance, client care and concierge under one roof."
+    },
+    "header": {
+      "eyebrow": "Contact",
+      "title": "Let’s talk about your property",
+      "intro": "Tell us about your villa or apartment. A real person will reply {responseTime}, and we’ll give you an honest view of what it could earn."
+    },
+    "details": {
+      "write": "Write to us",
+      "writeNote": "Every query answered {responseTime} — by a person, never a bot."
+    },
+    "formCard": {
+      "title": "Send us a message",
+      "intro": "A few details are all we need to get started."
+    },
+    "form": {
+      "fields": {
+        "name": "Name",
+        "email": "Email",
+        "phone": "Phone",
+        "propertyType": "Property type",
+        "propertyCount": "Number of properties",
+        "message": "Message"
+      },
+      "messagePlaceholder": "Where is your property, and what would you like help with?",
+      "pleaseSelect": "Please select",
+      "propertyTypes": {
+        "villa": "Villa",
+        "apartment": "Apartment",
+        "several": "Several properties"
+      },
+      "propertyCounts": {
+        "one": "1",
+        "twoToFive": "2–5",
+        "sixPlus": "6+"
+      },
+      "honeypot": "Leave this field empty",
+      "consent": "I agree to be contacted about my enquiry, as described in the <link>privacy policy</link>",
+      "submit": "Send message",
+      "sending": "Sending…",
+      "validation": {
+        "nameMissing": "Please tell us your name.",
+        "nameTooLong": "Please keep your name under {max, number} characters.",
+        "emailMissing": "Please enter your email address.",
+        "emailInvalid": "Please enter a valid email address.",
+        "phoneTooLong": "Please keep the phone number under {max, number} characters.",
+        "messageMissing": "Please tell us a little about your property.",
+        "messageTooLong": "Please keep your message under {max, number} characters (it is {length, number}).",
+        "consentMissing": "Please confirm we may contact you about your enquiry."
+      },
+      "errors": {
+        "directContact": "Please email {email} or call {people} — we answer the same day.",
+        "person": "{name} on {phone}",
+        "deliveryFailed": "We couldn’t send your message just now. {directContact}",
+        "tooLong": "Part of your message is too long — please shorten it (messages up to {max, number} characters). {directContact}",
+        "missingFields": "Please complete the required fields.",
+        "rateLimited": "You’ve sent several messages in a short time. Please wait a few minutes and try again, or email us directly.",
+        "invalidRequest": "Invalid request body.",
+        "unsupported": "Unsupported request.",
+        "forbidden": "Forbidden."
+      },
+      "success": {
+        "title": "Message received",
+        "body": "Thank you — a real person from our team will read your message and reply the same day.",
+        "again": "Send another message"
+      }
+    },
+    "faq": {
+      "eyebrow": "FAQ",
+      "title": "Questions owners ask",
+      "sub": "The short answers first — for everything else, we’re one message away.",
+      "items": {
+        "fees": {
+          "question": "What does Bellavere charge?"
+        },
+        "reply": {
+          "question": "How quickly will you get back to me?",
+          "answer": "The same day — every query, every time. {names} can be reached every day, 24/7, on the numbers on this page."
+        },
+        "payouts": {
+          "question": "When do I get paid?",
+          "answer": "Every month you receive a full statement — gross income, our fee and any expenses, line by line. Payout timing is set out in your management agreement."
+        },
+        "ownUse": {
+          "question": "Can I still use my property?",
+          "answer": "Of course — it’s your home. Talk to your client-relations contact about the dates you need; how owner stays work is set out in your management agreement."
+        },
+        "onboarding": {
+          "question": "How fast is onboarding?",
+          "answer": "One to two weeks from our first meeting. In that time we inspect the property, agree your fee and set up your listing."
+        }
+      }
+    }
+  },
+  "legal": {
+    "shared": {
+      "eyebrow": "Legal",
+      "lastUpdated": "Last updated: {date}",
+      "registration": "Company number {number}, incorporated in Mauritius on {date} as a {companyType}.",
+      "registeredAddress": "Registered address: {address}",
+      "reviewNotice": "This page is a template and should be reviewed by a qualified legal adviser before launch."
+    },
+    "privacy": {
+      "meta": {
+        "title": "Privacy policy",
+        "description": "How {legalName} collects, uses and protects personal data, and the cookies this website sets."
+      },
+      "title": "Privacy policy",
+      "intro": "How we collect, use and protect your personal data when you use this website and the owner portal.",
+      "whoWeAre": {
+        "heading": "1. Who we are",
+        "operator": "This website is operated by {legalName}, trading as {tradingName} (“{company}”, “we”, “us”). {legalName} is the data controller for the personal data described in this policy.",
+        "contact": "Contact for privacy matters: <link>{email}</link>"
+      },
+      "laws": {
+        "heading": "2. The laws that apply",
+        "body": "We process personal data in accordance with the Mauritius <strong>Data Protection Act 2017</strong>, which is overseen by the <strong>Data Protection Office</strong> of Mauritius. Where the EU General Data Protection Regulation (<strong>GDPR</strong>) applies to our processing of your data, we also comply with it."
+      },
+      "collection": {
+        "heading": "3. What we collect",
+        "contactForm": {
+          "heading": "Contact form",
+          "items": {
+            "details": "Your name, email address, optional phone number, property type, number of properties and your message.",
+            "consent": "A consent record: that you ticked “I agree to be contacted about my enquiry”, the date and time, and a shortened, one-way hash of your IP address (not the address itself)."
+          }
+        },
+        "whatsapp": {
+          "heading": "WhatsApp and phone",
+          "items": {
+            "received": "When you message us on WhatsApp or call us (the WhatsApp button, or the numbers on the contact page): your phone number, your WhatsApp profile name and picture (as your WhatsApp settings allow) and what you tell us. The website only opens WhatsApp with a suggested message, which you can change; nothing is sent until you send it yourself.",
+            "use": "We use this only to answer you and follow up on your enquiry. The conversation stays in the WhatsApp account of the team member you contacted, and we keep it for as long as other enquiries (see section 5)."
+          }
+        },
+        "ownerPortal": {
+          "heading": "Owner portal",
+          "items": {
+            "account": "Account details: your name, email address, phone number and login credentials.",
+            "property": "Property and financial information needed to manage your property: bookings, maintenance records, documents, statements and payout details."
+          }
+        },
+        "technical": {
+          "heading": "Technical data",
+          "items": {
+            "serverLogs": "Server logs kept by our hosting provider (such as IP address, browser type and pages requested), used for security and to keep the site running."
+          }
+        }
+      },
+      "purposes": {
+        "heading": "4. Why we use it, and our legal basis",
+        "items": {
+          "enquiry": "<strong>Answering your enquiry</strong> — based on your consent and on steps taken at your request before entering into a contract.",
+          "portal": "<strong>Running the owner portal and managing your property</strong> — necessary to perform our management agreement with you.",
+          "records": "<strong>Keeping accounting and tax records</strong> — to comply with our legal obligations in Mauritius.",
+          "security": "<strong>Protecting the site against abuse</strong> (for example rate limiting and spam filtering) — our legitimate interest in keeping the service secure."
+        }
+      },
+      "retention": {
+        "heading": "5. How long we keep it",
+        "items": {
+          "enquiries": "Contact enquiries that do not lead to an agreement: up to 12 months after our last exchange.",
+          "ownerRecords": "Owner-account and property records: for the duration of the management agreement, then for as long as Mauritian accounting and tax law requires (typically 7 years).",
+          "consent": "Consent records: for as long as the related data is kept."
+        }
+      },
+      "sharing": {
+        "heading": "6. Who we share it with",
+        "processors": "We <strong>never sell</strong> your personal data. We share it only with service providers (“processors”) that help us run the business, under contracts that require them to protect it — for example our website hosting provider and our email provider — and with professional advisers or authorities where the law requires it.",
+        "whatsapp": "If you contact us on WhatsApp, your messages are carried by WhatsApp, a Meta service, under WhatsApp’s own terms and privacy policy. WhatsApp is not one of our processors: we do not decide how it stores or uses data, so please read its privacy policy before using it. You can always reach us through the contact form, by email or by phone instead.",
+        "transfers": "Some of these providers may store data outside Mauritius or the EU. Where that happens we rely on appropriate safeguards, such as adequacy decisions or standard contractual clauses."
+      },
+      "rights": {
+        "heading": "7. Your rights",
+        "intro": "Under the Data Protection Act 2017 and, where it applies, the GDPR, you have the right to:",
+        "items": {
+          "access": "access the personal data we hold about you;",
+          "rectification": "have inaccurate data corrected;",
+          "erasure": "have your data erased where we no longer need it;",
+          "restriction": "restrict or object to certain processing;",
+          "portability": "receive your data in a portable format (data portability);",
+          "withdrawConsent": "withdraw your consent at any time, without affecting processing carried out before you withdrew it."
+        },
+        "exercise": "To exercise any of these rights, email <link>{email}</link>. We may ask you to confirm your identity, and we will reply within one month. You also have the right to complain to the Data Protection Office of Mauritius or, if you live in the EU, to the data protection authority in your country."
+      },
+      "cookies": {
+        "heading": "8. Cookies",
+        "intro": "This website sets at most four cookies:",
+        "items": {
+          "session": "<code>{name}</code> — <strong>strictly necessary</strong>. Keeps you signed in to the owner portal. It is httpOnly (not readable by scripts) and is only set when you log in.",
+          "currency": "<code>{name}</code> — <strong>preference</strong>. Remembers whether you chose to view prices in MUR or EUR. It is set only when you make that choice and lasts 1 year.",
+          "language": "<code>{name}</code> — <strong>preference</strong>. Remembers whether you chose to read the site in English or French. It is set only when you choose a language, with the language switch or the suggestion to read the site in French, and lasts 1 year.",
+          "viewAs": "<code>{name}</code> — <strong>strictly necessary</strong>, {company} staff only. Remembers which owner’s portal an administrator is viewing. It is httpOnly and ends with the browser session."
+        },
+        "localStorage": "If you close the suggestion to read this site in French, your browser also keeps a small note in its local storage (<code>{name}</code>) so that the suggestion is not shown again. It contains no personal data and never leaves your device.",
+        "noTracking": "We do <strong>not</strong> use analytics, advertising or tracking cookies, and no third-party cookies are set. Because every cookie is either strictly necessary or set at your request, we do not show a cookie-consent banner. You can delete cookies at any time in your browser settings; deleting <code>{sessionCookie}</code> signs you out."
+      },
+      "security": {
+        "heading": "9. Security",
+        "body": "We use encrypted connections (HTTPS) and restrict access to personal data to the people who need it to do their job. No method of transmission or storage is completely secure, but we take reasonable steps to protect your data."
+      },
+      "changes": {
+        "heading": "10. Changes to this policy",
+        "body": "We may update this policy from time to time. The date at the top shows when it last changed. See also our <link>terms of use</link>."
+      }
+    },
+    "terms": {
+      "meta": {
+        "title": "Terms of use",
+        "description": "Terms of use for the {company} website and owner portal."
+      },
+      "title": "Terms of use",
+      "intro": "The rules for using this website and the {company} owner portal.",
+      "about": {
+        "heading": "1. About these terms",
+        "operator": "This website and the owner portal are operated by {legalName}, trading as {tradingName}.",
+        "contact": "Contact: <link>{email}</link>",
+        "agreement": "By using the website you agree to these terms. If you do not agree, please do not use the site. The management of your property is governed separately by your written management agreement with us; where that agreement and these terms differ, the management agreement prevails."
+      },
+      "information": {
+        "heading": "2. Information on this website",
+        "body": "We take care to keep the information on this website accurate and up to date, but it is provided for general information only."
+      },
+      "portal": {
+        "heading": "3. The owner portal",
+        "items": {
+          "access": "The owner portal is for authorised property owners (and people they have authorised in writing) only. Access is granted by us.",
+          "credentials": "You are responsible for keeping your login details confidential and for activity under your account. Tell us immediately at <link>{email}</link> if you suspect unauthorised access.",
+          "otherOwners": "You must not attempt to access another owner’s data, or to interfere with the security or operation of the portal.",
+          "figures": "Figures shown in the portal are provided for convenience. Your formal monthly statement is the authoritative record.",
+          "suspension": "We may suspend or withdraw access if these terms are breached, or when the management agreement ends."
+        }
+      },
+      "currencies": {
+        "heading": "4. Currencies",
+        "body": "Prices and figures may be displayed in Mauritian rupees (MUR) or euros (EUR). Conversions between the two are shown for information only, using indicative exchange rates that may differ from the rate applied by banks on the day of payment. The binding amounts and currency are those set out in your management agreement and statements."
+      },
+      "intellectualProperty": {
+        "heading": "5. Intellectual property",
+        "body": "The content of this website — text, design, logos and images — belongs to {legalName} or its licensors. You may view and print it for personal use, but may not reproduce it for commercial purposes without our written permission."
+      },
+      "externalLinks": {
+        "heading": "6. Links to other sites",
+        "body": "The website may link to third-party sites. We are not responsible for their content or their privacy practices."
+      },
+      "liability": {
+        "heading": "7. Limitation of liability",
+        "body": "The website is provided “as is”. To the fullest extent permitted by law, {legalName} is not liable for any loss arising from reliance on information on the website, from the website being unavailable, or from viruses or other harmful material, and is not liable for any indirect or consequential loss. Nothing in these terms limits liability that cannot be limited by law, such as liability for fraud. Our liability for the management of your property is governed by your management agreement."
+      },
+      "privacy": {
+        "heading": "8. Privacy",
+        "body": "How we handle personal data and cookies is explained in our <link>privacy policy</link>."
+      },
+      "changes": {
+        "heading": "9. Changes",
+        "body": "We may update these terms from time to time. The date at the top shows when they last changed; continuing to use the website after a change means you accept the updated terms."
+      },
+      "governingLaw": {
+        "heading": "10. Governing law",
+        "body": "These terms are governed by the laws of the Republic of Mauritius, and the courts of Mauritius have exclusive jurisdiction over any dispute arising from them."
+      }
+    }
+  },
+  "estimator": {
+    "meta": {
+      "title": "Rental income estimator for Mauritius",
+      "description": "What could your villa, apartment or penthouse in Mauritius earn as a holiday rental? Answer five quick questions for a free, indicative monthly and yearly range."
+    },
+    "header": {
+      "eyebrow": "Rental income estimator",
+      "title": "What could your property earn?",
+      "intro": "Five quick questions, about 30 seconds. You’ll see an indicative monthly and yearly range for your property — in euros or rupees — and what stays with you after our fee."
+    },
+    "flow": {
+      "label": "Rental income estimator",
+      "step": "Step {current} of {total}",
+      "progress": "Progress",
+      "back": "Back",
+      "continue": "Continue",
+      "seeEstimate": "See my estimate"
+    },
+    "steps": {
+      "type": {
+        "title": "What kind of property is it?",
+        "hint": "Choose the closest match."
+      },
+      "region": {
+        "title": "Where on the island is it?",
+        "hint": "Rental rates vary from one coast to another."
+      },
+      "bedrooms": {
+        "title": "How many bedrooms does it have?",
+        "hint": "Count the bedrooms your guests can sleep in."
+      },
+      "features": {
+        "title": "What sets it apart?",
+        "hint": "Select all that apply — or none at all."
+      },
+      "availability": {
+        "title": "When can guests stay?",
+        "hint": "Rent it out all year, or keep some weeks for yourself."
+      }
+    },
+    "types": {
+      "villa": {
+        "name": "Villa",
+        "description": "A detached house, often with a garden"
+      },
+      "apartment": {
+        "name": "Apartment",
+        "description": "A home in a residence or apartment block"
+      },
+      "penthouse": {
+        "name": "Penthouse",
+        "description": "A top-floor apartment, usually with a terrace"
+      }
+    },
+    "regions": {
+      "north": {
+        "name": "North",
+        "towns": "Grand Baie, Pereybère",
+        "located": "in the north"
+      },
+      "west": {
+        "name": "West",
+        "towns": "Flic en Flac, Tamarin, Black River",
+        "located": "in the west"
+      },
+      "east": {
+        "name": "East",
+        "towns": "Belle Mare, Trou d’Eau Douce",
+        "located": "in the east"
+      },
+      "south": {
+        "name": "South",
+        "towns": "Bel Ombre",
+        "located": "in the south"
+      },
+      "centre": {
+        "name": "Centre / other",
+        "towns": "Moka, Curepipe and the rest of the island",
+        "located": "in the centre or elsewhere on the island"
+      }
+    },
+    "bedrooms": {
+      "count": "{count, plural, one {# bedroom} other {# bedrooms}}",
+      "countMax": "{count}+ bedrooms",
+      "fewer": "One fewer bedroom",
+      "more": "One more bedroom"
+    },
+    "features": {
+      "items": {
+        "privatePool": {
+          "label": "Private pool",
+          "inSentence": "private pool"
+        },
+        "seaView": {
+          "label": "Sea view",
+          "inSentence": "sea view"
+        },
+        "beachfront": {
+          "label": "Beachfront",
+          "inSentence": "beachfront"
+        },
+        "airCon": {
+          "label": "Air conditioning throughout",
+          "inSentence": "air conditioning throughout"
+        },
+        "housekeeping": {
+          "label": "Housekeeping included",
+          "inSentence": "housekeeping included"
+        }
+      },
+      "count": "{count, plural, =0 {Nothing selected — that’s fine too.} one {# selected} other {# selected}}"
+    },
+    "availability": {
+      "yearRound": {
+        "title": "I rent it out year-round",
+        "description": "Open to guests all {weeks} weeks of the year"
+      },
+      "partYear": {
+        "title": "I use it part of the year",
+        "description": "Choose how many weeks guests can book"
+      },
+      "weeksLabel": "Weeks available to guests",
+      "weeks": "{weeks, plural, one {# week} other {# weeks}}",
+      "weeksPerYear": "{weeks, plural, one {# week} other {# weeks}} a year"
+    },
+    "result": {
+      "eyebrow": "Your estimate",
+      "title": "What your property could earn",
+      "change": "Change my answers",
+      "answersLabel": "Your answers",
+      "yearRound": "Year-round",
+      "noFeatures": "No extras",
+      "perMonth": "Per month",
+      "perYear": "Per year",
+      "gross": "Estimated gross rental income",
+      "range": "{low} to {high}",
+      "disclaimer": "Indicative estimate based on regional averages — your free assessment gives the exact figure.",
+      "occupancy": "{yearRound, select, yes {Based on about {occupancy, number, percent} occupancy across the year} other {Based on about {occupancy, number, percent} occupancy over the {weeks, plural, one {# week} other {# weeks}} you make available}} — {high, number, percent} in high season ({highFrom, date, ::MMM}–{highTo, date, ::MMM}), {low, number, percent} in low season ({lowFrom, date, ::MMM}–{lowTo, date, ::MMM}).",
+      "breakdown": {
+        "title": "Where it goes",
+        "period": "Per year",
+        "gross": "Estimated gross rental income",
+        "fee": "Bellavere management fee",
+        "feeCap": "at most {maxFee, number, percent}",
+        "net": "Estimated net to you",
+        "atLeast": "(at least)",
+        "note": "Your management fee is agreed with you after our first meeting and never exceeds {maxFee, number, percent} of gross rental income. No hidden fees: every cost is itemised on your monthly statement."
+      },
+      "approach": {
+        "title": "How we’d get you there",
+        "items": {
+          "rental": {
+            "title": "Your rental, run end to end",
+            "copy": "Listing, marketing and pricing, enquiries, bookings and guest check-ins — we handle all of it."
+          },
+          "care": {
+            "title": "Guest-ready all year",
+            "copy": "Preventive care, repairs and regular inspections keep your property in good order year-round."
+          },
+          "reporting": {
+            "title": "Every figure in view",
+            "copy": "One contact who knows your property, clear monthly statements, and occupancy and revenue live on your owner dashboard."
+          }
+        }
+      },
+      "cta": {
+        "primary": "Get your exact figure — free assessment",
+        "whatsapp": "Talk it through on WhatsApp",
+        "newTab": "(opens in a new tab)"
+      }
+    },
+    "method": {
+      "eyebrow": "How the estimate works",
+      "title": "Clear assumptions, nothing hidden",
+      "sub": "We show a range — {spread, number, percent} either side of our central figure — because no two properties are alike. Your free assessment replaces it with the exact figure.",
+      "items": {
+        "rates": {
+          "title": "Regional nightly rates",
+          "copy": "We start from typical nightly rates for your type of property and region, then adjust for bedrooms and for features such as a private pool or a sea view."
+        },
+        "occupancy": {
+          "title": "Seasonal occupancy",
+          "copy": "We assume about {high, number, percent} occupancy in high season ({highFrom, date, ::MMMM} to {highTo, date, ::MMMM}) and {low, number, percent} in low season, spread over the weeks you make available."
+        },
+        "fees": {
+          "title": "Our fee, up front",
+          "copy": "Your management fee is agreed with you and never exceeds {maxFee, number, percent} of gross rental income — so the estimate shows what stays with you."
+        }
+      }
+    },
+    "teaser": {
+      "eyebrow": "Rental income estimator",
+      "title": "What could your property earn?",
+      "pitch": "Five quick questions, about 30 seconds: an indicative monthly and yearly range for your villa, apartment or penthouse.",
+      "formLabel": "Start your estimate",
+      "region": "Where is your property?",
+      "anyRegion": "Choose a region",
+      "regionOption": "{name} — {towns}",
+      "bedrooms": "Bedrooms",
+      "action": "Estimate my income",
+      "note": "Free, indicative, no sign-up."
+    },
+    "whatsappMessage": "Hello Bellavere, I’ve just used your income estimator for {type, select, villa {a villa} apartment {an apartment} other {a penthouse}} with {max, select, yes {{bedrooms} or more bedrooms} other {{bedrooms, plural, =1 {one bedroom} other {# bedrooms}}}} {located}. It suggests {low}–{high} a year. Could we talk about it?",
+    "contactSummary": {
+      "full": "I used the income estimator: {type, select, villa {villa} apartment {apartment} other {penthouse}} {located}{hasTowns, select, yes { ({towns})} other {}}, {bedrooms}{hasFeatures, select, yes {, {features}} other {}}, {yearRound, select, yes {available year-round} other {available {weeks, plural, one {# week} other {# weeks}} a year}}. Estimate: {low}–{high} a year. I’d like my free assessment.",
+      "short": "I used the income estimator. Estimate: {low}–{high} a year. I’d like my free assessment."
+    }
+  },
+  "whatsapp": {
+    "button": {
+      "label": "Chat with us on WhatsApp"
+    },
+    "contactCards": {
+      "heading": "WhatsApp or call us<muted> — {hours}</muted>",
+      "headingNoHours": "WhatsApp or call us",
+      "whatsapp": "WhatsApp",
+      "whatsappLabel": "Chat with {name} on WhatsApp",
+      "callLabel": "Call {name} on {phone}",
+      "prefill": "Hello {name}, I’d like to know more about Bellavere’s property management services."
+    }
+  },
+  "analytics": {
+    "privacy": {
+      "heading": "Website analytics",
+      "body": "To understand how visitors use this website, we use <strong>Plausible Analytics</strong>, a privacy-friendly service based in the European Union. It sets no cookies, does not identify you and does not follow you across other websites. It records the pages viewed, the website you came from, your browser, operating system, type of device and country, and a few anonymous events — such as a click on a WhatsApp button or a submitted contact form. Your IP address is used only to work out your country and to count visitors anonymously, day by day; it is never stored. Plausible processes this data on our behalf on servers in the European Union, and we only ever see aggregated statistics.",
+      "noTracking": "We do <strong>not</strong> use advertising or tracking cookies, and no third-party cookies are set: our website analytics (Plausible) works without cookies. Because every cookie is either strictly necessary or set at your request, we do not show a cookie-consent banner. You can delete cookies at any time in your browser settings; deleting <code>{sessionCookie}</code> signs you out."
+    }
+  },
+  "locale": {
+    "toggle": {
+      "label": "Language",
+      "names": {
+        "en": "English",
+        "fr": "Français"
+      }
+    },
+    "suggestion": {
+      "label": "Version française disponible",
+      "message": "Ce site est également disponible en français.",
+      "action": "Voir en français",
+      "dismiss": "Fermer"
+    }
+  }
+}

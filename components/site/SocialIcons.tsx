@@ -1,3 +1,5 @@
+import { useTranslations } from "next-intl";
+
 /**
  * Inline brand glyphs — lucide-react v1 no longer ships brand icons.
  * Sized/stroked to sit alongside lucide icons.
@@ -68,28 +70,16 @@ type SocialProfiles = {
 
 /**
  * Social profiles that actually exist (non-null in data/company.ts), with
- * their icons. Empty until the client provides real links.
+ * their icons. Empty until the client provides real links. The accessible
+ * name is `common.social.<network>` ("Bellavere on Instagram"):
+ *
+ *   label={t(`social.${network}`, { company: company.name })}
  */
-export function publishedSocialLinks(
-  companyName: string,
-  social: SocialProfiles,
-) {
+export function publishedSocialLinks(social: SocialProfiles) {
   const all = [
-    {
-      label: `${companyName} on Instagram`,
-      href: social.instagram,
-      Icon: InstagramIcon,
-    },
-    {
-      label: `${companyName} on Facebook`,
-      href: social.facebook,
-      Icon: FacebookIcon,
-    },
-    {
-      label: `${companyName} on LinkedIn`,
-      href: social.linkedin,
-      Icon: LinkedInIcon,
-    },
+    { network: "instagram" as const, href: social.instagram, Icon: InstagramIcon },
+    { network: "facebook" as const, href: social.facebook, Icon: FacebookIcon },
+    { network: "linkedin" as const, href: social.linkedin, Icon: LinkedInIcon },
   ];
   return all.flatMap((link) =>
     link.href ? [{ ...link, href: link.href }] : [],
@@ -108,16 +98,18 @@ export function SocialLink({
   children,
 }: {
   href: string;
+  /** The profile, e.g. "Bellavere on Instagram" (already translated). */
   label: string;
   className?: string;
   children: React.ReactNode;
 }) {
+  const t = useTranslations("common.social");
   return (
     <a
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label={`${label} (opens in a new tab)`}
+      aria-label={t("newTab", { label })}
       className={className}
     >
       {children}

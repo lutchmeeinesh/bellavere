@@ -219,3 +219,69 @@ Portal titles ("Bookings · Owner dashboard · Bellavere"), portal 404s decided 
 - **Lighthouse on the live site** (Lighthouse 12, simulated throttling): mobile `/` 95, `/services` 98, `/contact` 100 performance; desktop `/` and `/about` 100. Accessibility and best practices 100 on all five; CLS 0 everywhere; LCP 0.5–0.7 s on desktop, 1.5–2.8 s on a throttled phone; the server answers in 80 ms (it took ~450–530 ms per page before, rendered in Washington). SEO 66–69 is by design until `SITE_INDEXABLE=true` (the pages carry `noindex`).
 - Test harness note: on a repeat visit the Next.js router can hold background prefetch responses open for ~30 s (clicks still navigate in ~100 ms), so `review.mjs` waits for `load` plus a short settle instead of `networkidle`.
 
+---
+
+## Round 8 — 5–7 October 2026 (Wave 1: income estimator, WhatsApp, French)
+
+Wave 1 added three features to the live site, built on branch `wave-1` and released only after the checks below:
+
+1. **Rental income estimator** at `/estimate` (five questions, a monthly and yearly *range*, the fee "at most 15%" and the net "at least", the mandatory disclaimer, a free-assessment call to action that pre-fills the contact form, a WhatsApp call to action) and a quick-start teaser on the home page.
+2. **WhatsApp**: a floating button on every public page (hidden on the estimator's questions, carrying the estimate on its result) and WhatsApp + call cards for Ankit and Nihal on the contact page.
+3. **French / English** with next-intl: English at `/`, French under `/fr`, an "EN | FR" switch, a one-time suggestion for French-preferring browsers (never a redirect), localized metadata, hreflang, a bilingual sitemap, and every user-facing string in `messages/en.json` / `messages/fr.json`.
+
+Also: one public email constant (`PUBLIC_EMAIL`, still the Gmail address until hello@bellaveremu.com has a mailbox), Plausible analytics behind `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` (off until set), localized 404 pages with a real 404 status.
+
+### How it was built
+
+- **Phase 0** (one agent): routing restructure (`app/[locale]/(site)`, `app/(portal)`), middleware merge, shared interfaces; then five agents moved every existing English string into messages — English output byte-identical (visual diff against the pre-Wave-1 baseline: ≤ 0.32% per page, header only).
+- **Phase 1** (three feature streams in isolated git worktrees + four French translators following a shared style guide and glossary).
+- **Phase 2**: a French editor and an English editor unified the copy; an integration engineer fixed the 404 rendering (server HTML without JavaScript), cut the client JavaScript back to near pre-Wave-1 levels (home 239 → 204 kB), and cleared every axe finding; messages were consolidated into the two files.
+- **Phase 3**: an independent review by four reviewers (functional QA in both locales, visual/performance/accessibility, code review, native French), fixes by three fixers, and an independent re-verification.
+
+### Phase 3 review: 39 findings (0 blocker, 3 major, 18 minor, 18 nit)
+
+| Major finding | Fix |
+|---|---|
+| Leaving the estimator's result (EN ↔ FR switch, or Back from the contact page) lost every answer | The answers live in the URL (`history.replaceState`, `step=result` on the result); the switch (also in a new tab), Back and a reload reopen the same result |
+| The inactive language link fell to 3.56:1 when the frosted header passed over navy sections | New `ink-700` token: worst case 5.16:1 across 1,482 scroll positions |
+| Home page mobile Lighthouse median 89 (target ≥ 90) | The hero intro (the page's largest paint on phones) rises without a fade from the first paint; the page-change fade skips the home page |
+
+Minor and nit findings fixed include: the fee could show above 15% of the rounded gross (now rounded down to its own step: never above the cap, fee + net = gross); the free-assessment call to action now lands on the pre-filled form (`#enquiry`); WhatsApp links from the result carry `rel="noopener noreferrer"` and the locale in analytics; upper-case locale prefixes (`/FR`, `/Fr`) redirect instead of 404; unknown URLs answer 404 to every HTTP method; the self-fetch of the static 404 page has a 3-second timeout; the privacy policy now covers WhatsApp, lists four cookies plus the suggestion card's local-storage note, and carries the 6 October 2026 date; focus rings are ≥ 3:1 on every surface (gold-700 on light, gold-500 on navy, white on the hero photo, two-tone on the WhatsApp button); focus never ends under the fixed header; the phone menu never leaves focus on hidden content; the owner-login button is back from 1024 px in English; the navy strip under the footer only appears where the floating button needs it (< 1296 px); French wording and typography corrections (plurals such as « d’une chambre », no-break spaces in « 7j/7, 24h/24 », the registration sentence, the JSON-LD country name); the English WhatsApp prefill uses ’; stale docs and dead company prose removed; `scripts/review.mjs` now checks every French page, hreflang/canonical, the cookie and upper-case redirects, 404s for every method and the sitemap.
+
+**Accepted, documented exception:** the white WhatsApp glyph on WhatsApp's brand green is 1.98:1 — it is WhatsApp's own mark, the 2 px teal ring keeps the button boundary at 3.9:1 or more, and the link's name carries the meaning (ASSUMPTIONS.md).
+
+### Re-verification and final fixes
+
+An independent re-verification against the fixed build confirmed 37 of the 39 as fixed and #34 as accepted; the last two partial items (one French no-break space, the phone menu when the page is scrolled) and six small new items it found were then fixed: the fee is rounded down to its own three-significant-figure step (understated by less than one step, never above the cap), the fee row states the cap once ("at most 15%"), Escape dismisses the French-suggestion card from anywhere and focus keeps clear of it (WCAG 2.4.11), the sign-in page has a `<main>` landmark, the estimator's card text avoids lone words, `scripts/visual-snapshot.mjs` waits for lazy images, and the deliverable screenshots were regenerated from the final build (`screenshots/wave1/<en|fr>/`).
+
+Known and accepted: switching language in the middle of the questions keeps the answers but restarts at question 1.
+
+### Verification (final build, 7 October 2026)
+
+- `npx tsc --noEmit` and `npm run lint`: 0 errors. `npm test`: **49/49** estimator tests (hand-computed cases incl. 1 bedroom, 6+ bedrooms, all features, minimum weeks, ±15% range, fee cap and rounding, URL parsing). `npm run i18n:check -- --strict`: **566** keys, 0 parity / placeholder / untranslated / hard-coded issues. `npm run build`: every public page prerendered in `en` and `fr`, portal dynamic as before.
+- `node scripts/review.mjs` on the production build: **0 errors, 0 warnings, 39 checks**, admin flow included (all French pages, hreflang/canonical, cookie and upper-case redirects, 404 for every method, sitemap, isolation, security, currency).
+- **axe-core**: 0 violations on every public page in both locales at 390 and 1280, in every header scroll state, with the phone menu, the French-suggestion card, the estimator steps and result, and the 404.
+- **Lighthouse mobile** medians (6–10 runs, local `next start`): `/` **91**, `/estimate` **91.5**, `/fr` 87.5; accessibility 100.
+- **Estimator figures** matched hand calculations in every checked combination in EUR and MUR (672 assertions in review, 24 in re-verification; 529,920 displayed lines checked for the fee cap).
+- **Contact prefill, WhatsApp links (decoded, accents included), language switch with the estimate, 404 pages without JavaScript**: verified end to end in both locales at 1440 and 390.
+
+### Brief QA checklist
+
+| Item | Status |
+|---|---|
+| `npm run build` clean, 0 TS/lint errors, no console errors on any route in either locale | ✅ |
+| Estimator: unit tests pass; result always a range + disclaimer; Back keeps answers; deep-link prefill; currency switch updates the result live | ✅ (49 tests) |
+| Contact form receives and displays the estimator prefill | ✅ both locales |
+| Every WhatsApp link opens wa.me with the right number and a readable, correctly encoded prefill (accented French included) | ✅ |
+| `/fr` mirrors every public page; no untranslated strings; no hard-coded strings in components; the switch keeps the page | ✅ (`i18n:check --strict`: 566 keys, 0 issues) |
+| Existing pages pixel-equivalent to before except the specified additions | ✅ (differences only: header additions, WhatsApp button and the strip under the footer on small screens, home estimator teaser, contact cards, deeper step numbers, wider testimonial dots, focus colours, the home intro without its fade) |
+| Lighthouse `/` and `/estimate` ≥ 90 performance, ≥ 95 accessibility | ✅ medians 91 and 91.5; accessibility 100 (`/fr` 87.5, not in the brief) |
+| Floating button never traps focus or covers form controls on mobile | ✅ |
+| `prefers-reduced-motion` respected in all new animation | ✅ |
+
+### Waiting on real data or the client
+
+- **Estimator rates** in `data/estimator-config.ts` are `[CONFIRM]` demo defaults — replace with real market figures.
+- **hello@bellaveremu.com**: no mailbox yet (no MX records on bellaveremu.com); the site keeps BellavereLtd@gmail.com until `HELLO_MAILBOX_LIVE` is switched on in `data/site.ts`.
+- **Plausible**: set `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` and create the three goals to switch analytics on (the privacy policy updates itself).
+- **Lawyer review** of the French legal pages along with the English ones.

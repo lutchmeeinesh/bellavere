@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { CountUp } from "@/components/ui/CountUp";
 import { useMoney } from "@/components/currency/CurrencyProvider";
 import { conversionRateLabel } from "@/lib/format";
@@ -27,7 +28,7 @@ export function Money({
   );
 }
 
-/** Count-up figure for money KPIs ("€8,420" / "Rs 437,840"). */
+/** Count-up figure for money KPIs ("€8,420" / "Rs 437,840"; "8 420 €" in French). */
 export function MoneyCountUp({ eur }: { eur: number }) {
   const money = useMoney();
   // key: restart the count when the currency flips.
@@ -35,7 +36,9 @@ export function MoneyCountUp({ eur }: { eur: number }) {
     <CountUp
       key={money.currency}
       value={money.convert(eur)}
-      prefix={money.symbol}
+      prefix={money.affixes.prefix}
+      suffix={money.affixes.suffix}
+      locale={money.locale}
     />
   );
 }
@@ -46,12 +49,12 @@ export function MoneyCountUp({ eur }: { eur: number }) {
  * the brand promise.
  */
 export function ConversionNote({ className }: { className?: string }) {
-  const { currency } = useMoney();
+  const { currency, locale } = useMoney();
+  const t = useTranslations("common.currency");
   if (currency !== "MUR") return null;
   return (
     <p className={cn("text-xs text-ink-500", className)}>
-      Rupee amounts are converted from euros at {conversionRateLabel()} for
-      information.
+      {t("conversionNote", { rate: conversionRateLabel(locale) })}
     </p>
   );
 }

@@ -13,6 +13,12 @@
  *    API's handling of hostile or malformed requests
  *  - scans the browser bundles for secrets (the local build, or the deployed
  *    chunks when a remote URL is given)
+ *  - checks both languages: every public page in English and French answers
+ *    200 with the right <html lang>, no console errors and correct canonical
+ *    and hreflang links; the NEXT_LOCALE=fr redirect (unprefixed -> /fr, /fr
+ *    never redirected), /en/... and upper-case prefixes (/FR/...) -> the
+ *    canonical address; the localized 404 for every HTTP method; the sitemap;
+ *    the estimator in both languages
  *
  * Usage: node scripts/review.mjs [baseUrl]  (default http://localhost:3010)
  * The app must already be running (npm run build && npx next start -p 3010).
@@ -31,6 +37,19 @@ const ACCOUNTS = {
 };
 
 const PUBLIC_ROUTES = ["/", "/services", "/about", "/contact", "/privacy", "/terms", "/login"];
+
+// The public site (app/[locale]/(site)): every page exists in English
+// (unprefixed) and French (/fr/...). The portal (/login) is English only.
+const SITE_PAGES = ["/", "/services", "/about", "/contact", "/privacy", "/terms", "/estimate"];
+const LOCALES = ["en", "fr"];
+/** A page's address in a language: ("fr", "/services") -> "/fr/services", ("fr", "/") -> "/fr". */
+const localized = (locale, route) => (locale === "en" ? route : route === "/" ? `/${locale}` : `/${locale}${route}`);
+const LOCALIZED_PAGES = LOCALES.flatMap((locale) => SITE_PAGES.map((route) => ({ locale, route, url: localized(locale, route) })));
+
+/** A namespace of messages/<lang>.json (top-level keys are the namespaces). */
+const messages = (lang, namespace) =>
+  JSON.parse(fs.readFileSync(path.join("messages", `${lang}.json`), "utf8"))[namespace];
+const squash = (text) => text.replace(/\s+/g, " ").trim();
 
 // Fake filler that was deliberately removed — it must never come back.
 const REMOVED_FILLER = [
@@ -100,7 +119,7 @@ async function inspectPage(page, route, label) {
   page.off("console", onConsole);
   page.off("pageerror", onPageError);
   page.off("response", onResponse);
-  return { finalUrl: page.url(), audit };
+  return { finalUrl: page.url(), audit, status: res.status(), consoleErrors: errors.length + pageErrors.length };
 }
 
 async function shoot(page, route, name) {
@@ -161,8 +180,9 @@ if (!IS_LOCAL) {
   }
   console.log("OK: security headers checked");
 
-  // Public pages are prerendered: never "no-store", and cached at the edge.
-  for (const route of PUBLIC_ROUTES) {
+  // Public pages are prerendered in both languages: never "no-store", and
+  // cached at the edge.
+  for (const route of new Set([...PUBLIC_ROUTES, ...LOCALIZED_PAGES.map((p) => p.url)])) {
     await fetch(BASE + route); // warm the cache
     const res = await fetch(BASE + route);
     const cacheControl = res.headers.get("cache-control") ?? "";
@@ -172,7 +192,7 @@ if (!IS_LOCAL) {
       if (!/HIT|STALE|PRERENDER/.test(edge)) note("WARN", `caching ${route}`, `not served from the edge cache (x-vercel-cache: ${edge || "none"})`);
     }
   }
-  console.log("OK: public pages are static (edge-cacheable)");
+  console.log("OK: public pages are static (edge-cacheable), in English and French");
 
   const api = (route, init = {}) =>
     fetch(BASE + route, { redirect: "manual", ...init }).then((r) => ({ status: r.status, allow: r.headers.get("allow"), type: r.headers.get("content-type") ?? "" }));
@@ -198,6 +218,146 @@ if (!IS_LOCAL) {
   const unknown = await expectStatus("unknown API path", api("/api/definitely-not-here"), 404);
   if (!unknown.type.includes("application/json")) note("ERROR", "api", `unknown API path answered ${unknown.type}, not JSON`);
   console.log("OK: API robustness checked");
+}
+
+// ---------- HTTP: both languages ----------
+// The server HTML of every public page in English and French: status,
+// <html lang>, canonical and hreflang links. Then the language redirects
+// (the NEXT_LOCALE cookie, /en/..., upper-case prefixes), the localized 404
+// for every method, and the sitemap.
+{
+  /** Every <link> tag in an HTML document, as lower-cased attribute maps. */
+  const linkTags = (html) =>
+    [...html.matchAll(/<link\b[^>]*>/gi)].map(([tag]) =>
+      Object.fromEntries([...tag.matchAll(/([\w:-]+)="([^"]*)"/g)].map(([, name, value]) => [name.toLowerCase(), value.replace(/&amp;/g, "&")])),
+    );
+  /** The path of an absolute URL ("https://x.com" -> "/"), or null if it is not absolute. */
+  const pathOf = (href) => {
+    try {
+      const url = new URL(href);
+      return url.pathname;
+    } catch {
+      return null;
+    }
+  };
+
+  let pagesOk = true;
+  for (const { locale, route, url } of LOCALIZED_PAGES) {
+    const label = `i18n ${url}`;
+    const res = await fetch(BASE + url, { redirect: "manual" });
+    const html = await res.text();
+    const fail = (message) => { pagesOk = false; note("ERROR", label, message); };
+    if (res.status !== 200) { fail(`expected 200, got ${res.status}`); continue; }
+    const lang = html.match(/<html\b[^>]*\slang="([^"]*)"/i)?.[1];
+    if (lang !== locale) fail(`<html lang="${lang}">, expected "${locale}"`);
+
+    const links = linkTags(html);
+    const canonical = links.filter((l) => l.rel === "canonical");
+    if (canonical.length !== 1) fail(`expected 1 canonical link, found ${canonical.length}`);
+    else if (pathOf(canonical[0].href) !== url) fail(`canonical is ${canonical[0].href}, expected the absolute URL of ${url}`);
+
+    const alternates = links.filter((l) => l.rel === "alternate" && l.hreflang);
+    const expected = { en: localized("en", route), fr: localized("fr", route), "x-default": localized("en", route) };
+    const seen = Object.fromEntries(alternates.map((l) => [l.hreflang, l.href]));
+    if (alternates.length !== Object.keys(expected).length) fail(`expected ${Object.keys(expected).length} hreflang links, found ${alternates.length} (${alternates.map((l) => l.hreflang).join(", ")})`);
+    for (const [hreflang, target] of Object.entries(expected)) {
+      if (!seen[hreflang]) fail(`no hreflang="${hreflang}" link`);
+      else if (pathOf(seen[hreflang]) !== target) fail(`hreflang="${hreflang}" points to ${seen[hreflang]}, expected ${target}`);
+    }
+    // Canonical and alternates name the same site.
+    const origins = new Set([...canonical, ...alternates].map((l) => { try { return new URL(l.href).origin; } catch { return l.href; } }));
+    if (origins.size > 1) fail(`canonical and hreflang links use different origins: ${[...origins].join(", ")}`);
+  }
+  if (pagesOk) console.log(`OK: ${LOCALIZED_PAGES.length} public pages (English and French) answer 200 with the right lang, canonical and hreflang links`);
+
+  // Language redirects. Each case is followed hop by hop (at most 5) with
+  // the given cookie; `hops` is the exact number of redirects expected.
+  const hop = async (route, cookie) => {
+    const res = await fetch(BASE + route, { redirect: "manual", headers: cookie ? { cookie } : {} });
+    const location = res.headers.get("location");
+    if (!location || res.status < 300 || res.status > 399) return { status: res.status, to: null };
+    const next = new URL(location, BASE);
+    return { status: res.status, to: next.pathname + next.search };
+  };
+  const follow = async (route, cookie) => {
+    let current = route;
+    for (let hops = 0; hops <= 5; hops++) {
+      const { status, to } = await hop(current, cookie);
+      if (!to) return { status, final: current, hops };
+      current = to;
+    }
+    return { status: "redirect loop", final: current, hops: 6 };
+  };
+  const FR = "NEXT_LOCALE=fr";
+  const EN = "NEXT_LOCALE=en";
+  const REDIRECTS = [
+    // [route, cookie, final address, final status, redirects]
+    ["/fr/services", null, "/fr/services", 200, 0],
+    ["/en", null, "/", 200, 1],
+    ["/en/services?ref=x", null, "/services?ref=x", 200, 1],
+    ["/FR", null, "/fr", 200, 1],
+    ["/Fr/services", null, "/fr/services", 200, 1],
+    ["/EN/services", null, "/services", 200, 1],
+    ["/fr/login", null, "/login", 200, 1],
+    ["/FR/login", null, "/login", 200, 1],
+    // The visitor chose French: unprefixed public URLs go to /fr (query kept).
+    ["/", FR, "/fr", 200, 1],
+    ["/services?ref=x", FR, "/fr/services?ref=x", 200, 1],
+    ["/estimate", FR, "/fr/estimate", 200, 1],
+    // ...but /fr URLs are never redirected, and the portal ignores the cookie.
+    ["/fr", FR, "/fr", 200, 0],
+    ["/fr/contact", FR, "/fr/contact", 200, 0],
+    ["/login", FR, "/login", 200, 0],
+    // Upper-case prefixes never become /fr/FR/... (a 404).
+    ["/FR/services", FR, "/fr/services", 200, 1],
+    ["/Fr", FR, "/fr", 200, 1],
+    ["/EN/services", FR, "/fr/services", 200, 2],
+    ["/en/services", FR, "/fr/services", 200, 2],
+    ["/no-such-page", FR, "/fr/no-such-page", 404, 1],
+    ["/services", EN, "/services", 200, 0],
+  ];
+  let redirectsOk = true;
+  for (const [route, cookie, final, status, hops] of REDIRECTS) {
+    const got = await follow(route, cookie);
+    if (got.final !== final || got.status !== status || got.hops !== hops) {
+      redirectsOk = false;
+      note("ERROR", "i18n redirects", `${route}${cookie ? ` with ${cookie}` : ""}: expected ${final} (${status}) after ${hops} redirect(s), got ${got.final} (${got.status}) after ${got.hops}`);
+    }
+  }
+  if (redirectsOk) console.log(`OK: language redirects (${REDIRECTS.length} cases: NEXT_LOCALE cookie, /en/..., upper-case prefixes, portal)`);
+
+  // Unknown public URLs: 404 whatever the method, with the localized page
+  // for the methods that carry a body.
+  let methodsOk = true;
+  for (const [route, lang] of [["/no-such-page", "en"], ["/services/no-such-section", "en"], ["/fr/no-such-page", "fr"]]) {
+    const heading = squash(messages(lang, "common").notFound.heading);
+    for (const method of ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]) {
+      const res = await fetch(BASE + route, { method, redirect: "manual" });
+      const body = await res.text();
+      const h1 = squash(body.match(/<h1\b[^>]*>([^<]*)</)?.[1] ?? "");
+      const wantsPage = !["HEAD", "OPTIONS"].includes(method);
+      if (res.status !== 404 || (wantsPage && h1 !== heading)) {
+        methodsOk = false;
+        note("ERROR", `404 ${method} ${route}`, `expected 404${wantsPage ? ` with "${heading}"` : ""}, got ${res.status}${wantsPage ? `, h1 "${h1}"` : ""}`);
+      }
+    }
+  }
+  if (methodsOk) console.log("OK: unknown URLs answer 404 to every method (localized page for GET, POST, PUT, PATCH, DELETE)");
+
+  // The sitemap lists every public page in both languages, each with a date.
+  const sitemap = await fetch(`${BASE}/sitemap.xml`).then((r) => r.text()).catch(() => "");
+  const entries = [...sitemap.matchAll(/<url>([\s\S]*?)<\/url>/g)].map(([, entry]) => ({
+    path: pathOf(entry.match(/<loc>([^<]+)<\/loc>/)?.[1] ?? ""),
+    lastmod: entry.match(/<lastmod>([^<]+)<\/lastmod>/)?.[1] ?? null,
+  }));
+  let sitemapOk = entries.length === LOCALIZED_PAGES.length;
+  if (!sitemapOk) note("ERROR", "sitemap", `expected ${LOCALIZED_PAGES.length} entries, found ${entries.length}`);
+  for (const { url } of LOCALIZED_PAGES) {
+    const entry = entries.find((e) => e.path === url);
+    if (!entry) { sitemapOk = false; note("ERROR", "sitemap", `${url} is missing`); }
+    else if (!/^\d{4}-\d{2}-\d{2}/.test(entry.lastmod ?? "")) { sitemapOk = false; note("ERROR", "sitemap", `${url} has no lastmod`); }
+  }
+  if (sitemapOk) console.log(`OK: the sitemap lists the ${LOCALIZED_PAGES.length} public pages (both languages) with their dates`);
 }
 
 const browser = await chromium.launch();
@@ -281,13 +441,54 @@ const browser = await chromium.launch();
   await ctx.close();
 }
 
+// ---------- French pages and the estimator (browser) ----------
+// Every French page at 1440 and 390 (the English ones are inspected above):
+// 200, <html lang="fr">, no console errors, images, no horizontal scroll and
+// no removed filler. The estimator, in both languages, shows its first
+// question. No screenshots here (screenshots/ holds the English set).
+{
+  const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  const page = await ctx.newPage();
+  const pages = [...LOCALIZED_PAGES.filter((p) => p.locale === "fr"), ...LOCALIZED_PAGES.filter((p) => p.locale === "en" && p.route === "/estimate")];
+  let frOk = true;
+  for (const { locale, route, url } of pages) {
+    for (const width of [1440, 390]) {
+      await page.setViewportSize({ width, height: width > 1000 ? 900 : 844 });
+      const label = `${locale} ${url} @${width}`;
+      const { status, consoleErrors } = await inspectPage(page, url, label);
+      if (status === undefined) { frOk = false; continue; }
+      if (status !== 200) { frOk = false; note("ERROR", label, `expected 200, got ${status}`); }
+      if (consoleErrors) frOk = false;
+      const seen = await page.evaluate(() => ({
+        lang: document.documentElement.lang,
+        html: document.documentElement.outerHTML,
+        h1: document.querySelector("h1")?.textContent ?? "",
+        choices: document.querySelectorAll('main [role="radiogroup"] [role="radio"]').length,
+      }));
+      if (seen.lang !== locale) { frOk = false; note("ERROR", label, `<html lang="${seen.lang}">, expected "${locale}"`); }
+      if (width === 1440) {
+        for (const pattern of REMOVED_FILLER) {
+          if (pattern.test(seen.html)) { frOk = false; note("ERROR", `filler ${url}`, `removed fake content is back: ${pattern}`); }
+        }
+      }
+      if (route === "/estimate") {
+        const title = squash(messages(locale, "estimator").header.title);
+        if (squash(seen.h1) !== title) { frOk = false; note("ERROR", label, `estimator heading is "${squash(seen.h1)}", expected "${title}"`); }
+        if (seen.choices < 2) { frOk = false; note("ERROR", label, `estimator shows ${seen.choices} choices for its first question`); }
+      }
+    }
+  }
+  if (frOk) console.log(`OK: French pages and the estimator (both languages) load at 1440 and 390 with lang set and no console errors`);
+  await ctx.close();
+}
+
 // ---------- without JavaScript ----------
 // The server HTML must show the content by itself (search engines, link
 // previews, slow phones): nothing may wait for hydration to become visible.
 {
   const ctx = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } });
   const page = await ctx.newPage();
-  for (const route of PUBLIC_ROUTES) {
+  for (const route of new Set([...PUBLIC_ROUTES, ...LOCALIZED_PAGES.map((p) => p.url)])) {
     await page.goto(BASE + route, { waitUntil: "load" }).catch(() => {});
     const result = await page.evaluate(() => {
       const scope = document.querySelector("main") ?? document.body;
@@ -297,7 +498,31 @@ const browser = await chromium.launch();
     if (result.text < 100) note("ERROR", `no-js ${route}`, `page shows almost no text without JavaScript (${result.text} chars)`);
     if (result.hidden) note("ERROR", `no-js ${route}`, `${result.hidden} element(s) rendered with opacity 0 in the server HTML`);
   }
-  console.log("OK: public pages are readable without JavaScript");
+  console.log("OK: public pages are readable without JavaScript, in English and French");
+
+  // Unknown public URLs: a real 404 status with the localized "Lost at sea?"
+  // page in the server HTML (app/[locale]/[...rest]/route.ts).
+  const notFoundHeading = (lang) => squash(messages(lang, "common").notFound.heading);
+  const NOT_FOUND = [
+    ["/no-such-page", "en"],
+    ["/services/no-such-section", "en"],
+    ["/fr/no-such-page", "fr"],
+    ["/fr/services/no-such-section", "fr"],
+  ];
+  let notFoundOk = true;
+  for (const [route, lang] of NOT_FOUND) {
+    const heading = notFoundHeading(lang);
+    const res = await page.goto(BASE + route, { waitUntil: "load" }).catch(() => null);
+    const seen = await page.evaluate(() => ({
+      lang: document.documentElement.lang,
+      h1: document.querySelector("h1")?.textContent?.replace(/\s+/g, " ").trim() ?? "",
+    }));
+    if (res?.status() !== 404 || seen.lang !== lang || seen.h1 !== heading) {
+      notFoundOk = false;
+      note("ERROR", `no-js ${route}`, `expected a ${lang} 404 page reading "${heading}" with status 404, got status ${res?.status()}, lang "${seen.lang}", h1 "${seen.h1}"`);
+    }
+  }
+  if (notFoundOk) console.log("OK: unknown URLs answer 404 with the localized page, without JavaScript");
   await ctx.close();
 }
 

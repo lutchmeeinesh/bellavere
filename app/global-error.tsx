@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { company } from "@/data/company";
+import { PUBLIC_EMAIL } from "@/data/site";
 
 /*
  * Last-resort error page, used only when the root layout itself fails. It
@@ -114,8 +115,8 @@ export default function GlobalError({
               </li>
             ))}
             <li>
-              <a href={`mailto:${company.email}`} style={styles.link}>
-                {company.email}
+              <a href={`mailto:${PUBLIC_EMAIL}`} style={styles.link}>
+                {PUBLIC_EMAIL}
               </a>
             </li>
           </ul>

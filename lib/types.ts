@@ -143,8 +143,3 @@ export interface ActivityItem {
   propertyId?: string;
 }
 
-export interface Testimonial {
-  quote: string;
-  name: string;
-  role: string;
-}

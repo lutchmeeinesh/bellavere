@@ -1,11 +1,16 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Check } from "lucide-react";
+import { useFormatter, useLocale, useTranslations } from "next-intl";
+import type { ContactErrorCode } from "@/app/api/contact/route";
 import { company } from "@/data/company";
+import { PUBLIC_EMAIL } from "@/data/site";
+import { Link } from "@/i18n/navigation";
+import { track } from "@/lib/analytics";
 import { CONTACT_LIMITS, EMAIL_PATTERN } from "@/lib/contactLimits";
+import { useEstimatePrefill } from "@/components/estimator/useEstimatePrefill";
 import { Button } from "@/components/ui/Button";
 import {
   Checkbox,
@@ -15,10 +20,8 @@ import {
   Textarea,
 } from "@/components/ui/Input";
 
-/** Shown if the message cannot be sent, so no enquiry is silently lost. */
-const FALLBACK_ERROR = `We couldn’t send your message just now. Please email ${company.email} or call ${company.contacts
-  .map((person) => `${person.name.split(" ")[0]} on ${person.phone}`)
-  .join(" or ")} — we answer the same day.`;
+/** Wording: messages `contact.form.*`. */
+type FormTranslator = ReturnType<typeof useTranslations<"contact.form">>;
 
 type FormValues = {
   name: string;
@@ -54,42 +57,123 @@ const EMPTY_VALUES: FormValues = {
   hp_extra: "",
 };
 
-function validate(values: FormValues): FieldErrors {
+/** Dialling-code hint in the phone field (a fact, the same in every language). */
+const PHONE_PLACEHOLDER = "+230 …";
+
+function validate(values: FormValues, t: FormTranslator): FieldErrors {
   const errors: FieldErrors = {};
   if (!values.name.trim()) {
-    errors.name = "Please tell us your name.";
+    errors.name = t("validation.nameMissing");
   } else if (values.name.trim().length > CONTACT_LIMITS.name) {
-    errors.name = `Please keep your name under ${CONTACT_LIMITS.name} characters.`;
+    errors.name = t("validation.nameTooLong", { max: CONTACT_LIMITS.name });
   }
   if (!values.email.trim()) {
-    errors.email = "Please enter your email address.";
+    errors.email = t("validation.emailMissing");
   } else if (
     values.email.trim().length > CONTACT_LIMITS.email ||
     !EMAIL_PATTERN.test(values.email.trim())
   ) {
-    errors.email = "Please enter a valid email address.";
+    errors.email = t("validation.emailInvalid");
   }
   if (values.phone.trim().length > CONTACT_LIMITS.phone) {
-    errors.phone = `Please keep the phone number under ${CONTACT_LIMITS.phone} characters.`;
+    errors.phone = t("validation.phoneTooLong", { max: CONTACT_LIMITS.phone });
   }
   const messageLength = values.message.trim().length;
   if (!messageLength) {
-    errors.message = "Please tell us a little about your property.";
+    errors.message = t("validation.messageMissing");
   } else if (messageLength > CONTACT_LIMITS.message) {
-    errors.message = `Please keep your message under ${CONTACT_LIMITS.message.toLocaleString("en-GB")} characters (it is ${messageLength.toLocaleString("en-GB")}).`;
+    errors.message = t("validation.messageTooLong", {
+      max: CONTACT_LIMITS.message,
+      length: messageLength,
+    });
   }
   if (!values.consent) {
-    errors.consent = "Please confirm we may contact you about your enquiry.";
+    errors.consent = t("validation.consentMissing");
   }
   return errors;
 }
 
 /** Contact enquiry form: client-side validation, POST to /api/contact, animated success state. */
 export function ContactForm() {
+  const t = useTranslations("contact.form");
+  const format = useFormatter();
+  const locale = useLocale();
   const [values, setValues] = useState<FormValues>(EMPTY_VALUES);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [status, setStatus] = useState<"idle" | "sending" | "success">("idle");
   const [submitError, setSubmitError] = useState<string | null>(null);
+
+  // Arriving from the income estimator (/contact?source=estimate&…): pre-fill
+  // the property and a summary of the estimate. The summary follows a
+  // currency switch until the visitor edits it.
+  const estimatePrefill = useEstimatePrefill();
+  const prefillApplied = useRef(false);
+  const prefilledMessage = useRef<string | null>(null);
+  useEffect(() => {
+    if (!estimatePrefill) return;
+    const first = !prefillApplied.current;
+    const previous = prefilledMessage.current;
+    const { message } = estimatePrefill;
+    prefillApplied.current = true;
+    prefilledMessage.current = message;
+    setValues((prev) => {
+      const untouched =
+        (first && prev.message === "") ||
+        (previous !== null && prev.message === previous);
+      return {
+        ...prev,
+        ...(first
+          ? {
+              propertyType: prev.propertyType || estimatePrefill.propertyType,
+              propertyCount:
+                prev.propertyCount || estimatePrefill.propertyCount,
+            }
+          : {}),
+        message: message !== null && untouched ? message : prev.message,
+      };
+    });
+  }, [estimatePrefill]);
+
+  /**
+   * The visitor's message for an API error code (app/api/contact/route.ts),
+   * in the page's language. Delivery problems always list the direct
+   * contacts, so no enquiry is silently lost. Any other answer (an unknown
+   * code, method_not_allowed, a platform error page) reads as a failed send,
+   * never as the server's English text.
+   */
+  function submitErrorText(code?: string): string {
+    const directContact = t("errors.directContact", {
+      email: PUBLIC_EMAIL,
+      people: format.list(
+        company.contacts.map((person) =>
+          t("errors.person", {
+            name: person.name.split(" ")[0],
+            phone: person.phone,
+          }),
+        ),
+        { type: "disjunction" },
+      ),
+    });
+    switch (code as ContactErrorCode | undefined) {
+      case "too_long":
+        return t("errors.tooLong", {
+          max: CONTACT_LIMITS.message,
+          directContact,
+        });
+      case "missing_fields":
+        return t("errors.missingFields");
+      case "rate_limited":
+        return t("errors.rateLimited");
+      case "invalid_request":
+        return t("errors.invalidRequest");
+      case "unsupported":
+        return t("errors.unsupported");
+      case "forbidden":
+        return t("errors.forbidden");
+      default:
+        return t("errors.deliveryFailed", { directContact });
+    }
+  }
 
   function update<K extends keyof FormValues>(key: K, value: FormValues[K]) {
     setValues((prev) => ({ ...prev, [key]: value }));
@@ -99,7 +183,7 @@ export function ContactForm() {
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const nextErrors = validate(values);
+    const nextErrors = validate(values, t);
     setErrors(nextErrors);
     if (Object.values(nextErrors).some(Boolean)) {
       // Take the visitor straight to the first field that needs attention.
@@ -114,28 +198,29 @@ export function ContactForm() {
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
+        // The page's language is shown to the team in the enquiry email.
+        body: JSON.stringify({ ...values, locale }),
       });
       if (response.status === 429) {
         setStatus("idle");
-        setSubmitError(
-          "You’ve sent several messages in a short time. Please wait a few minutes and try again, or email us directly.",
-        );
+        setSubmitError(submitErrorText("rate_limited"));
         return;
       }
       if (!response.ok) {
-        // The server explains what happened and gives direct contacts.
+        // The server says what happened with a code (its `error` text is
+        // English); the visitor reads it in the page's language.
         const data = (await response.json().catch(() => null)) as {
-          error?: string;
+          code?: string;
         } | null;
         setStatus("idle");
-        setSubmitError(data?.error ?? FALLBACK_ERROR);
+        setSubmitError(submitErrorText(data?.code));
         return;
       }
       setStatus("success");
+      track("Contact Submitted");
     } catch {
       setStatus("idle");
-      setSubmitError(FALLBACK_ERROR);
+      setSubmitError(submitErrorText("delivery_failed"));
     }
   }
 
@@ -170,13 +255,10 @@ export function ContactForm() {
           >
             <Check className="size-8" aria-hidden strokeWidth={2.5} />
           </motion.span>
-          <h3 className="mt-6">Message received</h3>
-          <p className="mt-3 max-w-sm text-ink-500">
-            Thank you — a real person from our team will read your message and
-            reply the same day.
-          </p>
+          <h3 className="mt-6">{t("success.title")}</h3>
+          <p className="mt-3 max-w-sm text-ink-500">{t("success.body")}</p>
           <Button variant="outline" size="sm" className="mt-8" onClick={reset}>
-            Send another message
+            {t("success.again")}
           </Button>
         </motion.div>
       ) : (
@@ -193,7 +275,7 @@ export function ContactForm() {
         >
           <div className="grid gap-5 sm:grid-cols-2">
             <Field
-              label="Name"
+              label={t("fields.name")}
               htmlFor="contact-name"
               required
               error={errors.name}
@@ -209,7 +291,7 @@ export function ContactForm() {
               />
             </Field>
             <Field
-              label="Email"
+              label={t("fields.email")}
               htmlFor="contact-email"
               required
               error={errors.email}
@@ -227,36 +309,46 @@ export function ContactForm() {
             </Field>
           </div>
 
-          <Field label="Phone" htmlFor="contact-phone" error={errors.phone}>
+          <Field
+            label={t("fields.phone")}
+            htmlFor="contact-phone"
+            error={errors.phone}
+          >
             <Input
               id="contact-phone"
               name="phone"
               type="tel"
               autoComplete="tel"
               maxLength={CONTACT_LIMITS.phone}
-              placeholder="+230 …"
+              placeholder={PHONE_PLACEHOLDER}
               value={values.phone}
               onChange={(e) => update("phone", e.target.value)}
               aria-invalid={errors.phone ? true : undefined}
             />
           </Field>
 
+          {/* Option values stay English: they are what the enquiry email shows. */}
           <div className="grid gap-5 sm:grid-cols-2">
-            <Field label="Property type" htmlFor="contact-property-type">
+            <Field
+              label={t("fields.propertyType")}
+              htmlFor="contact-property-type"
+            >
               <Select
                 id="contact-property-type"
                 name="propertyType"
                 value={values.propertyType}
                 onChange={(e) => update("propertyType", e.target.value)}
               >
-                <option value="">Please select</option>
-                <option value="villa">Villa</option>
-                <option value="apartment">Apartment</option>
-                <option value="several">Several properties</option>
+                <option value="">{t("pleaseSelect")}</option>
+                <option value="villa">{t("propertyTypes.villa")}</option>
+                <option value="apartment">
+                  {t("propertyTypes.apartment")}
+                </option>
+                <option value="several">{t("propertyTypes.several")}</option>
               </Select>
             </Field>
             <Field
-              label="Number of properties"
+              label={t("fields.propertyCount")}
               htmlFor="contact-property-count"
             >
               <Select
@@ -265,16 +357,16 @@ export function ContactForm() {
                 value={values.propertyCount}
                 onChange={(e) => update("propertyCount", e.target.value)}
               >
-                <option value="">Please select</option>
-                <option value="1">1</option>
-                <option value="2-5">2–5</option>
-                <option value="6+">6+</option>
+                <option value="">{t("pleaseSelect")}</option>
+                <option value="1">{t("propertyCounts.one")}</option>
+                <option value="2-5">{t("propertyCounts.twoToFive")}</option>
+                <option value="6+">{t("propertyCounts.sixPlus")}</option>
               </Select>
             </Field>
           </div>
 
           <Field
-            label="Message"
+            label={t("fields.message")}
             htmlFor="contact-message"
             required
             error={errors.message}
@@ -282,7 +374,7 @@ export function ContactForm() {
             <Textarea
               id="contact-message"
               name="message"
-              placeholder="Where is your property, and what would you like help with?"
+              placeholder={t("messagePlaceholder")}
               value={values.message}
               onChange={(e) => update("message", e.target.value)}
               aria-invalid={errors.message ? true : undefined}
@@ -294,7 +386,7 @@ export function ContactForm() {
             aria-hidden="true"
             className="absolute -left-[10000px] top-auto size-px overflow-hidden"
           >
-            <label htmlFor="contact-hp-extra">Leave this field empty</label>
+            <label htmlFor="contact-hp-extra">{t("honeypot")}</label>
             <input
               id="contact-hp-extra"
               name="hp_extra"
@@ -319,14 +411,18 @@ export function ContactForm() {
                 aria-invalid={errors.consent ? true : undefined}
                 className="mt-0.5"
               />
+              {/* The API logs this sentence, in the page's language, as the consent record. */}
               <span>
-                I agree to be contacted about my enquiry, as described in the{" "}
-                <Link
-                  href="/privacy"
-                  className="text-navy-900 underline decoration-gold-500 underline-offset-2 hover:text-gold-700"
-                >
-                  privacy policy
-                </Link>
+                {t.rich("consent", {
+                  link: (chunks) => (
+                    <Link
+                      href="/privacy"
+                      className="text-navy-900 underline decoration-gold-500 underline-offset-2 hover:text-gold-700"
+                    >
+                      {chunks}
+                    </Link>
+                  ),
+                })}
                 <span className="text-gold-700"> *</span>
               </span>
             </label>
@@ -343,7 +439,7 @@ export function ContactForm() {
               className="w-full sm:w-auto"
               disabled={status === "sending"}
             >
-              {status === "sending" ? "Sending…" : "Send message"}
+              {status === "sending" ? t("sending") : t("submit")}
             </Button>
           </div>
 

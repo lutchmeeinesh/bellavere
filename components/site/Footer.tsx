@@ -1,40 +1,43 @@
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { SocialLink, publishedSocialLinks } from "@/components/site/SocialIcons";
 import { Logo } from "@/components/site/Logo";
 import { Container } from "@/components/ui/Container";
 import { company } from "@/data/company";
 
+// Link text: messages `common.footer.links.*` and `common.serviceNames.*`.
 const columns = [
   {
-    title: "Company",
+    id: "company",
     links: [
-      { href: "/about", label: "About us" },
-      { href: "/contact", label: "Contact" },
+      { href: "/about", label: "footer.links.about" },
+      { href: "/contact", label: "footer.links.contact" },
     ],
   },
   {
-    title: "Services",
+    id: "services",
     links: [
-      { href: "/services#rental", label: "Rental management" },
-      { href: "/services#maintenance", label: "Maintenance" },
-      { href: "/services#client-care", label: "Client care" },
-      { href: "/services#concierge", label: "Concierge & services" },
-      { href: "/services#syndic", label: "Syndic & residences" },
+      { href: "/services#rental", label: "serviceNames.rental" },
+      { href: "/services#maintenance", label: "serviceNames.maintenance" },
+      { href: "/services#client-care", label: "serviceNames.clientCare" },
+      { href: "/services#concierge", label: "serviceNames.concierge" },
+      { href: "/services#syndic", label: "serviceNames.syndic" },
     ],
   },
   {
-    title: "Owners",
+    id: "owners",
     links: [
-      { href: "/login", label: "Owner login" },
-      { href: "/contact", label: "List your property" },
-      { href: "/contact#faq", label: "Owner FAQ" },
+      { href: "/login", label: "footer.links.ownerLogin" },
+      { href: "/contact", label: "footer.links.listProperty" },
+      { href: "/contact#faq", label: "footer.links.ownerFaq" },
     ],
   },
-];
+] as const;
 
 export function Footer() {
+  const t = useTranslations("common");
   // Only the social profiles set in data/company.ts are shown.
-  const socialLinks = publishedSocialLinks(company.name, company.social);
+  const socialLinks = publishedSocialLinks(company.social);
   return (
     <footer className="bg-navy-900 text-white">
       <Container className="py-16 lg:py-20">
@@ -42,15 +45,13 @@ export function Footer() {
           <div className="max-w-sm">
             <Logo dark />
             <p className="mt-5 text-sm leading-relaxed text-white/60">
-              {company.tagline} Property management and syndic services all
-              around Mauritius — north, south, east, west and the central
-              plateau.
+              {t("footer.blurb", { tagline: t("company.tagline") })}
             </p>
             {company.contacts.length > 0 ? (
               <div className="mt-5 text-sm text-white/70">
                 {company.hours ? (
                   <p className="text-white/60">
-                    Call us — {company.hours.toLowerCase()}
+                    {t("footer.callUs", { hours: t("company.hoursInline") })}
                   </p>
                 ) : null}
                 <ul className="mt-1.5 space-y-1">
@@ -70,11 +71,11 @@ export function Footer() {
             ) : null}
             {socialLinks.length > 0 ? (
               <div className="mt-6 flex gap-3">
-                {socialLinks.map(({ label, href, Icon }) => (
+                {socialLinks.map(({ network, href, Icon }) => (
                   <SocialLink
-                    key={label}
+                    key={network}
                     href={href}
-                    label={label}
+                    label={t(`social.${network}`, { company: company.name })}
                     className="rounded-full border border-white/15 p-2.5 text-white/70 transition-colors duration-200 hover:border-gold-500 hover:text-gold-500"
                   >
                     <Icon className="size-4" />
@@ -85,9 +86,9 @@ export function Footer() {
           </div>
 
           {columns.map((column) => (
-            <nav key={column.title} aria-label={column.title}>
+            <nav key={column.id} aria-label={t(`footer.columns.${column.id}`)}>
               <h3 className="font-sans text-xs font-semibold tracking-(--tracking-label) text-gold-500 uppercase">
-                {column.title}
+                {t(`footer.columns.${column.id}`)}
               </h3>
               <ul className="mt-5 space-y-3">
                 {column.links.map((link) => (
@@ -96,7 +97,7 @@ export function Footer() {
                       href={link.href}
                       className="text-sm text-white/70 transition-colors duration-200 hover:text-white"
                     >
-                      {link.label}
+                      {t(link.label)}
                     </Link>
                   </li>
                 ))}
@@ -108,11 +109,16 @@ export function Footer() {
         <div className="mt-14 flex flex-col gap-4 border-t border-white/10 pt-8 text-xs leading-relaxed text-white/60 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <p>
-              © {new Date().getFullYear()} {company.legalName}. All rights
-              reserved.
+              {t("footer.copyright", {
+                year: String(new Date().getFullYear()),
+                legalName: company.legalName,
+              })}
             </p>
             <p className="mt-1">
-              Company No. {company.companyNumber} · {company.address.country}
+              {t("footer.registration", {
+                number: company.companyNumber,
+                country: t("company.country"),
+              })}
             </p>
           </div>
           <div className="lg:text-right">
@@ -121,18 +127,16 @@ export function Footer() {
                 href="/privacy"
                 className="transition-colors duration-200 hover:text-white"
               >
-                Privacy policy
+                {t("footer.privacy")}
               </Link>
               <Link
                 href="/terms"
                 className="transition-colors duration-200 hover:text-white"
               >
-                Terms of use
+                {t("footer.terms")}
               </Link>
             </p>
-            <p className="mt-1">
-              The owner-portal demo uses sample accounts and figures.
-            </p>
+            <p className="mt-1">{t("footer.demoNote")}</p>
           </div>
         </div>
       </Container>

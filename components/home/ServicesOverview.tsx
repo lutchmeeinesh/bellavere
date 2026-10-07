@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {
   ArrowRight,
   Building2,
@@ -8,43 +7,25 @@ import {
   Wrench,
   type LucideIcon,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Reveal, RevealItem, RevealStagger } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { Link } from "@/i18n/navigation";
 
 interface Service {
+  /** Title: messages `common.serviceNames.<id>`; copy: `home.services.items.<id>`. */
+  id: "rental" | "maintenance" | "clientCare" | "concierge";
   icon: LucideIcon;
-  title: string;
-  copy: string;
   href: string;
 }
 
 const SERVICES: Service[] = [
-  {
-    icon: KeyRound,
-    title: "Rental management",
-    copy: "From listing, marketing and pricing to enquiries, bookings and guest check-ins, we run your rental end to end.",
-    href: "/services#rental",
-  },
-  {
-    icon: Wrench,
-    title: "Maintenance",
-    copy: "Preventive care, repairs and regular inspections keep your property in good order year-round. Every job is logged and its status is visible on your dashboard.",
-    href: "/services#maintenance",
-  },
-  {
-    icon: HeartHandshake,
-    title: "Client care",
-    copy: "One contact knows your property, your preferences and your guests by name — and a real person always answers. Clear statements arrive monthly.",
-    href: "/services#client-care",
-  },
-  {
-    icon: ConciergeBell,
-    title: "Concierge & services",
-    copy: "Airport transfers, welcome packs, housekeeping and guest services — the extras that make a stay memorable and lift your rental yield.",
-    href: "/services#concierge",
-  },
+  { id: "rental", icon: KeyRound, href: "/services#rental" },
+  { id: "maintenance", icon: Wrench, href: "/services#maintenance" },
+  { id: "clientCare", icon: HeartHandshake, href: "/services#client-care" },
+  { id: "concierge", icon: ConciergeBell, href: "/services#concierge" },
 ];
 
 /**
@@ -52,28 +33,32 @@ const SERVICES: Service[] = [
  * plus a full-width syndic card for residences and developers.
  */
 export function ServicesOverview() {
+  const t = useTranslations("home.services");
+  const tCommon = useTranslations("common");
   return (
     <section className="bg-white py-24 lg:py-32">
       <Container>
         <SectionHeading
-          eyebrow="What we do"
-          title="Everything your property needs, under one roof"
-          sub="One team, no hidden fees, and a real person at the end of the line — so owning property in Mauritius stays a pleasure."
+          eyebrow={t("eyebrow")}
+          title={t("title")}
+          sub={t("sub")}
         />
         <RevealStagger className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {SERVICES.map((service) => (
-            <RevealItem key={service.title}>
+            <RevealItem key={service.id}>
               <Link href={service.href} className="group block h-full">
                 <Card lift className="flex h-full flex-col p-7">
                   <span className="flex size-12 items-center justify-center rounded-full bg-gold-500/15 text-gold-700">
                     <service.icon className="size-5" aria-hidden />
                   </span>
-                  <h3 className="mt-5">{service.title}</h3>
+                  <h3 className="mt-5">
+                    {tCommon(`serviceNames.${service.id}`)}
+                  </h3>
                   <p className="mt-3 flex-1 text-sm leading-relaxed text-ink-500">
-                    {service.copy}
+                    {t(`items.${service.id}`)}
                   </p>
                   <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-navy-900 transition-colors duration-200 group-hover:text-gold-700">
-                    Learn more
+                    {t("learnMore")}
                     <ArrowRight
                       className="size-4 transition-transform duration-200 group-hover:translate-x-0.5"
                       aria-hidden
@@ -93,21 +78,15 @@ export function ServicesOverview() {
                   <Building2 className="size-5" aria-hidden />
                 </span>
                 <div>
-                  <p className="eyebrow eyebrow-light">
-                    For residences, estates &amp; developers
-                  </p>
-                  <h3 className="mt-2 text-white">
-                    Syndic &amp; residence management
-                  </h3>
+                  <p className="eyebrow eyebrow-light">{t("syndic.eyebrow")}</p>
+                  <h3 className="mt-2 text-white">{t("syndic.title")}</h3>
                   <p className="mt-2 max-w-2xl text-sm leading-relaxed text-white/70">
-                    Common areas, pools and gardens, preventive maintenance,
-                    contractor supervision and clear owner reporting — one
-                    reliable point of contact for every co-owner.
+                    {t("syndic.copy")}
                   </p>
                 </div>
               </div>
               <span className="inline-flex shrink-0 items-center gap-1.5 text-sm font-medium text-gold-500 transition-colors duration-200 group-hover:text-white">
-                Learn more
+                {t("learnMore")}
                 <ArrowRight
                   className="size-4 transition-transform duration-200 group-hover:translate-x-0.5"
                   aria-hidden
