@@ -7,6 +7,7 @@ import {
   useId,
   useState,
   type MouseEvent,
+  type SyntheticEvent,
 } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
@@ -25,12 +26,19 @@ import { cn } from "@/lib/utils";
  * - The query string and hash are kept ("/services?ref=x#syndic" ->
  *   "/fr/services?ref=x#syndic"). Pages are static, so those are only known
  *   in the browser: they join the href after hydration (the server HTML has
- *   the bare path) and are read again from the address bar when clicked.
+ *   the bare path, so nothing differs while hydrating).
+ * - Pages can change the query without any event: the estimator mirrors its
+ *   answers with history.replaceState. So the links read the address bar
+ *   again whenever the browser may be about to use them (`linkEvents`:
+ *   pointer over or down, focus, the context menu, modified and middle
+ *   clicks): the href attribute is set at once, before the browser reads
+ *   it, so a link opened in a new tab or window, copied or dragged carries
+ *   the estimate as well as a plain click does.
  * - A click remembers the choice (NEXT_LOCALE, lib/i18n/localeCookie.ts)
  *   before navigating, so the middleware already sees the new choice. Plain
- *   clicks navigate client-side; modified clicks (new tab or window) are
- *   left to the browser. Nothing is prefetched: a prefetch made under the
- *   old cookie could be a redirect back to the old language.
+ *   clicks navigate client-side; modified and middle clicks (new tab or
+ *   window) are left to the browser. Nothing is prefetched: a prefetch made
+ *   under the old cookie could be a redirect back to the old language.
  * - The hrefs are complete, localized URLs, hence next/navigation's router
  *   and a plain <a> rather than the locale-aware helpers (which would add
  *   the current locale).
@@ -58,6 +66,40 @@ export function useLocaleSwitch() {
   const hrefFor = (code: AppLocale) =>
     getPathname({ href: path, locale: code }) + suffix;
 
+  /** The link to `code` for the address as it is now (browser only). */
+  const liveHref = (code: AppLocale) =>
+    getPathname({ href: path, locale: code }) +
+    window.location.search +
+    window.location.hash;
+
+  /** Points the link at the address as it is now, at once and for React. */
+  const sync = (code: AppLocale, link: HTMLAnchorElement) => {
+    link.setAttribute("href", liveHref(code));
+    refresh();
+  };
+
+  /**
+   * Event handlers for a link to `code` that keep its href in step with the
+   * address bar (see above). Spread them on the link, before its onClick.
+   */
+  const linkEvents = (code: AppLocale) => {
+    const update = (event: SyntheticEvent<HTMLAnchorElement>) =>
+      sync(code, event.currentTarget);
+    return {
+      onPointerEnter: update,
+      onPointerDown: update,
+      onFocus: update,
+      onContextMenu: update,
+      // A middle click opens a new tab: like a modified click, it records
+      // the choice and leaves the rest to the browser.
+      onAuxClick: (event: MouseEvent<HTMLAnchorElement>) => {
+        if (event.button !== 1) return;
+        writeLocaleCookie(code);
+        update(event);
+      },
+    };
+  };
+
   /**
    * Click handler for a link to `code` (call from the link's onClick).
    * Returns true when this page navigates (a plain click), false when the
@@ -74,17 +116,17 @@ export function useLocaleSwitch() {
       event.ctrlKey ||
       event.shiftKey ||
       event.altKey;
-    if (modified) return false;
+    if (modified) {
+      // The browser follows the href once this handler returns.
+      sync(code, event.currentTarget);
+      return false;
+    }
     event.preventDefault();
-    router.push(
-      getPathname({ href: path, locale: code }) +
-        window.location.search +
-        window.location.hash,
-    );
+    router.push(liveHref(code));
     return true;
   };
 
-  return { hrefFor, choose, refresh };
+  return { hrefFor, linkEvents, choose };
 }
 
 /**
@@ -118,7 +160,7 @@ export function LanguageToggle({
 }) {
   const locale = useLocale() as AppLocale;
   const t = useTranslations("locale.toggle");
-  const { hrefFor, choose, refresh } = useLocaleSwitch();
+  const { hrefFor, linkEvents, choose } = useLocaleSwitch();
   // The language just clicked, underlined while its page loads.
   const [chosen, setChosen] = useState<AppLocale | null>(null);
   // One underline per rendered switch (the header renders several), so they
@@ -162,8 +204,7 @@ export function LanguageToggle({
               // out (and shown on hover).
               aria-label={names ? undefined : name}
               title={names ? undefined : name}
-              onPointerEnter={refresh}
-              onFocus={refresh}
+              {...linkEvents(code)}
               onClick={(event) => {
                 if (current) {
                   event.preventDefault();
@@ -182,7 +223,10 @@ export function LanguageToggle({
                     : "text-navy-900"
                   : light
                     ? "text-white/80 hover:text-white"
-                    : "text-ink-500 hover:text-navy-900",
+                    : // ink-700: the frosted header takes on the colour of
+                      // what scrolls under it (navy footer, photos), where
+                      // ink-500 falls below 4.5:1 (globals.css).
+                      "text-ink-700 hover:text-navy-900",
               )}
             >
               {/* The code itself ("EN", "FR") in every language. */}

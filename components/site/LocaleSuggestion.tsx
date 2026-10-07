@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, Languages, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { AppLocale } from "@/i18n/routing";
@@ -35,14 +35,17 @@ function rememberDismissal() {
  *
  * A floating card (no layout shift): under the header on phones, bottom
  * left from 640px, clear of the WhatsApp button (bottom right) and of the
- * page's calls to action. It appears after a short pause. Closing it (button
- * or Escape) is remembered in localStorage; picking a language here or in
- * the header switch writes the cookie, which hides it for good as well.
+ * page's calls to action. It appears after a short pause, rising and fading
+ * in (at once, without either, with reduced motion: MotionConfig's "user"
+ * setting only removes the movement). Closing it (button or Escape) is
+ * remembered in localStorage; picking a language here or in the header
+ * switch writes the cookie, which hides it for good as well.
  */
 export function LocaleSuggestion({ target }: { target: AppLocale }) {
   const t = useTranslations("locale.suggestion");
-  const { hrefFor, choose, refresh } = useLocaleSwitch();
+  const { hrefFor, linkEvents, choose } = useLocaleSwitch();
   const [open, setOpen] = useState(false);
+  const reduceMotion = useReducedMotion();
 
   useEffect(() => {
     // A language picked while this card was loading counts too.
@@ -77,10 +80,10 @@ export function LocaleSuggestion({ target }: { target: AppLocale }) {
             if (event.key === "Escape") dismiss();
           }}
           className="fixed inset-x-4 top-21 z-30 sm:inset-x-auto sm:top-auto sm:bottom-5 sm:left-5 sm:w-[26rem]"
-          initial={{ opacity: 0, y: 12 }}
+          initial={reduceMotion ? false : { opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 12 }}
-          transition={{ duration: 0.4, ease: EASE }}
+          exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 }}
+          transition={{ duration: reduceMotion ? 0 : 0.4, ease: EASE }}
         >
           <div className="flex items-start gap-3.5 rounded-2xl border border-sand-300 bg-white py-4 pr-2 pl-4 shadow-(--shadow-lift)">
             <span
@@ -96,8 +99,7 @@ export function LocaleSuggestion({ target }: { target: AppLocale }) {
               <a
                 href={hrefFor(target)}
                 hrefLang={target}
-                onPointerEnter={refresh}
-                onFocus={refresh}
+                {...linkEvents(target)}
                 onClick={(event) => {
                   choose(target, event);
                 }}

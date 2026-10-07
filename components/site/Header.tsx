@@ -40,9 +40,12 @@ const NAV_LINKS = [
  * Where each part of the bar appears, per language (measured with the
  * longest labels; the bar is at most 1200px wide):
  *
- * - English: the full bar from 1024px (lg). The owner login appears as an
- *   icon button from 1120px and with its label from 1280px (xl); below
- *   1120px it stays in the footer and the home hero.
+ * - English: the full bar from 1024px (lg), with the owner login as an icon
+ *   button, and with its label from 1280px (xl). Between 1024 and 1119px
+ *   the bar is tighter so the icon fits with at least 16px between the
+ *   logo, the links and the buttons: nav links with 8px side padding
+ *   instead of 12px, 8px between the buttons instead of 12px, and the icon
+ *   button round (38px) instead of a 54px pill.
  * - French: the labels are longer ("Estimer mes revenus", "Espace
  *   propriétaire", "Confier votre bien"), so the full bar starts at 1152px,
  *   with the owner login as an icon button (its label does not fit next to
@@ -68,7 +71,7 @@ const BAR_CLASSES: Record<
     nav: "hidden lg:block",
     actions: "hidden lg:flex",
     compact: "lg:hidden",
-    ownerIcon: "hidden min-[1120px]:flex xl:hidden",
+    ownerIcon: "hidden lg:flex xl:hidden",
     ownerLabel: "hidden xl:flex",
   },
   fr: {
@@ -84,8 +87,9 @@ const BAR_CLASSES: Record<
  * Fixed site header. Transparent over the home hero; frosted sand with a
  * bottom border after 40px of scroll (and always on inner pages). The active
  * link underline slides between items via a shared layoutId. The mobile menu
- * closes on navigation, on any link click and on Escape (focus then goes
- * back to the menu button).
+ * closes on navigation, on any link click, on Escape (focus then goes back
+ * to the menu button) and when focus moves on to the page behind it (Tab
+ * past its last item), so the focused element is never hidden under it.
  */
 export function Header() {
   const t = useTranslations("common");
@@ -125,6 +129,16 @@ export function Header() {
 
   return (
     <header
+      // Over the hero, focus rings are drawn on the dark photo (globals.css).
+      data-surface={overHero ? "dark" : undefined}
+      onBlur={(event) => {
+        // Only a move to another element on the page closes the menu;
+        // focus leaving the window (relatedTarget null) keeps it open.
+        const next = event.relatedTarget;
+        if (menuOpen && next && !event.currentTarget.contains(next)) {
+          setMenuOpen(false);
+        }
+      }}
       className={cn(
         "fixed inset-x-0 top-0 z-40 transition-all duration-300",
         overHero
@@ -148,7 +162,7 @@ export function Header() {
                     href={link.href}
                     aria-current={active ? "page" : undefined}
                     className={cn(
-                      "relative block px-3 py-2 text-sm font-medium whitespace-nowrap transition-colors duration-200 xl:px-3.5",
+                      "relative block px-2 py-2 text-sm font-medium whitespace-nowrap transition-colors duration-200 min-[1120px]:px-3 xl:px-3.5",
                       overHero
                         ? "text-white/85 hover:text-white"
                         : "text-ink-900 hover:text-navy-900",
@@ -159,7 +173,7 @@ export function Header() {
                     {active ? (
                       <motion.span
                         layoutId="nav-underline"
-                        className="absolute inset-x-3 -bottom-0.5 h-0.5 rounded-full bg-gold-500 xl:inset-x-3.5"
+                        className="absolute inset-x-2 -bottom-0.5 h-0.5 rounded-full bg-gold-500 min-[1120px]:inset-x-3 xl:inset-x-3.5"
                         transition={{ duration: 0.3, ease: "easeOut" }}
                       />
                     ) : null}
@@ -170,7 +184,9 @@ export function Header() {
           </ul>
         </nav>
 
-        <div className={cn("items-center gap-3", bar.actions)}>
+        <div
+          className={cn("items-center gap-2 min-[1120px]:gap-3", bar.actions)}
+        >
           <CurrencyToggle tone={tone} layoutId="currency-pill-header" />
           <LanguageToggle tone={tone} />
           {/* Compact owner login where its label does not fit (see BAR_CLASSES). */}
@@ -179,6 +195,8 @@ export function Header() {
               href="/login"
               variant={overHero ? "light" : "outline"}
               size="sm"
+              // Round below 1120px, where the English bar is tightest.
+              className="max-[1120px]:px-2"
             >
               <UserRound className="size-5" aria-hidden />
               <span className="sr-only">{t("actions.ownerLogin")}</span>

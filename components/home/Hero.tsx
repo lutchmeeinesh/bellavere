@@ -14,6 +14,16 @@ const delay = (seconds: number) => ({ animationDelay: `${seconds}s` });
  * animations defined in globals.css. Both are CSS, so the hero paints and
  * animates straight from the server HTML, before JavaScript loads.
  *
+ * The intro paragraph is the page's largest paint (LCP on phones), and a
+ * paint counts only once its fade has finished: it therefore rises without
+ * fading, from the first paint, while the eyebrow, the headline and the
+ * buttons fade in around it; and the page-change fade skips this page
+ * (data-page-hero, globals.css).
+ *
+ * Focus rings on the hero's buttons are white (data-surface="photo",
+ * globals.css): the brightest parts of the photo behind them leave the
+ * gold ring at 2:1, white keeps 3:1 or more.
+ *
  * Text: messages `home.hero.*`; the headline is the company tagline and the
  * buttons the shared actions (`common.company.tagline`, `common.actions.*`).
  */
@@ -24,7 +34,11 @@ export function Hero() {
   const words = tCommon("company.tagline").split(" ");
 
   return (
-    <section className="relative flex min-h-svh items-center overflow-hidden bg-navy-900">
+    <section
+      data-page-hero
+      data-surface="photo"
+      className="relative flex min-h-svh items-center overflow-hidden bg-navy-900"
+    >
       <Image
         src={images.homeHero.src}
         alt={images.homeHero.alt}
@@ -58,10 +72,7 @@ export function Hero() {
           ))}
         </h1>
 
-        <p
-          className="animate-rise mt-6 max-w-xl text-lg text-white/80"
-          style={delay(0.55)}
-        >
+        <p className="animate-rise-in mt-6 max-w-xl text-lg text-white/80">
           {t("intro")}
         </p>
 

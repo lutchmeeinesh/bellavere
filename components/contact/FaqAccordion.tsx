@@ -21,7 +21,12 @@ const FAQ_ITEMS = [
 
 type FaqKey = (typeof FAQ_ITEMS)[number]["key"];
 
-/** Accessible one-open-at-a-time FAQ accordion with animated panels. */
+/**
+ * Accessible one-open-at-a-time FAQ accordion with animated panels. The
+ * floating WhatsApp button steps aside while the list is behind it
+ * (data-whatsapp-avoid), so it never hides the end of a question and its
+ * open/close chevron.
+ */
 export function FaqAccordion({ className }: { className?: string }) {
   const t = useTranslations("contact.faq");
   const tc = useTranslations("common");
@@ -45,7 +50,10 @@ export function FaqAccordion({ className }: { className?: string }) {
   };
 
   return (
-    <div className={cn("border-t border-sand-300", className)}>
+    <div
+      data-whatsapp-avoid
+      className={cn("border-t border-sand-300", className)}
+    >
       {FAQ_ITEMS.map((item) => {
         const open = openId === item.id;
         return (

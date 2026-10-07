@@ -140,11 +140,17 @@ function useStepAside(
  * - Steps aside while a form is behind it, and on phones while a text field
  *   has focus, so it never covers a field or a submit button.
  * - Adds a navy strip below the footer (the footer's colour) so, scrolled
- *   to the very bottom, it never covers the footer's last lines.
+ *   to the very bottom, it never covers the footer's last lines. Only below
+ *   1296px: from there the button sits right of the footer's 1200px column.
  * - Pulses softly the first time it appears in a visit; no pulse, and no
  *   movement, with reduced motion.
  * - Boundary: a 2px ring of WhatsApp's teal green (3:1 or more against the
- *   sand, white and navy surfaces); the label is navy on white (16:1).
+ *   sand, white and navy surfaces); the label is navy on white (16:1). The
+ *   white glyph on the brand green is 1.98:1, an accepted exception
+ *   (ASSUMPTIONS.md): the brand mark is recognisable by its shape, the ring
+ *   gives the button its boundary and the link's name carries the meaning.
+ * - Keyboard focus: a two-tone ring, white then navy (app/globals.css), as
+ *   the button floats over every surface, often two at once.
  * - In its own landmark (an aside named like the button), so screen-reader
  *   users find it among the page's regions.
  */
@@ -182,7 +188,7 @@ export function WhatsAppButton() {
         <div
           aria-hidden
           data-whatsapp-float
-          className="h-[calc(2rem+env(safe-area-inset-bottom))] bg-navy-900"
+          className="h-[calc(2rem+env(safe-area-inset-bottom))] bg-navy-900 min-[1296px]:hidden"
         />
       )}
       <AnimatePresence initial={false}>
@@ -223,7 +229,7 @@ export function WhatsAppButton() {
                 "group flex items-center rounded-full shadow-(--shadow-lift) ring-2 ring-(--wa-deep)",
                 "transition-[background-color,opacity,translate,visibility] duration-300 ease-out",
                 "hover:bg-white focus-visible:bg-white data-expanded:bg-white",
-                "focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold-500",
+                // Focus ring: two-tone, in app/globals.css ([data-whatsapp-float]).
                 steppingAside &&
                   "pointer-events-none invisible translate-y-3 opacity-0",
               )}
